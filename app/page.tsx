@@ -6,6 +6,7 @@ import BestPractices from "@/components/BestPractices";
 import TrustedGlobally from "@/components/TrustedGlobally";
 import JoinExchange from "@/components/JoinExchange";
 import Reviews from "@/components/Reviews";
+import StartExchanging from "@/components/StartExchanging";
 import { Twitter, Linkedin, Facebook } from "lucide-react";
 
 export default function Home() {
@@ -19,6 +20,7 @@ export default function Home() {
       <TrustedGlobally />
       <JoinExchange />
       <Reviews />
+      <StartExchanging />
 
       {/* Contact Section */}
       <section id="contact" className="py-20 bg-gray-800">
