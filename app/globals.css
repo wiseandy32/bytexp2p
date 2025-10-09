@@ -34,6 +34,8 @@
   --font-mono: var(--font-geist-mono);
   --color-dark-bg3: #1A1D09;
   --color-dark-bg4: #222630;
+  --color-dark-bg5: #232731;
+  --color-company-bg: #262c3a;
 }
 
 @media (prefers-color-scheme: dark) {
