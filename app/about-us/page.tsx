@@ -3,7 +3,7 @@ import Footer from "@/components/Footer";
 
 const AboutUs = () => {
   return (
-    <div className="bg-gray-900 text-white min-h-screen">
+    <div className="bg-dark-bg5 text-white min-h-screen">
       <Header />
       <div className="container mx-auto mt-5 px-4 sm:px-0">
         <div className="p-4 mt-24 mx-auto bg-dark-bg" style={{ width: '100%' }}>
