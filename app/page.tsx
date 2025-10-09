@@ -2,6 +2,7 @@ import Header from "@/components/Header";
 import Hero from "@/components/Hero";
 import Stats from "@/components/Stats";
 import HowItWorks from "@/components/HowItWorks";
+import BestPractices from "@/components/BestPractices";
 import { Globe, ShieldCheck, Server, Twitter, Linkedin, Facebook } from "lucide-react";
 
 export default function Home() {
@@ -11,6 +12,7 @@ export default function Home() {
       <Hero />
       <Stats />
       <HowItWorks />
+      <BestPractices />
 
       {/* Why Choose Us Section */}
       <section id="about" className="py-20">
