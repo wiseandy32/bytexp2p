@@ -25,6 +25,7 @@
   --danger: #dc3545;
   --light: #f8f9fa;
   --dark: #343a40;
+  --dark-bg3: #1A1D09;
 }
 
 @theme inline {
@@ -32,6 +33,7 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+--color-dark-bg3: var(--dark-bg3);
 }
 
 @media (prefers-color-scheme: dark) {
