@@ -5,7 +5,8 @@ import HowItWorks from "@/components/HowItWorks";
 import BestPractices from "@/components/BestPractices";
 import TrustedGlobally from "@/components/TrustedGlobally";
 import JoinExchange from "@/components/JoinExchange";
-import { Globe, ShieldCheck, Server, Twitter, Linkedin, Facebook } from "lucide-react";
+import Reviews from "@/components/Reviews";
+import { Twitter, Linkedin, Facebook } from "lucide-react";
 
 export default function Home() {
   return (
@@ -17,64 +18,7 @@ export default function Home() {
       <BestPractices />
       <TrustedGlobally />
       <JoinExchange />
-
-      {/* Why Choose Us Section */}
-      <section id="about" className="py-20">
-        <div className="container mx-auto px-6">
-          <h2 className="text-4xl font-bold text-center mb-12">Why Choose PeerShieldEX</h2>
-          <p className="text-xl text-gray-400 text-center mb-12">PeerShieldEX is the most secure and reliable P2P crypto escrow platform.</p>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="bg-gray-800 rounded-xl p-8 transform transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl">
-              <div className="bg-green-500 rounded-full h-16 w-16 flex items-center justify-center mx-auto mb-6">
-                <Globe className="h-8 w-8 text-white" />
-              </div>
-              <h3 className="text-2xl font-bold text-center mb-4">Decentralized</h3>
-              <p className="text-gray-400 text-center">
-                PeerShieldEX is a decentralized platform, which means that there is no central point of failure.
-              </p>
-            </div>
-            <div className="bg-gray-800 rounded-xl p-8 transform transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl">
-              <div className="bg-green-500 rounded-full h-16 w-16 flex items-center justify-center mx-auto mb-6">
-                <ShieldCheck className="h-8 w-8 text-white" />
-              </div>
-              <h3 className="text-2xl font-bold text-center mb-4">Secure</h3>
-              <p className="text-gray-400 text-center">
-                PeerShieldEX uses a multi-signature escrow system to ensure that your funds are safe.
-              </p>
-            </div>
-            <div className="bg-gray-800 rounded-xl p-8 transform transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl">
-              <div className="bg-green-500 rounded-full h-16 w-16 flex items-center justify-center mx-auto mb-6">
-                <Server className="h-8 w-8 text-white" />
-              </div>
-              <h3 className="text-2xl font-bold text-center mb-4">Reliable</h3>
-              <p className="text-gray-400 text-center">
-                PeerShieldEX is a reliable platform that is available 24/7.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* FAQ Section */}
-      <section id="faq" className="py-20">
-        <div className="container mx-auto px-6">
-          <h2 className="text-4xl font-bold text-center mb-12">Frequently Asked Questions</h2>
-          <div className="max-w-3xl mx-auto">
-            <div className="bg-gray-800 rounded-xl p-6 mb-4">
-              <h3 className="text-xl font-bold mb-2">What is PeerShieldEX?</h3>
-              <p className="text-gray-400">PeerShieldEX is a decentralized P2P crypto escrow platform that allows users to trade directly with each other in a secure and trustless environment.</p>
-            </div>
-            <div className="bg-gray-800 rounded-xl p-6 mb-4">
-              <h3 className="text-xl font-bold mb-2">How does PeerShieldEX work?</h3>
-              <p className="text-gray-400">PeerShieldEX uses a multi-signature escrow system to ensure that your funds are safe. When you create an offer, you send your crypto to a multi-signature wallet. The funds are held in the wallet until both parties have confirmed that the trade has been completed.</p>
-            </div>
-            <div className="bg-gray-800 rounded-xl p-6 mb-4">
-              <h3 className="text-xl font-bold mb-2">What are the fees for using PeerShieldEX?</h3>
-              <p className="text-gray-400">PeerShieldEX charges a small fee for each trade. The fee is used to cover the costs of running the platform.</p>
-            </div>
-          </div>
-        </div>
-      </section>
+      <Reviews />
 
       {/* Contact Section */}
       <section id="contact" className="py-20 bg-gray-800">
