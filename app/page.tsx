@@ -1,6 +1,7 @@
 import Header from "@/components/Header";
 import Hero from "@/components/Hero";
 import Stats from "@/components/Stats";
+import HowItWorks from "@/components/HowItWorks";
 import { Globe, ShieldCheck, Server, Twitter, Linkedin, Facebook } from "lucide-react";
 
 export default function Home() {
@@ -9,6 +10,7 @@ export default function Home() {
       <Header />
       <Hero />
       <Stats />
+      <HowItWorks />
 
       {/* Why Choose Us Section */}
       <section id="about" className="py-20">
@@ -42,39 +44,6 @@ export default function Home() {
               <p className="text-gray-400 text-center">
                 PeerShieldEX is a reliable platform that is available 24/7.
               </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* How it Works Section */}
-      <section id="services" className="py-20 bg-gray-800">
-        <div className="container mx-auto px-6 text-center">
-          <h2 className="text-4xl font-bold mb-12">How It Works</h2>
-          <p className="text-xl text-gray-400 text-center mb-12">PeerShieldEX makes it easy to trade crypto with anyone in the world.</p>
-          <div className="flex flex-col md:flex-row justify-center items-center gap-8">
-            <div className="flex items-center">
-              <div className="bg-green-500 rounded-full h-20 w-20 flex items-center justify-center text-3xl font-bold">1</div>
-              <div className="ml-6 text-left">
-                <h3 className="text-2xl font-bold">Create an offer</h3>
-                <p className="text-gray-400">Create an offer to buy or sell crypto.</p>
-              </div>
-            </div>
-            <div className="h-1 w-20 bg-green-500 hidden md:block"></div>
-            <div className="flex items-center mt-8 md:mt-0">
-              <div className="bg-green-500 rounded-full h-20 w-20 flex items-center justify-center text-3xl font-bold">2</div>
-              <div className="ml-6 text-left">
-                <h3 className="text-2xl font-bold">Fund the escrow</h3>
-                <p className="text-gray-400">Fund the escrow with the crypto you want to trade.</p>
-              </div>
-            </div>
-            <div className="h-1 w-20 bg-green-500 hidden md:block"></div>
-            <div className="flex items-center mt-8 md:mt-0">
-              <div className="bg-green-500 rounded-full h-20 w-20 flex items-center justify-center text-3xl font-bold">3</div>
-              <div className="ml-6 text-left">
-                <h3 className="text-2xl font-bold">Release the funds</h3>
-                <p className="text-gray-400">Release the funds to the other party once you have received the crypto.</p>
-              </div>
             </div>
           </div>
         </div>
