@@ -24,7 +24,7 @@ export default function Stats() {
           <p className="font-bold text-gray-400 text-sm tracking-widest mb-4">SECURELY BUY, SELL, SIGN AND MANAGE TRANSACTIONS</p>
           <h1 className="text-5xl font-bold">Escrow exchange for 120+ cryptocurrencies</h1>
           <div className="mt-8 border border-gray-800 rounded-lg p-1">
-            <iframe src="https://widget.coinlib.io/widget?type=full_v2&theme=dark&cnt=6&pref_coin_id=1505&graph=yes" width="100%" height="420px" scrolling="none" marginWidth="0" marginHeight="0" frameBorder="0" style={{border:0, margin:0, padding:0}}></iframe>
+            <iframe src="https://widget.coinlib.io/widget?type=full_v2&theme=dark&cnt=6&pref_coin_id=1505&graph=yes" width="100%" height="420px" scrolling="none" style={{border:0, margin:0, padding:0}}></iframe>
           </div>
         </div>
       </div>
