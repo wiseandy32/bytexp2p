@@ -20,7 +20,7 @@ export default function HowItWorks() {
                 </div>
                 <div>
                   <h3 className="text-lg font-bold">Create Exchange room</h3>
-                  <p className="text-sm text-gray-400">
+                  <p className="text-sm text-gray-400 bg-dark-bg4 p-3 rounded-md">
                     Proceed to create the exchange room. Share your exchange ID with a trade partner to join them to the trade.
                   </p>
                 </div>
@@ -31,7 +31,7 @@ export default function HowItWorks() {
                 </div>
                 <div>
                   <h3 className="text-lg font-bold">Exchange Assets</h3>
-                  <p className="text-sm text-gray-400">
+                  <p className="text-sm text-gray-400 bg-dark-bg4 p-3 rounded-md">
                     Complete the exchange with just a click. Join existing trades or created exchange room are all seamlessly optimized.
                   </p>
                 </div>
@@ -42,7 +42,7 @@ export default function HowItWorks() {
                 </div>
                 <div>
                   <h3 className="text-lg font-bold">Withdraw</h3>
-                  <p className="text-sm text-gray-400">
+                  <p className="text-sm text-gray-400 bg-dark-bg4 p-3 rounded-md">
                     Once the exchange is complete, Instantly Withdraw your exchanged asset to your preferred crypto address.
                   </p>
                 </div>
