@@ -13,13 +13,13 @@ const Footer = () => {
           <div>
             <h5 className="text-base font-bold mb-4">COMPANY</h5>
             <p className="mb-2">
-              <Link href="https://peershieldex.com/terms" className="text-gray-400 text-sm">Terms and Conditions</Link>
+              <Link href="/terms" className="text-gray-400 text-sm">Terms and Conditions</Link>
             </p>
             <p className="mb-2">
-              <Link href="https://peershieldex.com/privacy" className="text-gray-400 text-sm">Policy</Link>
+              <Link href="/privacy" className="text-gray-400 text-sm">Policy</Link>
             </p>
             <p>
-              <Link href="https://peershieldex.com/about-us" className="text-gray-400 text-sm">About Us</Link>
+              <Link href="/about-us" className="text-gray-400 text-sm">About Us</Link>
             </p>
           </div>
 
@@ -31,10 +31,10 @@ const Footer = () => {
               </a>
             </p>
             <p className="mb-2">
-              <Link href="https://peershieldex.com/escrow-service-guarantee" className="text-white">Escrow Guarantee</Link>
+              <Link href="/escrow-service-guarantee" className="text-white">Escrow Guarantee</Link>
             </p>
             <p>
-              <Link href="https://peershieldex.com/escrow-process" className="text-white">Escrow Process</Link>
+              <Link href="/escrow-process" className="text-white">Escrow Process</Link>
             </p>
           </div>
 
