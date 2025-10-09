@@ -11,14 +11,13 @@ const Register = () => {
         <div className="max-w-md mx-auto mt-24 bg-dark-bg5 p-8 rounded-lg">
           <div className="text-center mb-8">
             <Link href="/">
-                <Image src="/logo.png" alt="Peershieldex" width={130} height={32} />
+                <Image src="https://peershieldex.com/assets/images/favicon.png" alt="Peershieldex" width={130} height={32} />
             </Link>
           </div>
           <h4 className="text-2xl font-serif mb-2">Create Account</h4>
           <p className="text-gray-400 text-sm mb-6">Start exchanging crypto assets today. Secure & fast crypto escrow protocol.</p>
           
-          <form action="https://peershieldex.com/register" method="POST">
-            <input type="hidden" name="_token" value="ERaPDNKTpn7ynnD0Dk6VeEZ62balaNKzGOdvWYqW" />
+          <form>
             <div className="mb-4 relative">
               <input type="text" name="name" id="name" className="w-full bg-gray-700 border border-gray-600 rounded-md py-2 px-3 text-white focus:outline-none focus:border-green-500 peer" placeholder=" " required />
               <label htmlFor="name" className="absolute left-3 -top-2.5 text-gray-400 text-xs bg-dark-bg5 px-1 peer-placeholder-shown:top-2.5 peer-placeholder-shown:text-base peer-focus:-top-2.5 peer-focus:text-xs transition-all">Full Name</label>

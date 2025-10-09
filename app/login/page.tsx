@@ -11,14 +11,13 @@ const Login = () => {
         <div className="max-w-md mx-auto mt-24 bg-dark-bg5 p-8 rounded-lg">
           <div className="text-center mb-8">
             <Link href="/">
-                <Image src="/logo.png" alt="Peershieldex" width={130} height={32} />
+                <Image src="https://peershieldex.com/assets/images/favicon.png" alt="Peershieldex" width={130} height={32} />
             </Link>
           </div>
           <h4 className="text-2xl font-serif mb-2">Account login</h4>
           <p className="text-gray-400 text-sm mb-6">Welcome back. Provide your credentials to continue</p>
           
-          <form action="https://peershieldex.com/login" method="POST">
-            <input type="hidden" name="_token" value="ERaPDNKTpn7ynnD0Dk6VeEZ62balaNKzGOdvWYqW" />
+          <form>
             <div className="mb-4 relative">
               <input type="email" name="email" id="id_email" className="w-full bg-gray-700 border border-gray-600 rounded-md py-2 px-3 text-white focus:outline-none focus:border-green-500 peer" placeholder=" " required />
               <label htmlFor="id_email" className="absolute left-3 -top-2.5 text-gray-400 text-xs bg-dark-bg5 px-1 peer-placeholder-shown:top-2.5 peer-placeholder-shown:text-base peer-focus:-top-2.5 peer-focus:text-xs transition-all">Email address</label>
@@ -43,7 +42,7 @@ const Login = () => {
             </div>
 
             <p className="text-center">
-              <Link href="https://peershieldex.com/password/reset" className="text-gray-400 text-sm">Forgot Password?</Link>
+              <Link href="/password/reset" className="text-gray-400 text-sm">Forgot Password?</Link>
             </p>
           </form>
         </div>
