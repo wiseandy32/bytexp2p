@@ -18,7 +18,7 @@ const StartExchanging = () => {
     
           <div className="flex mt-10 justify-center flex-col md:flex-row">
             <Link href="https://peershieldex.com/register">
-              <button className="w-full md:w-auto px-8 py-3 font-semibold flex justify-center items-center bg-green-500 rounded-md">
+              <button className="w-full md:w-auto px-8 py-3 font-semibold flex justify-center items-center bg-new-blue rounded-md">
                 Exchange Now <ArrowRight className="ml-2" style={{ fontSize: '16px' }} />
               </button>
             </Link>

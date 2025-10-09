@@ -20,7 +20,7 @@ export default function Hero() {
           </p>
           <div className="flex gap-4">
             <Link href="/register">
-              <button className="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-lg transition-colors">
+              <button className="bg-new-blue hover:bg-new-blue-dark text-white font-bold py-3 px-6 rounded-lg transition-colors">
                 Exchange Now
               </button>
             </Link>
@@ -78,7 +78,7 @@ export default function Hero() {
               </div>
             </div>
 
-            <button className="w-full mt-6 bg-green-500 text-white font-bold py-3 rounded-lg hover:bg-green-600 transition-colors" disabled>
+            <button className="w-full mt-6 bg-new-blue text-white font-bold py-3 rounded-lg hover:bg-new-blue-dark transition-colors" disabled>
               Continue
             </button>
           </div>

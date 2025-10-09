@@ -32,7 +32,7 @@ const JoinExchange = () => {
           </p>
           <div className="mt-4 aos-init aos-animate" data-aos="fade-up" data-aos-duration="700">
             <Link href="https://peershieldex.com/register" className="mr-3">
-              <button className="px-4 py-2 bg-green-500 rounded-md w-fit">Create free account</button>
+              <button className="px-4 py-2 bg-new-blue rounded-md w-fit">Create free account</button>
             </Link>
             <Link href="https://peershieldex.com/login">
               <button className="px-4 py-2 bg-gray-700 rounded-md w-fit">Sign in</button>
