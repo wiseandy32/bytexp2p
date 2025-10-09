@@ -1,30 +1,12 @@
-
 import Header from "@/components/Header";
+import Hero from "@/components/Hero";
 import { Globe, ShieldCheck, Server, Twitter, Linkedin, Facebook } from "lucide-react";
 
 export default function Home() {
   return (
     <div className="bg-gray-900 text-white min-h-screen">
       <Header />
-
-      {/* Hero Section */}
-      <section id="home" className="relative text-center pt-32 pb-24 bg-gradient-to-r from-gray-900 to-green-900">
-        <div className="absolute inset-0 bg-black opacity-40"></div>
-        <div className="relative z-10">
-          <h1 className="text-6xl font-extrabold mb-4 leading-tight">The Future of Secure P2P Exchange</h1>
-          <p className="text-2xl text-gray-300 mb-10 max-w-3xl mx-auto">
-            PeerShieldEX is a decentralized peer-to-peer (P2P) crypto escrow platform that enables users to trade directly with one another in a secure and trustless environment.
-          </p>
-          <div className="flex justify-center gap-4">
-            <button className="bg-green-500 hover:bg-green-600 text-white font-bold py-4 px-10 rounded-full shadow-2xl transform transition-all duration-300 hover:scale-110">
-              Get Started
-            </button>
-            <button className="bg-gray-700 hover:bg-gray-600 text-white font-bold py-4 px-10 rounded-full shadow-2xl transform transition-all duration-300 hover:scale-110">
-              Learn More
-            </button>
-          </div>
-        </div>
-      </section>
+      <Hero />
 
       {/* Why Choose Us Section */}
       <section id="about" className="py-20">
