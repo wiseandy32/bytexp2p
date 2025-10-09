@@ -4,6 +4,7 @@ import Stats from "@/components/Stats";
 import HowItWorks from "@/components/HowItWorks";
 import BestPractices from "@/components/BestPractices";
 import TrustedGlobally from "@/components/TrustedGlobally";
+import JoinExchange from "@/components/JoinExchange";
 import { Globe, ShieldCheck, Server, Twitter, Linkedin, Facebook } from "lucide-react";
 
 export default function Home() {
@@ -15,6 +16,7 @@ export default function Home() {
       <HowItWorks />
       <BestPractices />
       <TrustedGlobally />
+      <JoinExchange />
 
       {/* Why Choose Us Section */}
       <section id="about" className="py-20">
