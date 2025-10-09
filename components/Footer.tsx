@@ -6,7 +6,7 @@ const Footer = () => {
     <div className="bg-dark-bg3 font-sans-pro">
       <div className="container mx-auto py-12">
         <div className="flex items-center mb-8">
-          <img src="https://peershieldex.com/assets/images/favicon.png" alt="Peershieldex" className="w-6 h-6" />
+          <img src="/favicon.png" alt="Peershieldex" className="w-6 h-6" />
           <h5 className="text-xl font-bold ml-2">Peershieldex</h5>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 pb-16 text-sm">
