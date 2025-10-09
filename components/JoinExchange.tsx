@@ -2,19 +2,19 @@ import Link from 'next/link';
 
 const featuredLogos = [
   {
-    src: "https://peershieldex.com/assets/images/forbes.png",
+    src: "/forbes.png",
     alt: "Forbes",
   },
   {
-    src: "https://peershieldex.com/assets/images/fortune.png",
+    src: "/fortune.png",
     alt: "Fortune",
   },
   {
-    src: "https://peershieldex.com/assets/images/blocknomi.png",
+    src: "/blocknomi.png",
     alt: "Blocknomi",
   },
   {
-    src: "https://peershieldex.com/assets/images/coindesk-1.png",
+    src: "/coindesk-1.png",
     alt: "Coindesk",
   },
 ];

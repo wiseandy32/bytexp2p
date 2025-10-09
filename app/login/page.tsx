@@ -11,7 +11,7 @@ const Login = () => {
         <div className="max-w-md mx-auto mt-24 bg-dark-bg5 p-8 rounded-lg">
           <div className="text-center mb-8">
             <Link href="/">
-                <Image src="https://peershieldex.com/assets/images/favicon.png" alt="Peershieldex" width={130} height={32} />
+                <Image src="/logo.png" alt="Peershieldex" width={130} height={32} />
             </Link>
           </div>
           <h4 className="text-2xl font-serif mb-2">Account login</h4>

@@ -11,7 +11,7 @@ export default function Header() {
         <div className="flex justify-between items-center py-3">
           {/* Logo */}
           <Link href="/" className="flex items-center space-x-2">
-            <img src="https://peershieldex.com/assets/images/favicon.png" alt="Peershieldex" className="h-7 w-7" />
+            <img src="/favicon.png" alt="Peershieldex" className="h-7 w-7" />
             <span className="font-sans text-white font-bold text-lg">Peershieldex</span>
           </Link>
 
