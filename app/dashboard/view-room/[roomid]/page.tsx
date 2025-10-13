@@ -3,15 +3,16 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
-import { useState, useEffect } from "react";
+import { useState, useEffect, use } from "react";
 import { LuClipboard, LuClipboardCheck } from "react-icons/lu";
 import Link from "next/link";
 
-export default function ViewRoomPage({ params }: { params: { roomid: string } }) {
+export default function ViewRoomPage({ params }: { params: Promise<{ roomid: string }> }) {
+    const { roomid } = use(params);
     const [copied, setCopied] = useState(false);
 
     const handleCopy = () => {
-        navigator.clipboard.writeText(params.roomid);
+        navigator.clipboard.writeText(roomid);
         setCopied(true);
     };
 
@@ -29,7 +30,7 @@ export default function ViewRoomPage({ params }: { params: { roomid: string } })
             <div className="text-center my-4 roboto">
                 <Image src="https://peershieldex.com/assets/images/icon-convert.svg" alt="" width={40} height={40} className="inline-block"/>
                 <span style={{fontSize: "20px"}} className="top-2 bold-text"> Trade Room</span>
-                <small className="xsmall grey-color-2 d-block mt-2">
+                <small className="xsmall grey-color-2 block mt-2">
                     Share the room ID to the other party to join in the trade
                 </small>
             </div>
@@ -38,7 +39,7 @@ export default function ViewRoomPage({ params }: { params: { roomid: string } })
                 <CardContent>
                     <div className="flex justify-between items-center">
                         <div className="flex items-center gap-2">
-                            <h4>Room ID: {params.roomid}</h4>
+                            <h4>Room ID: {roomid}</h4>
                             <Button variant="ghost" size="icon" onClick={handleCopy}>
                                 {copied ? <LuClipboardCheck className="h-4 w-4" /> : <LuClipboard className="h-4 w-4" />}
                             </Button>
@@ -134,7 +135,7 @@ export default function ViewRoomPage({ params }: { params: { roomid: string } })
                 <CardContent>
                     <div className="flex justify-between">
                         <div>
-                            <Link href={`/dashboard/deposit/address?roomId=${params.roomid}`}>
+                            <Link href={`/dashboard/deposit/address?roomId=${roomid}`}>
                                 <Button>
                                     <i className="fas fa-download mr-3" aria-hidden="true"></i> Deposit Payment
                                 </Button>
