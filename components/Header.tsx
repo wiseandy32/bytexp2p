@@ -40,6 +40,7 @@ export default function Header() {
 
           {/* Desktop Menu (hidden on small screens) */}
           <div className="hidden lg:flex items-center space-x-1">
+            <Link href="/dashboard" className="text-sm text-gray-300 hover:text-white px-3 py-2 rounded-md">Dashboard</Link>
             <Link href="/about-us" className="text-sm text-gray-300 hover:text-white px-3 py-2 rounded-md">About US</Link>
             <Link href="/escrow-process" className="text-sm text-gray-300 hover:text-white px-3 py-2 rounded-md">Our Approach</Link>
             <Link href="/escrow-service-guarantee" className="text-sm text-gray-300 hover:text-white px-3 py-2 rounded-md">Guarantee</Link>
@@ -58,6 +59,7 @@ export default function Header() {
       {isOpen && (
         <div className="lg:hidden">
           <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+            <Link href="/dashboard" className="block text-sm text-gray-300 hover:text-white px-3 py-2 rounded-md">Dashboard</Link>
             <Link href="/about-us" className="block text-sm text-gray-300 hover:text-white px-3 py-2 rounded-md">About US</Link>
             <Link href="/escrow-process" className="block text-sm text-gray-300 hover:text-white px-3 py-2 rounded-md">Our Approach</Link>
             <Link href="/escrow-service-guarantee" className="block text-sm text-gray-300 hover:text-white px-3 py-2 rounded-md">Guarantee</Link>
