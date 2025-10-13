@@ -4,16 +4,17 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import {
-  ArrowLeftRight,
-  ChevronDown,
-  ChevronRight,
-  Menu,
-  PlusCircle,
-  User,
-  Wallet,
-  Sun,
-  Moon,
-} from 'lucide-react';
+  FiChevronDown,
+  FiChevronRight,
+  FiMenu,
+  FiPlusCircle,
+  FiUser,
+  FiSun,
+  FiMoon,
+  FiX,
+} from 'react-icons/fi';
+import AccountDropdown from './AccountDropdown';
+import { LuWallet, LuArrowRightLeft } from "react-icons/lu";
 
 export default function Dashboard({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -62,13 +63,18 @@ export default function Dashboard({ children }: { children: React.ReactNode }) {
 
   const SidebarContent = () => (
     <nav className="flex flex-col gap-2 p-4">
-      <div className="flex items-center mb-4 px-4">
-        <img
-          src="https://peershieldex.com/assets/images/favicon.png"
-          alt="bytexp2p Logo"
-          className="w-8 h-8 mr-2"
-        />
-        <h1 className="text-xl font-bold text-gray-800 dark:text-gray-100">bytexp2p</h1>
+      <div className="flex items-center justify-between mb-4 px-4">
+        <div className="flex items-center">
+            <img
+              src="https://peershieldex.com/assets/images/favicon.png"
+              alt="bytexp2p Logo"
+              className="w-8 h-8 mr-2"
+            />
+            <h1 className="text-xl font-bold text-gray-800 dark:text-gray-100">bytexp2p</h1>
+        </div>
+        <button onClick={() => setSidebarOpen(false)} className="md:hidden">
+            <FiX size={24} className="text-gray-500 dark:text-gray-400" />
+        </button>
       </div>
       {navItems.map((item) => (
         <Link
@@ -110,16 +116,12 @@ export default function Dashboard({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex min-h-screen bg-gray-50 dark:bg-gray-800">
       {/* Mobile Sidebar */}
-      <div
-        className={`fixed inset-0 z-40 flex md:hidden ${
-          sidebarOpen ? 'block' : 'hidden'
-        }`}
-      >
+      <div className={`fixed inset-0 z-40 md:hidden ${sidebarOpen ? 'block' : 'hidden'}`}>
         <div
           className="fixed inset-0 bg-black opacity-50"
           onClick={() => setSidebarOpen(false)}
         ></div>
-        <aside className="relative bg-white w-64 flex-shrink-0 dark:bg-gray-800">
+        <aside className={`absolute top-0 right-0 h-full bg-white w-64 flex-shrink-0 dark:bg-gray-800 transform transition-transform duration-300 ease-in-out ${sidebarOpen ? 'translate-x-0' : 'translate-x-full'}`}>
           <SidebarContent />
         </aside>
       </div>
@@ -131,20 +133,32 @@ export default function Dashboard({ children }: { children: React.ReactNode }) {
 
       <div className="flex flex-col flex-1">
         {/* Mobile Header */}
-        <header className="bg-white border-b border-gray-200 p-4 md:hidden flex justify-between items-center dark:bg-gray-800 dark:border-gray-700">
-          <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100">Dashboard</h1>
-          <button onClick={() => setSidebarOpen(!sidebarOpen)}>
-            <Menu className="w-6 h-6 text-gray-700 dark:text-gray-300" />
-          </button>
+        <header className="md:hidden container-fluid sticky-top border-bottom sans-pro dark:bg-gray-800 dark:border-gray-700 py-2 flex items-center">
+            <Link href="/" className="navbar-brand">
+                <img src="https://peershieldex.com/assets/images/favicon.png" alt="" className="logoStyle w-6 h-6" />
+            </Link>
+            <p className="text-xs mt-2 top-6 flex-1">
+                <i className="fa fa-caret-right mr-1 text-gray-500" aria-hidden="true"></i>
+                <b>Dashboard</b><br />
+            </p>
+            <div className="relative">
+                <p className="text-xs m-0 top-5 mr-3">
+                    <FiUser size={26} className="text-gray-400 cursor-pointer" onClick={() => setAccountMenuOpen(!accountMenuOpen)} />
+                </p>
+                {accountMenuOpen && <AccountDropdown />}
+            </div>
+            <div id="toggleDrawer" onClick={() => setSidebarOpen(!sidebarOpen)} className="cursor-pointer">
+                <FiMenu size={28} className="text-gray-400" />
+            </div>
         </header>
 
         {/* Desktop Header */}
-        <header className="hidden md:block bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 w-full py-3">
+        <header className="hidden md:block bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gamma-700 w-full py-3">
           <div className="flex items-center px-4">
             <div className="m-0 text-gray-500 dark:text-gray-400 flex-1 flex items-center">
               {breadcrumbs.map((breadcrumb, index) => (
                 <div key={breadcrumb.href} className="flex items-center">
-                  {index > 0 && <ChevronRight className="w-4 h-4 mx-2" />}
+                  {index > 0 && <FiChevronRight className="w-4 h-4 mx-2" />}
                   <Link href={breadcrumb.href} className="hover:text-gray-800 dark:hover:text-white">
                     {breadcrumb.label}
                   </Link>
@@ -155,21 +169,21 @@ export default function Dashboard({ children }: { children: React.ReactNode }) {
               href="/dashboard/create-trade"
               className="bg-gray-200 dark:bg-gray-700 text-black dark:text-gray-100 px-3 py-1 text-sm rounded-md flex items-center"
             >
-              <PlusCircle size={16} className="mr-1" />
+              <FiPlusCircle size={16} className="mr-1" />
               new trade
             </Link>
             <Link
               href="/dashboard/my-exchanges"
               className="ml-4 text-sm flex items-center text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-white"
             >
-              <ArrowLeftRight size={16} className="mr-1" />
+              <LuArrowRightLeft size={16} className="mr-1" />
               active trade
             </Link>
             <Link
               href="/dashboard/overview"
               className="ml-4 text-sm flex items-center text-gray-500 dark:text-gray-400 hover:text-gray-800 dark:hover:text-white"
             >
-              <Wallet size={16} className="mr-1" />
+              <LuWallet size={16} className="mr-1" />
               wallets
             </Link>
 
@@ -177,7 +191,7 @@ export default function Dashboard({ children }: { children: React.ReactNode }) {
               onClick={toggleTheme}
               className="ml-4 p-1.5 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-500 dark:text-gray-400"
             >
-              {theme === 'dark' ? <Sun size={16} /> : <Moon size={16} />}
+              {theme === 'dark' ? <FiSun size={16} /> : <FiMoon size={16} />}
             </button>
 
             <div className="relative ml-4">
@@ -185,10 +199,10 @@ export default function Dashboard({ children }: { children: React.ReactNode }) {
                 onClick={() => setAccountMenuOpen(!accountMenuOpen)}
                 className="bg-gray-200 dark:bg-gray-700 rounded-md py-1 px-3 flex items-center cursor-pointer"
               >
-                <User size={16} className="text-gray-800 dark:text-gray-200" />
-                <ChevronDown size={16} className="text-gray-800 dark:text-gray-200" />
+                <FiUser size={16} className="text-gray-800 dark:text-gray-200" />
+                <FiChevronDown size={16} className="text-gray-800 dark:text-gray-200" />
               </button>
-              {/* Dropdown for account management can be added here */}
+              {accountMenuOpen && <AccountDropdown />}
             </div>
           </div>
         </header>
