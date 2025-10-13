@@ -56,10 +56,10 @@ export default function TransactionDetailsPage() {
             </TableBody>
           </Table>
           <div className="flex gap-2">
-            <Link href={`/user/payment/${transaction.id}`} className="w-full">
+            <Link href="/dashboard/deposit/address" className="w-full">
                 <Button variant="secondary" className="w-full">Make Payment</Button>
             </Link>
-            <Link href={`/user/upload-proof/${transaction.id}`} className="w-full">
+            <Link href="/dashboard/deposit/confirm" className="w-full">
                 <Button className="w-full">Confirm Payment</Button>
             </Link>
           </div>
