@@ -16,6 +16,7 @@ import {
 import AccountDropdown from './AccountDropdown';
 import { LuWallet, LuArrowRightLeft } from "react-icons/lu";
 import WithdrawalModal from './WithdrawalModal'; // Import the modal component
+import JoinTradeDialog from '../app/dashboard/JoinTradeDialog';
 
 export default function Dashboard({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -23,6 +24,7 @@ export default function Dashboard({ children }: { children: React.ReactNode }) {
   const [accountMenuOpen, setAccountMenuOpen] = useState(false);
   const [theme, setTheme] = useState('dark');
   const [isWithdrawalModalOpen, setWithdrawalModalOpen] = useState(false); // State for modal
+  const [isJoinTradeModalOpen, setJoinTradeModalOpen] = useState(false);
 
   useEffect(() => {
     document.body.classList.add(theme);
@@ -114,7 +116,26 @@ export default function Dashboard({ children }: { children: React.ReactNode }) {
       <h2 className="px-4 text-lg font-semibold text-gray-800 dark:text-gray-100">
         Exchange/Escrow
       </h2>
-      {exchangeNavItems.map((item) => (
+      {exchangeNavItems.map((item) => {
+        if (item.href === '/dashboard/join-trade') {
+          return (
+            <button
+              key={item.href}
+              onClick={() => {
+                setJoinTradeModalOpen(true);
+                setSidebarOpen(false);
+              }}
+              className={`px-4 py-2 rounded-md font-medium text-left text-gray-700 dark:text-gray-300 ${
+                pathname === item.href
+                  ? 'bg-gray-100 text-blue-600 dark:bg-gray-700 dark:text-blue-400'
+                  : 'hover:bg-gray-50 dark:hover:bg-gray-700'
+              }`}
+            >
+              {item.label}
+            </button>
+          );
+        }
+        return (
         <Link
           key={item.href}
           href={item.href}
@@ -127,13 +148,15 @@ export default function Dashboard({ children }: { children: React.ReactNode }) {
         >
           {item.label}
         </Link>
-      ))}
+      )})}
     </nav>
   );
 
   return (
     <div className="flex min-h-screen bg-gray-50 dark:bg-gray-800">
        <WithdrawalModal isOpen={isWithdrawalModalOpen} onClose={() => setWithdrawalModalOpen(false)} />
+        <JoinTradeDialog show={isJoinTradeModalOpen} onHide={() => setJoinTradeModalOpen(false)} />
+
       {/* Mobile Sidebar */}
       <div className={`fixed inset-0 z-40 md:hidden ${sidebarOpen ? 'block' : 'hidden'}`}>
         <div
