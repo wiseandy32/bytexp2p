@@ -22,7 +22,10 @@ export default function Dashboard({ children }: { children: React.ReactNode }) {
   const [theme, setTheme] = useState('dark');
 
   useEffect(() => {
-    document.documentElement.classList.toggle('dark', theme === 'dark');
+    document.body.classList.add(theme);
+    return () => {
+      document.body.classList.remove(theme);
+    };
   }, [theme]);
 
   const toggleTheme = () => {
@@ -105,7 +108,7 @@ export default function Dashboard({ children }: { children: React.ReactNode }) {
   );
 
   return (
-    <div className="flex min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div className="flex min-h-screen bg-gray-50 dark:bg-gray-800">
       {/* Mobile Sidebar */}
       <div
         className={`fixed inset-0 z-40 flex md:hidden ${
