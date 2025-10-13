@@ -2,7 +2,7 @@
 export default function RequestCryptocurrencyPage() {
   return (
     <div>
-      <RequestCryptocurrency />
+<p>Request Cryptocurrency Page Content</p>
     </div>
   );
 }
