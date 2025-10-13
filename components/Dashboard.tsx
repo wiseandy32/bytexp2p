@@ -49,17 +49,13 @@ export default function Dashboard({ children }: { children: React.ReactNode }) {
 
   const allNavItems = [...navItems, ...exchangeNavItems];
 
-  const breadcrumbs = pathname
-    .split('/')
-    .filter(Boolean)
-    .map((segment, index, arr) => {
-      const href = '/' + arr.slice(0, index + 1).join('/');
-      const item = allNavItems.find((navItem) => navItem.href === href);
-      return {
-        href,
-        label: item ? item.label : segment.charAt(0).toUpperCase() + segment.slice(1),
-      };
-    });
+  const getCurrentRouteTitle = () => {
+    if (pathname === '/dashboard') {
+      return 'Overview';
+    }
+    const currentNavItem = allNavItems.find((item) => item.href === pathname);
+    return currentNavItem ? currentNavItem.label : '';
+  };
 
   const SidebarContent = () => (
     <nav className="flex flex-col gap-2 p-4">
@@ -137,10 +133,12 @@ export default function Dashboard({ children }: { children: React.ReactNode }) {
             <Link href="/" className="navbar-brand">
                 <img src="https://peershieldex.com/assets/images/favicon.png" alt="" className="logoStyle w-6 h-6" />
             </Link>
-            <p className="text-xs mt-2 top-6 flex-1">
-                <i className="fa fa-caret-right mr-1 text-gray-500" aria-hidden="true"></i>
-                <b>Dashboard</b><br />
-            </p>
+            <div className="flex-1 flex items-center ml-4">
+                <FiChevronRight className="text-gray-500" />
+                <p className="text-lg font-semibold text-gray-800 dark:text-gray-100 ml-2">
+                    {getCurrentRouteTitle()}
+                </p>
+            </div>
             <div className="relative">
                 <p className="text-xs m-0 top-5 mr-3">
                     <FiUser size={26} className="text-gray-400 cursor-pointer" onClick={() => setAccountMenuOpen(!accountMenuOpen)} />
@@ -156,14 +154,8 @@ export default function Dashboard({ children }: { children: React.ReactNode }) {
         <header className="hidden md:block bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gamma-700 w-full py-3">
           <div className="flex items-center px-4">
             <div className="m-0 text-gray-500 dark:text-gray-400 flex-1 flex items-center">
-              {breadcrumbs.map((breadcrumb, index) => (
-                <div key={breadcrumb.href} className="flex items-center">
-                  {index > 0 && <FiChevronRight className="w-4 h-4 mx-2" />}
-                  <Link href={breadcrumb.href} className="hover:text-gray-800 dark:hover:text-white">
-                    {breadcrumb.label}
-                  </Link>
-                </div>
-              ))}
+                <FiChevronRight />
+                <h1 className="text-lg font-semibold text-gray-800 dark:text-gray-100 ml-2">{getCurrentRouteTitle()}</h1>
             </div>
             <Link
               href="/dashboard/create-trade"
