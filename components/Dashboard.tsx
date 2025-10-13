@@ -15,12 +15,14 @@ import {
 } from 'react-icons/fi';
 import AccountDropdown from './AccountDropdown';
 import { LuWallet, LuArrowRightLeft } from "react-icons/lu";
+import WithdrawalModal from './WithdrawalModal'; // Import the modal component
 
 export default function Dashboard({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [accountMenuOpen, setAccountMenuOpen] = useState(false);
   const [theme, setTheme] = useState('dark');
+  const [isWithdrawalModalOpen, setWithdrawalModalOpen] = useState(false); // State for modal
 
   useEffect(() => {
     document.body.classList.add(theme);
@@ -72,20 +74,40 @@ export default function Dashboard({ children }: { children: React.ReactNode }) {
             <FiX size={24} className="text-gray-500 dark:text-gray-400" />
         </button>
       </div>
-      {navItems.map((item) => (
-        <Link
-          key={item.href}
-          href={item.href}
-          onClick={() => setSidebarOpen(false)}
-          className={`px-4 py-2 rounded-md font-medium text-gray-700 dark:text-gray-300 ${
-            pathname === item.href
-              ? 'bg-gray-100 text-blue-600 dark:bg-gray-700 dark:text-blue-400'
-              : 'hover:bg-gray-50 dark:hover:bg-gray-700'
-          }`}
-        >
-          {item.label}
-        </Link>
-      ))}
+      {navItems.map((item) => {
+        if (item.href === '/dashboard/withdraw') {
+          return (
+            <button
+              key={item.href}
+              onClick={() => {
+                setWithdrawalModalOpen(true);
+                setSidebarOpen(false);
+              }}
+              className={`px-4 py-2 rounded-md font-medium text-left text-gray-700 dark:text-gray-300 ${
+                pathname === item.href
+                  ? 'bg-gray-100 text-blue-600 dark:bg-gray-700 dark:text-blue-400'
+                  : 'hover:bg-gray-50 dark:hover:bg-gray-700'
+              }`}
+            >
+              {item.label}
+            </button>
+          );
+        }
+        return (
+          <Link
+            key={item.href}
+            href={item.href}
+            onClick={() => setSidebarOpen(false)}
+            className={`px-4 py-2 rounded-md font-medium text-gray-700 dark:text-gray-300 ${
+              pathname === item.href
+                ? 'bg-gray-100 text-blue-600 dark:bg-gray-700 dark:text-blue-400'
+                : 'hover:bg-gray-50 dark:hover:bg-gray-700'
+            }`}
+          >
+            {item.label}
+          </Link>
+        );
+      })}
 
       <hr className="my-4 border-gray-200 dark:border-gray-700" />
 
@@ -111,6 +133,7 @@ export default function Dashboard({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="flex min-h-screen bg-gray-50 dark:bg-gray-800">
+       <WithdrawalModal isOpen={isWithdrawalModalOpen} onClose={() => setWithdrawalModalOpen(false)} />
       {/* Mobile Sidebar */}
       <div className={`fixed inset-0 z-40 md:hidden ${sidebarOpen ? 'block' : 'hidden'}`}>
         <div

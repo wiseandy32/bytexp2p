@@ -1,9 +1,5 @@
-import Overview from "@/components/Overview";
+import Overview from '@/components/Overview';
 
-export default function OverviewPage() {
-  return (
-    <div>
-      <Overview />
-    </div>
-  );
+export default function Page() {
+  return <Overview />;
 }
