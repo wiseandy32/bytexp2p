@@ -1,11 +1,10 @@
 import ProtectedRoute from "@/components/ProtectedRoute";
+import AdminOverview from "@/components/AdminOverview";
 
 export default function AdminDashboard() {
     return (
         <ProtectedRoute>
-            <div>
-                <h1>Admin Dashboard</h1>
-            </div>
+            <AdminOverview />
         </ProtectedRoute>
     );
 }
