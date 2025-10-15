@@ -45,13 +45,11 @@ export default function Header() {
             <Link href="/about-us" className="text-sm text-gray-300 hover:text-white px-3 py-2 rounded-md">About US</Link>
             <Link href="/escrow-process" className="text-sm text-gray-300 hover:text-white px-3 py-2 rounded-md">Our Approach</Link>
             <Link href="/escrow-service-guarantee" className="text-sm text-gray-300 hover:text-white px-3 py-2 rounded-md">Guarantee</Link>
-            <Link href="/register" className="text-sm text-gray-300 hover:text-white px-3 py-2 rounded-md">Exchange</Link>
+            <Link href="/auth/register" className="text-sm text-gray-300 hover:text-white px-3 py-2 rounded-md">Exchange</Link>
             <Link href="/#faqs" className="text-sm text-gray-300 hover:text-white px-3 py-2 rounded-md">FAQs</Link>
-            <Link href="/login" className="text-sm text-gray-300 hover:text-white px-3 py-2 rounded-md">Login</Link>
-            <Link href="/register">
-              <button className="text-sm text-white bg-green-500 hover:bg-green-600 rounded font-bold px-4 py-2 transition-colors">
+            <Link href="/auth/login" className="text-sm text-gray-300 hover:text-white px-3 py-2 rounded-md">Login</Link>
+            <Link href="/auth/register" className="text-sm text-white bg-green-500 hover:bg-green-600 rounded font-bold px-4 py-2 transition-colors">
                 Register
-              </button>
             </Link>
           </div>
         </div>
