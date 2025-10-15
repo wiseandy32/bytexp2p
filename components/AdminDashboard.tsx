@@ -12,6 +12,7 @@ import {
   FiMoon,
   FiX,
 } from 'react-icons/fi';
+import AccountDropdown from './AccountDropdown';
 
 export default function AdminDashboard({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -107,6 +108,12 @@ export default function AdminDashboard({ children }: { children: React.ReactNode
                     {getCurrentRouteTitle()}
                 </p>
             </div>
+            <div className="relative">
+                <p className="text-xs m-0 top-5 mr-3">
+                    <FiUser size={26} className="text-gray-400 cursor-pointer" onClick={() => setAccountMenuOpen(!accountMenuOpen)} />
+                </p>
+                {accountMenuOpen && <AccountDropdown />}
+            </div>
             <div id="toggleDrawer" onClick={() => setSidebarOpen(!sidebarOpen)} className="cursor-pointer">
                 <FiMenu size={28} className="text-gray-400" />
             </div>
@@ -134,6 +141,7 @@ export default function AdminDashboard({ children }: { children: React.ReactNode
                 <FiUser size={16} className="text-gray-800 dark:text-gray-200" />
                 <FiChevronDown size={16} className="text-gray-800 dark:text-gray-200" />
               </button>
+              {accountMenuOpen && <AccountDropdown />}
             </div>
           </div>
         </header>
