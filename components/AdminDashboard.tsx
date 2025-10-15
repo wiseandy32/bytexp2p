@@ -35,7 +35,7 @@ export default function AdminDashboard({ children }: { children: React.ReactNode
     { href: '/admin/overview', label: 'Overview' },
     { href: '/admin/users', label: 'Users' },
     { href: '/admin/transactions', label: 'Transactions' },
-    { href: '/admin/add-currency', label: 'Add Currency' },
+    { href: '/admin/add-cryptocurrency', label: 'Add Currency' },
   ];
 
   const getCurrentRouteTitle = () => {
