@@ -17,7 +17,7 @@ import { uploadToCloudinary } from '@/lib/cloudinary';
 
 export default function AdminAddCryptocurrency() {
   const [cryptocurrencyName, setCryptocurrencyName] = useState('');
-  const [symbol, setSymbol] = useState('');
+  const [shortName, setShortName] = useState('');
   const [network, setNetwork] = useState('');
   const [depositAddress, setDepositAddress] = useState('');
   const [qrCodeUrl, setQrCodeUrl] = useState('');
@@ -81,7 +81,7 @@ export default function AdminAddCryptocurrency() {
 
       await addDoc(collection(db, 'cryptocurrencies'), {
         name: cryptocurrencyName,
-        symbol,
+        shortName,
         network,
         depositAddress,
         qrCodeUrl: finalQrCodeUrl,
@@ -90,7 +90,7 @@ export default function AdminAddCryptocurrency() {
 
       setStatus('Cryptocurrency added successfully!');
       setCryptocurrencyName('');
-      setSymbol('');
+      setShortName('');
       setNetwork('');
       setDepositAddress('');
       setQrCodeFile(null);
@@ -139,11 +139,11 @@ export default function AdminAddCryptocurrency() {
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="symbol">Symbol</Label>
+              <Label htmlFor="shortName">Short Name</Label>
               <Input
-                id="symbol"
-                value={symbol}
-                onChange={(e) => setSymbol(e.target.value)}
+                id="shortName"
+                value={shortName}
+                onChange={(e) => setShortName(e.target.value)}
                 placeholder="e.g. BTC"
                 required
               />
