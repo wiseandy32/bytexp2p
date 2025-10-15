@@ -3,14 +3,26 @@
 import { useState } from 'react';
 import { FiX } from 'react-icons/fi';
 
-const tokens = [
+interface Token {
+  name: string;
+  shortName: string;
+  icon: string;
+}
+
+const tokens: Token[] = [
   { name: 'Axie Infinity', shortName: 'AXS', icon: 'https://peershieldex.com/uploads/coins/17061505696783.png' },
   { name: 'OctaSpace', shortName: 'OCTA', icon: 'https://peershieldex.com/uploads/coins/1749562384octa_space1680699684826.png' },
   { name: 'MultiversX', shortName: 'EGLD', icon: 'https://peershieldex.com/uploads/coins/1722538238multivers_x1668673399665.png' },
   // Add all other tokens here...
 ];
 
-export default function TokenModal({ isOpen, onClose, onSelectToken }) {
+interface TokenModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onSelectToken: (token: Token) => void;
+}
+
+export default function TokenModal({ isOpen, onClose, onSelectToken }: TokenModalProps) {
   const [searchTerm, setSearchTerm] = useState('');
 
   if (!isOpen) return null;
@@ -29,7 +41,7 @@ export default function TokenModal({ isOpen, onClose, onSelectToken }) {
               type="text"
               placeholder="Search by Coin/Token"
               className="bg-transparent text-white w-full focus:outline-none"
-              onChange={(e) => setSearchTerm(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchTerm(e.target.value)}
             />
             <button onClick={onClose} className="text-blue-400 font-bold ml-4">Cancel</button>
           </div>

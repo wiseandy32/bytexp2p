@@ -5,18 +5,24 @@ import { useRouter } from 'next/navigation';
 import { FiChevronDown, FiInfo } from 'react-icons/fi';
 import TokenModal from './TokenModal';
 
+interface Token {
+  icon: string;
+  shortName: string;
+  name: string;
+}
+
 export default function Deposit() {
   const [isModalOpen, setModalOpen] = useState(false);
-  const [selectedToken, setSelectedToken] = useState(null);
+  const [selectedToken, setSelectedToken] = useState<Token | null>(null);
   const [amount, setAmount] = useState('');
   const router = useRouter();
 
-  const handleSelectToken = (token) => {
+  const handleSelectToken = (token: Token) => {
     setSelectedToken(token);
     setModalOpen(false);
   };
 
-  const handleFormSubmit = (e) => {
+  const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (selectedToken && amount) {
       router.push(`/dashboard/deposit/address?token=${JSON.stringify(selectedToken)}&amount=${amount}`);
