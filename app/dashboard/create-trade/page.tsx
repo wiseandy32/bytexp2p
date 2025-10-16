@@ -11,6 +11,7 @@ import { useRouter } from 'next/navigation';
 import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
 import { auth, db } from '@/lib/firebase';
 import { Token } from '@/lib/data';
+import { TradeStatus } from '@/lib/trade-types';
 
 function generateRoomId(length: number) {
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -64,6 +65,7 @@ export default function CreateTradePage() {
         }
 
         const roomId = generateRoomId(6);
+        const initialStatus: TradeStatus = 'pending';
 
         try {
             await addDoc(collection(db, 'trades'), {
@@ -76,7 +78,7 @@ export default function CreateTradePage() {
                 feeSplit,
                 sellersToken,
                 buyersToken,
-                status: 'pending', 
+                status: initialStatus, 
                 buyerPaymentStatus: 'pending',
                 sellerPaymentStatus: 'pending',
                 createdAt: serverTimestamp(),

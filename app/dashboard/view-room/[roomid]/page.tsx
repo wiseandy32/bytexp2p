@@ -18,7 +18,7 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
-
+import { TradeStatus } from '@/lib/trade-types';
 
 interface Trade {
     creatorId: string;
@@ -30,7 +30,7 @@ interface Trade {
     feeSplit: string;
     sellersToken: { name: string; image: string };
     buyersToken: { name: string; image: string };
-    status: string;
+    status: TradeStatus;
     roomId: string;
     participantId?: string;
     buyerPaymentStatus: string;
@@ -86,7 +86,7 @@ export default function ViewRoomPage() {
             try {
                 await updateDoc(tradeDocRef, {
                     participantId: currentUser.uid,
-                    status: 'active'
+                    status: 'joined'
                 });
             } catch (err) {
                 console.error("Error joining trade:", err);
@@ -100,40 +100,61 @@ export default function ViewRoomPage() {
             setError("Cannot process deposit. User or trade data is missing.");
             return;
         }
-
-        const requiredTokenName = userRole === 'seller' ? trade.sellersToken.name : trade.buyersToken.name;
-        const requiredAmount = userRole === 'seller' ? trade.sellerAmount : trade.buyerAmount;
-
+    
         const userDocRef = doc(db, 'users', currentUser.uid);
-
+        const q = query(collection(db, "trades"), where("roomId", "==", roomid as string));
+    
         try {
+            const querySnapshot = await getDocs(q);
+            if (querySnapshot.empty) {
+                throw new Error("Could not find the trade to update.");
+            }
+            const tradeDocRef = querySnapshot.docs[0].ref;
+    
             await runTransaction(db, async (transaction) => {
-                const userDocSnap = await transaction.get(userDocRef);
-                if (!userDocSnap.exists()) {
-                    throw new Error("User document not found.");
+                const tradeDoc = await transaction.get(tradeDocRef);
+                const userDoc = await transaction.get(userDocRef);
+    
+                if (!tradeDoc.exists() || !userDoc.exists()) {
+                    throw new Error("Required data not found.");
                 }
-
-                const userData = userDocSnap.data();
+    
+                const tradeData = tradeDoc.data() as Trade;
+                const userData = userDoc.data();
+    
+                const requiredTokenName = userRole === 'seller' ? tradeData.sellersToken.name : tradeData.buyersToken.name;
+                const requiredAmount = userRole === 'seller' ? tradeData.sellerAmount : tradeData.buyerAmount;
                 const currentBalance = userData.balances?.[requiredTokenName] ?? 0;
-
-                if (currentBalance >= requiredAmount) {
-                    const q = query(collection(db, "trades"), where("roomId", "==", roomid as string));
-                    const querySnapshot = await getDocs(q);
-                    if (querySnapshot.empty) {
-                        throw new Error("Could not find the trade to update.");
-                    }
-                    const tradeDocRef = querySnapshot.docs[0].ref;
-
-                    const newBalance = currentBalance - requiredAmount;
-                    transaction.update(userDocRef, { [`balances.${requiredTokenName}`]: newBalance });
-
-                    const statusFieldToUpdate = userRole === 'seller' ? 'sellerPaymentStatus' : 'buyerPaymentStatus';
-                    transaction.update(tradeDocRef, { [statusFieldToUpdate]: 'paid' });
-                } else {
+    
+                if (currentBalance < requiredAmount) {
                     const missingAmount = requiredAmount - currentBalance;
                     router.push(`/dashboard/deposit?token=${requiredTokenName}&amount=${missingAmount}`);
                     throw new Error("Redirecting to deposit page.");
                 }
+    
+                const newBalance = currentBalance - requiredAmount;
+                transaction.update(userDocRef, { [`balances.${requiredTokenName}`]: newBalance });
+    
+                let newStatus: TradeStatus = tradeData.status;
+                const updates: any = {};
+    
+                if (userRole === 'seller') {
+                    updates.sellerPaymentStatus = 'paid';
+                    if (tradeData.buyerPaymentStatus === 'paid') {
+                        newStatus = 'ready_to_withdraw';
+                    } else {
+                        newStatus = 'seller_deposited';
+                    }
+                } else { // buyer
+                    updates.buyerPaymentStatus = 'paid';
+                    if (tradeData.sellerPaymentStatus === 'paid') {
+                        newStatus = 'ready_to_withdraw';
+                    } else {
+                        newStatus = 'buyer_deposited';
+                    }
+                }
+                updates.status = newStatus;
+                transaction.update(tradeDocRef, updates);
             });
         } catch (error: any) {
             if (error.message !== "Redirecting to deposit page.") {
@@ -145,6 +166,10 @@ export default function ViewRoomPage() {
 
     const handleWithdrawToken = async () => {
         if (!trade || !currentUser) return;
+        if (trade.status !== 'ready_to_withdraw') {
+            setError("Both parties must deposit funds before withdrawal.");
+            return;
+        }
 
         let sellerUid, buyerUid;
         if (trade.traderRole === 'seller') {
@@ -180,13 +205,9 @@ export default function ViewRoomPage() {
                 if (!tradeDoc.exists() || !sellerDoc.exists() || !buyerDoc.exists()) {
                     throw new Error("A required document (trade, seller, or buyer) is missing.");
                 }
-
                 const tradeData = tradeDoc.data() as Trade;
-                if (tradeData.sellerPaymentStatus !== 'paid' || tradeData.buyerPaymentStatus !== 'paid') {
+                if (tradeData.status !== 'ready_to_withdraw') {
                     throw new Error("Both parties must deposit funds before withdrawal.");
-                }
-                if (tradeData.status === 'completed') {
-                    throw new Error("Withdrawal has already been processed.");
                 }
 
                 const sellerData = sellerDoc.data();
@@ -276,25 +297,16 @@ export default function ViewRoomPage() {
     };
 
     const getTradeProgress = (trade: Trade): { percentage: number; statusText: string } => {
-        if (trade.status === 'cancelled') {
-            return { percentage: 0, statusText: 'Trade Cancelled' };
-        }
-        if (trade.status === 'completed') {
-            return { percentage: 100, statusText: 'Trade Completed' };
-        }
-        if (trade.sellerPaymentStatus === 'paid' && trade.buyerPaymentStatus === 'paid') {
-            return { percentage: 80, statusText: 'Ready for Withdrawal' };
-        }
-        if (trade.sellerPaymentStatus === 'paid' || trade.buyerPaymentStatus === 'paid') {
-            return { percentage: 60, statusText: 'One Party Has Deposited' };
-        }
-        if (trade.status === 'active') {
-            return { percentage: 40, statusText: 'Waiting for Deposits' };
-        }
-        if (trade.status === 'pending') {
-            return { percentage: 20, statusText: 'Waiting for Counterparty to Join' };
-        }
-        return { percentage: 0, statusText: 'Initializing...' };
+        const progressMap: { [key in TradeStatus]: { percentage: number; statusText: string } } = {
+            pending: { percentage: 15, statusText: "Trade Created" },
+            joined: { percentage: 30, statusText: "Both Parties Joined" },
+            buyer_deposited: { percentage: 60, statusText: "Buyer Has Deposited" },
+            seller_deposited: { percentage: 60, statusText: "Seller Has Deposited" },
+            ready_to_withdraw: { percentage: 80, statusText: "Ready for Withdrawal" },
+            completed: { percentage: 100, statusText: "Trade Completed" },
+            cancelled: { percentage: 0, statusText: "Trade Cancelled" },
+        };
+        return progressMap[trade.status] || { percentage: 0, statusText: 'Unknown Status' };
     };
 
     if (loading) {
@@ -312,15 +324,9 @@ export default function ViewRoomPage() {
     const isDepositDisabled =
         (userRole === 'seller' && trade.sellerPaymentStatus === 'paid') ||
         (userRole === 'buyer' && trade.buyerPaymentStatus === 'paid') ||
-        trade.status === 'completed' ||
-        trade.status === 'cancelled';
+        !['joined', 'buyer_deposited', 'seller_deposited'].includes(trade.status);
 
-    const isWithdrawDisabled = 
-        trade.sellerPaymentStatus !== 'paid' || 
-        trade.buyerPaymentStatus !== 'paid' || 
-        trade.status === 'completed' ||
-        trade.status === 'cancelled';
-
+    const isWithdrawDisabled = trade.status !== 'ready_to_withdraw';
     const isCancelDisabled = trade.status === 'completed' || trade.status === 'cancelled';
 
     const { percentage, statusText } = getTradeProgress(trade);
