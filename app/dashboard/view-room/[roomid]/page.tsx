@@ -75,26 +75,6 @@ export default function ViewRoomPage() {
 
     const userRole = trade && currentUser ? (currentUser.email === trade.sellerEmail ? 'seller' : currentUser.email === trade.buyerEmail ? 'buyer' : null) : null;
 
-    const handleJoinTrade = async () => {
-        if (!trade || !currentUser) return;
-
-        const q = query(collection(db, "trades"), where("roomId", "==", roomid as string));
-        const querySnapshot = await getDocs(q);
-
-        if (!querySnapshot.empty) {
-            const tradeDocRef = querySnapshot.docs[0].ref;
-            try {
-                await updateDoc(tradeDocRef, {
-                    participantId: currentUser.uid,
-                    status: 'joined'
-                });
-            } catch (err) {
-                console.error("Error joining trade:", err);
-                setError("Failed to join trade.");
-            }
-        }
-    };
-
     const handleMakeDeposit = async () => {
         if (!trade || !currentUser || !userRole) {
             setError("Cannot process deposit. User or trade data is missing.");
@@ -435,12 +415,13 @@ export default function ViewRoomPage() {
                                     <CardTitle>Actions</CardTitle>
                                 </CardHeader>
                                 <CardContent className="space-y-4">
-                                    {trade.status === 'pending' ? (
-                                        currentUser?.uid !== trade.creatorId ? (
-                                            <Button className="w-full" onClick={handleJoinTrade}>Join Trade</Button>
-                                        ) : (
-                                            <p className="text-gray-500 text-center">Waiting for counterparty...</p>
-                                        )
+                                    {trade.status === 'pending' && currentUser?.uid !== trade.creatorId ? (
+                                        <div className="text-center p-4 border rounded-md">
+                                            <p className="font-semibold">You have been invited to this trade.</p>
+                                            <p className="text-gray-600 mt-2">Please use the "Join Trade" button in the dashboard sidebar and enter the Trade ID to proceed.</p>
+                                        </div>
+                                    ) : trade.status === 'pending' && currentUser?.uid === trade.creatorId ? (
+                                        <p className="text-gray-500 text-center">Waiting for counterparty to join...</p>
                                     ) : (
                                         <>
                                             <Button className="w-full" disabled={isDepositDisabled} onClick={handleMakeDeposit}>Make Deposit</Button>

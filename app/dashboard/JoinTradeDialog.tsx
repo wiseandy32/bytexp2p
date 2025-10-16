@@ -18,6 +18,7 @@ import { auth, db } from '@/lib/firebase';
 export default function JoinTradeDialog({ show, onHide }: { show: boolean; onHide: () => void }) {
     const [roomId, setRoomId] = useState("");
     const [error, setError] = useState<string | null>(null);
+    const [isJoining, setIsJoining] = useState(false);
     const router = useRouter();
 
     const handleJoin = async () => {
@@ -32,6 +33,7 @@ export default function JoinTradeDialog({ show, onHide }: { show: boolean; onHid
             return;
         }
 
+        setIsJoining(true);
         const tradesCollectionRef = collection(db, 'trades');
         const q = query(tradesCollectionRef, where("roomId", "==", roomId));
 
@@ -78,6 +80,8 @@ export default function JoinTradeDialog({ show, onHide }: { show: boolean; onHid
         } catch (err) {
             console.error(err);
             setError("An error occurred while trying to join the trade.");
+        } finally {
+            setIsJoining(false);
         }
     };
 
@@ -103,7 +107,9 @@ export default function JoinTradeDialog({ show, onHide }: { show: boolean; onHid
                     </div>
                 </div>
                 <DialogFooter>
-                    <Button className="w-full" type="submit" onClick={handleJoin}>Join trade</Button>
+                    <Button className="w-full" type="submit" onClick={handleJoin} disabled={isJoining}>
+                        {isJoining ? "Joining..." : "Join trade"}
+                    </Button>
                 </DialogFooter>
             </DialogContent>
         </Dialog>
