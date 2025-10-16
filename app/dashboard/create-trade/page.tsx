@@ -1,6 +1,6 @@
 
 'use client';
-import { useState } from 'react';
+import { useEffect, useState, ReactNode } from 'react';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
@@ -9,6 +9,24 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { LuArrowLeftRight, LuChevronDown } from 'react-icons/lu';
 import TokenModal from '@/components/TokenModal';
 import { useRouter } from 'next/navigation';
+import { addDoc, collection, doc, getDoc, serverTimestamp } from 'firebase/firestore';
+import { auth, db } from '@/lib/firebase';
+import { Token } from '@/lib/data';
+import Link from 'next/link';
+
+function generateRoomId(length: number) {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let result = '';
+    for (let i = 0; i < length; i++) {
+        result += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return result;
+}
+
+interface SelectedToken {
+    name: string;
+    image: string;
+}
 
 export default function CreateTradePage() {
     const router = useRouter();
@@ -18,28 +36,83 @@ export default function CreateTradePage() {
     const [sellerEmail, setSellerEmail] = useState('');
     const [buyerEmail, setBuyerEmail] = useState('');
     const [feeSplit, setFeeSplit] = useState('equal');
-    const [token1Name, setToken1Name] = useState('0G');
-    const [token2Name, setToken2Name] = useState('0G');
-    const [token1Image, setToken1Image] = useState('https://peershieldex.com/uploads/coins/17586300050_g_labs1758534215903.png');
-    const [token2Image, setToken2Image] = useState('https://peershieldex.com/uploads/coins/17586300050_g_labs1758534215903.png');
+    const [sellersToken, setSellersToken] = useState<SelectedToken | null>(null);
+    const [buyersToken, setBuyersToken] = useState<SelectedToken | null>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [currentTokenSide, setCurrentTokenSide] = useState('1');
+    const [error, setError] = useState<ReactNode | null>(null);
 
-    const handleTokenSelect = (token: { name: string, image: string }) => {
+    const handleTokenSelect = (token: Token) => {
+        const selectedToken = { name: token.shortName, image: token.logoUrl };
         if (currentTokenSide === '1') {
-            setToken1Name(token.name);
-            setToken1Image(token.image);
+            setSellersToken(selectedToken);
         } else {
-            setToken2Name(token.name);
-            setToken2Image(token.image);
+            setBuyersToken(selectedToken);
         }
         setIsModalOpen(false);
     };
 
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        const roomid = Math.random().toString(36).substring(2, 8).toUpperCase();
-        router.push(`/dashboard/view-room/${roomid}`);
+        setError(null);
+        if (!auth.currentUser || !sellersToken || !buyersToken) {
+            setError('Please select both tokens.');
+            return;
+        }
+
+        const amount = traderRole === 'seller' ? parseFloat(sellerAmount) : parseFloat(buyerAmount);
+        const tokenName = traderRole === 'seller' ? sellersToken.name : buyersToken.name;
+
+        const userDocRef = doc(db, 'users', auth.currentUser.uid);
+        try {
+            const userDocSnap = await getDoc(userDocRef);
+            if (userDocSnap.exists()) {
+                const userData = userDocSnap.data();
+                const tokenBalance = userData.tokens && userData.tokens[tokenName] ? userData.tokens[tokenName] : 0;
+
+                if (tokenBalance < amount) {
+                    setError(
+                        <span>
+                            Insufficient {tokenName} balance. You have {tokenBalance}, but you need {amount}.{' '}
+                            <Link href={`/dashboard/deposit?token=${tokenName}&amount=${amount}`} className="text-blue-500 underline">
+                                Deposit now
+                            </Link>
+                        </span>
+                    );
+                    return;
+                }
+            } else {
+                setError('User data not found.');
+                return;
+            }
+        } catch (error) {
+            console.error("Error fetching user data: ", error);
+            setError('Error fetching user data.');
+            return;
+        }
+
+        const roomId = generateRoomId(6);
+
+        try {
+            await addDoc(collection(db, 'trades'), {
+                creatorId: auth.currentUser.uid,
+                traderRole,
+                sellerAmount: parseFloat(sellerAmount),
+                buyerAmount: parseFloat(buyerAmount),
+                sellerEmail,
+                buyerEmail,
+                feeSplit,
+                sellersToken,
+                buyersToken,
+                status: 'pending',
+                createdAt: serverTimestamp(),
+                roomId,
+            });
+            router.push(`/dashboard/view-room/${roomId}`);
+        } catch (error) {
+            console.error("Error creating trade: ", error);
+            setError("Error creating trade.");
+        }
     };
 
     return (
@@ -54,6 +127,7 @@ export default function CreateTradePage() {
                 </CardHeader>
                 <CardContent>
                     <form onSubmit={handleSubmit} className="space-y-6">
+                        {error && <p className="text-red-500 text-center">{error}</p>}
                         <Card>
                             <CardHeader>
                                 <CardTitle>You Send</CardTitle>
@@ -63,13 +137,19 @@ export default function CreateTradePage() {
                                     <div className="flex items-center justify-between gap-2 p-2 rounded-md border">
 
                                         <div className="flex items-center gap-2">
-                                            <Image src={token1Image} alt="" width={24} height={24} onError={(e) => e.currentTarget.src = 'https://peershieldex.com/assets/images/token.png'} />
-                                            <span className="font-semibold">{token1Name}</span>
+                                            {sellersToken ? (
+                                                <>
+                                                    <Image src={sellersToken.image} alt="" width={24} height={24} onError={(e) => e.currentTarget.src = 'https://peershieldex.com/assets/images/token.png'} />
+                                                    <span className="font-semibold">{sellersToken.name}</span>
+                                                </>
+                                            ) : (
+                                                <span className="font-semibold">Select coin</span>
+                                            )}
                                         </div>
                                         <LuChevronDown />
                                     </div>
                                 </div>
-                                <Input type="number" placeholder="0.00" value={sellerAmount} onChange={(e) => setSellerAmount(e.target.value)} className="text-right text-lg font-bold flex-1" />
+                                <Input type="number" placeholder="0.00" value={sellerAmount} onChange={(e) => setSellerAmount(e.target.value)} className="text-right text-lg font-bold flex-1" required />
                             </CardContent>
                         </Card>
 
@@ -87,13 +167,19 @@ export default function CreateTradePage() {
                                 <div className="w-1/3 cursor-pointer" onClick={() => { setIsModalOpen(true); setCurrentTokenSide('2'); }}>
                                     <div className="flex items-center justify-between gap-2 p-2 rounded-md border">
                                         <div className="flex items-center gap-2">
-                                            <Image src={token2Image} alt="" width={24} height={24} onError={(e) => e.currentTarget.src = 'https://peershieldex.com/assets/images/token.png'} />
-                                            <span className="font-semibold">{token2Name}</span>
+                                            {buyersToken ? (
+                                                <>
+                                                    <Image src={buyersToken.image} alt="" width={24} height={24} onError={(e) => e.currentTarget.src = 'https://peershieldex.com/assets/images/token.png'} />
+                                                    <span className="font-semibold">{buyersToken.name}</span>
+                                                </>
+                                            ) : (
+                                                <span className="font-semibold">Select coin</span>
+                                            )}
                                         </div>
                                         <LuChevronDown />
                                     </div>
                                 </div>
-                                <Input type="number" placeholder="0.00" value={buyerAmount} onChange={(e) => setBuyerAmount(e.target.value)} className="text-right text-lg font-bold flex-1" />
+                                <Input type="number" placeholder="0.00" value={buyerAmount} onChange={(e) => setBuyerAmount(e.target.value)} className="text-right text-lg font-bold flex-1" required />
                             </CardContent>
                         </Card>
 
@@ -105,13 +191,13 @@ export default function CreateTradePage() {
                                 <div>
                                     <label className="font-semibold mb-2 block">Select your role</label>
                                     <div className="flex gap-2">
-                                        <Button variant={traderRole === 'seller' ? 'default' : 'secondary'} onClick={() => setTraderRole('seller')} className="flex-1">Seller</Button>
-                                        <Button variant={traderRole === 'buyer' ? 'default' : 'secondary'} onClick={() => setTraderRole('buyer')} className="flex-1">Buyer</Button>
+                                        <Button type="button" variant={traderRole === 'seller' ? 'default' : 'secondary'} onClick={() => setTraderRole('seller')} className="flex-1">Seller</Button>
+                                        <Button type="button" variant={traderRole === 'buyer' ? 'default' : 'secondary'} onClick={() => setTraderRole('buyer')} className="flex-1">Buyer</Button>
                                     </div>
                                 </div>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <Input type="email" placeholder="Seller's Email" value={sellerEmail} onChange={(e) => setSellerEmail(e.target.value)} />
-                                    <Input type="email" placeholder="Buyer's Email" value={buyerEmail} onChange={(e) => setBuyerEmail(e.target.value)} />
+                                    <Input type="email" placeholder="Seller's Email" value={sellerEmail} onChange={(e) => setSellerEmail(e.target.value)} required />
+                                    <Input type="email" placeholder="Buyer's Email" value={buyerEmail} onChange={(e) => setBuyerEmail(e.target.value)} required />
                                 </div>
                             </CardContent>
                         </Card>

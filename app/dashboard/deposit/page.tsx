@@ -1,9 +1,9 @@
 import Deposit from "@/components/Deposit";
 
-export default function DepositPage() {
+export default function DepositPage({ searchParams }: { searchParams: { token?: string, amount?: string } }) {
   return (
     <div>
-      <Deposit />
+      <Deposit token={searchParams.token} amount={searchParams.amount} />
     </div>
   );
 }

@@ -4,16 +4,34 @@ import { useState, FormEvent, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { addDoc, collection, serverTimestamp, updateDoc, doc, onSnapshot } from 'firebase/firestore';
 import { auth, db } from '@/lib/firebase';
-import { Token } from '@/lib/data';
+import { Token, fetchTokens } from '@/lib/data';
 import TokenModal from './TokenModal';
 import { FiChevronDown, FiInfo } from 'react-icons/fi';
 
-export default function Deposit() {
+export default function Deposit({ token, amount: initialAmount }: { token?: string, amount?: string }) {
   const [isModalOpen, setModalOpen] = useState(false);
   const [selectedToken, setSelectedToken] = useState<Token | null>(null);
-  const [amount, setAmount] = useState('');
+  const [amount, setAmount] = useState(initialAmount || '');
   const [balance, setBalance] = useState(0);
   const router = useRouter();
+  const [allTokens, setAllTokens] = useState<Token[]>([]);
+
+  useEffect(() => {
+    const getTokens = async () => {
+      const fetchedTokens = await fetchTokens();
+      setAllTokens(fetchedTokens);
+    };
+    getTokens();
+  }, []);
+
+  useEffect(() => {
+    if (token && allTokens.length > 0) {
+      const initialToken = allTokens.find(t => t.shortName === token);
+      if (initialToken) {
+        setSelectedToken(initialToken);
+      }
+    }
+  }, [token, allTokens]);
 
   useEffect(() => {
     let unsubscribe: (() => void) | undefined;
