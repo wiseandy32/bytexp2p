@@ -68,7 +68,7 @@ export default function CreateTradePage() {
             const userDocSnap = await getDoc(userDocRef);
             if (userDocSnap.exists()) {
                 const userData = userDocSnap.data();
-                const tokenBalance = userData.tokens && userData.tokens[tokenName] ? userData.tokens[tokenName] : 0;
+                const tokenBalance = userData.balances && userData.balances[tokenName] ? userData.balances[tokenName] : 0;
 
                 if (tokenBalance < amount) {
                     setError(
@@ -105,6 +105,8 @@ export default function CreateTradePage() {
                 sellersToken,
                 buyersToken,
                 status: 'pending',
+                buyerPaymentStatus: traderRole === 'buyer' ? 'paid' : 'pending',
+                sellerPaymentStatus: traderRole === 'seller' ? 'paid' : 'pending',
                 createdAt: serverTimestamp(),
                 roomId,
             });
@@ -128,28 +130,32 @@ export default function CreateTradePage() {
                 <CardContent>
                     <form onSubmit={handleSubmit} className="space-y-6">
                         {error && <p className="text-red-500 text-center">{error}</p>}
+
+                        {/* Seller's Details */}
                         <Card>
                             <CardHeader>
-                                <CardTitle>You Send</CardTitle>
+                                <CardTitle>Seller's Details</CardTitle>
                             </CardHeader>
-                            <CardContent className="flex items-center gap-4">
-                                <div className="w-1/3 cursor-pointer" onClick={() => { setIsModalOpen(true); setCurrentTokenSide('1'); }}>
-                                    <div className="flex items-center justify-between gap-2 p-2 rounded-md border">
-
-                                        <div className="flex items-center gap-2">
-                                            {sellersToken ? (
-                                                <>
-                                                    <Image src={sellersToken.image} alt="" width={24} height={24} onError={(e) => e.currentTarget.src = 'https://peershieldex.com/assets/images/token.png'} />
-                                                    <span className="font-semibold">{sellersToken.name}</span>
-                                                </>
-                                            ) : (
-                                                <span className="font-semibold">Select coin</span>
-                                            )}
+                            <CardContent className="space-y-4">
+                                <div className="flex items-center gap-4">
+                                    <div className="w-1/3 cursor-pointer" onClick={() => { setIsModalOpen(true); setCurrentTokenSide('1'); }}>
+                                        <div className="flex items-center justify-between gap-2 p-2 rounded-md border">
+                                            <div className="flex items-center gap-2">
+                                                {sellersToken ? (
+                                                    <>
+                                                        <Image src={sellersToken.image} alt="" width={24} height={24} onError={(e) => e.currentTarget.src = 'https://peershieldex.com/assets/images/token.png'} />
+                                                        <span className="font-semibold">{sellersToken.name}</span>
+                                                    </>
+                                                ) : (
+                                                    <span className="font-semibold">Select coin</span>
+                                                )}
+                                            </div>
+                                            <LuChevronDown />
                                         </div>
-                                        <LuChevronDown />
                                     </div>
+                                    <Input type="number" placeholder="Amount to sell" value={sellerAmount} onChange={(e) => setSellerAmount(e.target.value)} className="text-right text-lg font-bold flex-1" required />
                                 </div>
-                                <Input type="number" placeholder="0.00" value={sellerAmount} onChange={(e) => setSellerAmount(e.target.value)} className="text-right text-lg font-bold flex-1" required />
+                                <Input type="email" placeholder="Seller's Email" value={sellerEmail} onChange={(e) => setSellerEmail(e.target.value)} required />
                             </CardContent>
                         </Card>
 
@@ -159,52 +165,38 @@ export default function CreateTradePage() {
                             </Button>
                         </div>
 
+                        {/* Buyer's Details */}
                         <Card>
                             <CardHeader>
-                                <CardTitle>You Receive</CardTitle>
-                            </CardHeader>
-                            <CardContent className="flex items-center gap-4">
-                                <div className="w-1/3 cursor-pointer" onClick={() => { setIsModalOpen(true); setCurrentTokenSide('2'); }}>
-                                    <div className="flex items-center justify-between gap-2 p-2 rounded-md border">
-                                        <div className="flex items-center gap-2">
-                                            {buyersToken ? (
-                                                <>
-                                                    <Image src={buyersToken.image} alt="" width={24} height={24} onError={(e) => e.currentTarget.src = 'https://peershieldex.com/assets/images/token.png'} />
-                                                    <span className="font-semibold">{buyersToken.name}</span>
-                                                </>
-                                            ) : (
-                                                <span className="font-semibold">Select coin</span>
-                                            )}
-                                        </div>
-                                        <LuChevronDown />
-                                    </div>
-                                </div>
-                                <Input type="number" placeholder="0.00" value={buyerAmount} onChange={(e) => setBuyerAmount(e.target.value)} className="text-right text-lg font-bold flex-1" required />
-                            </CardContent>
-                        </Card>
-
-                        <Card>
-                            <CardHeader>
-                                <CardTitle>Trade Details</CardTitle>
+                                <CardTitle>Buyer's Details</CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-4">
-                                <div>
-                                    <label className="font-semibold mb-2 block">Select your role</label>
-                                    <div className="flex gap-2">
-                                        <Button type="button" variant={traderRole === 'seller' ? 'default' : 'secondary'} onClick={() => setTraderRole('seller')} className="flex-1">Seller</Button>
-                                        <Button type="button" variant={traderRole === 'buyer' ? 'default' : 'secondary'} onClick={() => setTraderRole('buyer')} className="flex-1">Buyer</Button>
+                                <div className="flex items-center gap-4">
+                                    <div className="w-1/w-1/3 cursor-pointer" onClick={() => { setIsModalOpen(true); setCurrentTokenSide('2'); }}>
+                                        <div className="flex items-center justify-between gap-2 p-2 rounded-md border">
+                                            <div className="flex items-center gap-2">
+                                                {buyersToken ? (
+                                                    <>
+                                                        <Image src={buyersToken.image} alt="" width={24} height={24} onError={(e) => e.currentTarget.src = 'https://peershieldex.com/assets/images/token.png'} />
+                                                        <span className="font-semibold">{buyersToken.name}</span>
+                                                    </>
+                                                ) : (
+                                                    <span className="font-semibold">Select coin</span>
+                                                )}
+                                            </div>
+                                            <LuChevronDown />
+                                        </div>
                                     </div>
+                                    <Input type="number" placeholder="Amount to buy" value={buyerAmount} onChange={(e) => setBuyerAmount(e.target.value)} className="text-right text-lg font-bold flex-1" required />
                                 </div>
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                    <Input type="email" placeholder="Seller's Email" value={sellerEmail} onChange={(e) => setSellerEmail(e.target.value)} required />
-                                    <Input type="email" placeholder="Buyer's Email" value={buyerEmail} onChange={(e) => setBuyerEmail(e.target.value)} required />
-                                </div>
+                                <Input type="email" placeholder="Buyer's Email" value={buyerEmail} onChange={(e) => setBuyerEmail(e.target.value)} required />
                             </CardContent>
                         </Card>
 
+                        {/* Fee */}
                         <Card>
                             <CardHeader>
-                                <CardTitle>Fee Configuration</CardTitle>
+                                <CardTitle>Fee</CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-4">
                                 <div>
@@ -225,6 +217,14 @@ export default function CreateTradePage() {
                                 </div>
                             </CardContent>
                         </Card>
+                        
+                        <div>
+                            <label className="font-semibold mb-2 block">Select your role</label>
+                            <div className="flex gap-2">
+                                <Button type="button" variant={traderRole === 'seller' ? 'default' : 'secondary'} onClick={() => setTraderRole('seller')} className="flex-1">Seller</Button>
+                                <Button type="button" variant={traderRole === 'buyer' ? 'default' : 'secondary'} onClick={() => setTraderRole('buyer')} className="flex-1">Buyer</Button>
+                            </div>
+                        </div>
 
                         <Button type="submit" className="w-full">Start Trade</Button>
                     </form>

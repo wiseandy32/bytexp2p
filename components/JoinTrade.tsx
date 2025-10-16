@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, ReactNode } from 'react';
+import Link from 'next/link';
 import { collection, onSnapshot, doc, updateDoc, query, where, getDocs, addDoc, serverTimestamp } from 'firebase/firestore';
 import { auth, db } from '@/lib/firebase';
 import { Button } from "@/components/ui/button";
@@ -20,11 +21,25 @@ interface Trade {
   amount: number;
   price: number;
   creatorId: string;
+  roomId?: string;
 }
 
 export default function JoinTrade() {
   const [trades, setTrades] = useState<Trade[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
+  const [userId, setUserId] = useState<string | null>(null);
+  const [error, setError] = useState<ReactNode | null>(null);
+
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged(user => {
+      if (user) {
+        setUserId(user.uid);
+      } else {
+        setUserId(null);
+      }
+    });
+    return () => unsubscribe();
+  }, []);
 
   useEffect(() => {
     const q = query(collection(db, 'trades'), where('status', '==', 'open'));
@@ -39,7 +54,26 @@ export default function JoinTrade() {
   }, []);
 
   const handleJoinTrade = async (trade: Trade) => {
-    if (!auth.currentUser) return;
+    setError(null);
+    if (!auth.currentUser) {
+        setError("You must be logged in to join a trade.");
+        return;
+    };
+
+    if (auth.currentUser.uid === trade.creatorId) {
+      setError(
+        <span>
+          You cannot join a trade you created.
+          {trade.roomId && (
+            <>
+              {' '}
+              Go to your <Link href={`/dashboard/view-room/${trade.roomId}`} className="text-blue-500 underline">trade room</Link>.
+            </>
+          )}
+        </span>
+      );
+      return;
+    }
 
     try {
       // Check if a chat already exists between the two users for this trade
@@ -67,6 +101,7 @@ export default function JoinTrade() {
 
     } catch (error) {
       console.error("Error joining trade: ", error);
+      setError("An error occurred while trying to join the trade.");
     }
   };
 
@@ -76,6 +111,7 @@ export default function JoinTrade() {
 
   return (
     <div className="flex flex-col gap-4">
+      {error && <p className="text-red-500 text-center p-2">{error}</p>}
       <Input
         placeholder="Search for trades..."
         value={searchTerm}
