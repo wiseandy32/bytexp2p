@@ -40,6 +40,7 @@ export default function CreateTradePage() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [currentTokenSide, setCurrentTokenSide] = useState('1');
     const [error, setError] = useState<ReactNode | null>(null);
+    const [isCreating, setIsCreating] = useState(false);
 
     const handleTokenSelect = (token: Token) => {
         const selectedToken = { name: token.shortName, image: token.logoUrl };
@@ -54,13 +55,17 @@ export default function CreateTradePage() {
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setError(null);
+        setIsCreating(true);
+
         if (!auth.currentUser || !sellersToken || !buyersToken) {
             setError('Please select both tokens.');
+            setIsCreating(false);
             return;
         }
 
         if (auth.currentUser.email !== sellerEmail && auth.currentUser.email !== buyerEmail) {
             setError("Your email must match either the seller's or the buyer's email.");
+            setIsCreating(false);
             return;
         }
 
@@ -78,7 +83,7 @@ export default function CreateTradePage() {
                 feeSplit,
                 sellersToken,
                 buyersToken,
-                status: initialStatus, 
+                status: initialStatus,
                 buyerPaymentStatus: 'pending',
                 sellerPaymentStatus: 'pending',
                 createdAt: serverTimestamp(),
@@ -88,6 +93,7 @@ export default function CreateTradePage() {
         } catch (error) {
             console.error("Error creating trade: ", error);
             setError("Error creating trade.");
+            setIsCreating(false);
         }
     };
 
@@ -200,7 +206,9 @@ export default function CreateTradePage() {
                             </div>
                         </div>
 
-                        <Button type="submit" className="w-full">Start Trade</Button>
+                        <Button type="submit" className="w-full" disabled={isCreating}>
+                            {isCreating ? 'Creating Trade...' : 'Start Trade'}
+                        </Button>
                     </form>
                 </CardContent>
             </Card>
