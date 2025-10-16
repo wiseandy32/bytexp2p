@@ -6,7 +6,7 @@ import { FiChevronDown, FiInfo } from 'react-icons/fi';
 import TokenModal from './TokenModal';
 
 interface Token {
-  icon: string;
+  logoUrl: string;
   shortName: string;
   name: string;
 }
@@ -53,7 +53,7 @@ export default function Deposit() {
                   >
                     {selectedToken ? (
                       <>
-                        <img src={selectedToken.icon} alt={selectedToken.shortName} className="w-5 h-5 mr-3" />
+                        <img src={selectedToken.logoUrl} alt={selectedToken.shortName} className="w-5 h-5 mr-3" />
                         <p className="font-bold m-0 flex-grow">{selectedToken.shortName} <span className="ml-3 text-xs text-gray-400 font-normal">{selectedToken.name}</span></p>
                       </>
                     ) : (

@@ -1,20 +1,7 @@
 'use client';
 
-import { useState } from 'react';
-import { FiX } from 'react-icons/fi';
-
-interface Token {
-  name: string;
-  shortName: string;
-  icon: string;
-}
-
-const tokens: Token[] = [
-  { name: 'Axie Infinity', shortName: 'AXS', icon: 'https://peershieldex.com/uploads/coins/17061505696783.png' },
-  { name: 'OctaSpace', shortName: 'OCTA', icon: 'https://peershieldex.com/uploads/coins/1749562384octa_space1680699684826.png' },
-  { name: 'MultiversX', shortName: 'EGLD', icon: 'https://peershieldex.com/uploads/coins/1722538238multivers_x1668673399665.png' },
-  // Add all other tokens here...
-];
+import { useState, useEffect } from 'react';
+import { fetchTokens, Token } from '@/lib/data';
 
 interface TokenModalProps {
   isOpen: boolean;
@@ -24,6 +11,17 @@ interface TokenModalProps {
 
 export default function TokenModal({ isOpen, onClose, onSelectToken }: TokenModalProps) {
   const [searchTerm, setSearchTerm] = useState('');
+  const [tokens, setTokens] = useState<Token[]>([]);
+
+  useEffect(() => {
+    if (isOpen) {
+      const getTokens = async () => {
+        const fetchedTokens = await fetchTokens();
+        setTokens(fetchedTokens);
+      };
+      getTokens();
+    }
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
@@ -51,11 +49,11 @@ export default function TokenModal({ isOpen, onClose, onSelectToken }: TokenModa
           <div className="max-h-80 overflow-y-auto">
             {filteredTokens.map(token => (
               <div 
-                key={token.shortName}
+                key={token.id}
                 className="flex items-center p-3 hover:bg-gray-700 cursor-pointer rounded-md"
                 onClick={() => onSelectToken(token)}
               >
-                <img src={token.icon} alt={token.shortName} className="w-5 h-5 mr-3" />
+                <img src={token.logoUrl} alt={token.shortName} className="w-5 h-5 mr-3" />
                 <p className="font-bold mr-4">{token.shortName}</p>
                 <p className="text-gray-400 text-sm capitalize">{token.name}</p>
               </div>
