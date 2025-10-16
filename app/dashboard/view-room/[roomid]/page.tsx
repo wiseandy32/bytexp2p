@@ -5,7 +5,20 @@ import { collection, query, where, onSnapshot, getDocs, updateDoc, doc, getDoc, 
 import { db, auth } from '@/lib/firebase';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { Progress } from '@/components/ui/progress';
 import { LuInfo } from 'react-icons/lu';
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
+
 
 interface Trade {
     creatorId: string;
@@ -119,7 +132,7 @@ export default function ViewRoomPage() {
                 } else {
                     const missingAmount = requiredAmount - currentBalance;
                     router.push(`/dashboard/deposit?token=${requiredTokenName}&amount=${missingAmount}`);
-                    throw new Error("Redirecting to deposit page."); // Stop transaction
+                    throw new Error("Redirecting to deposit page.");
                 }
             });
         } catch (error: any) {
@@ -197,6 +210,92 @@ export default function ViewRoomPage() {
         }
     };
 
+    const handleCancelTrade = async () => {
+        if (!trade || !currentUser) {
+            setError("Cannot cancel trade. User or trade data is missing.");
+            return;
+        }
+    
+        const q = query(collection(db, "trades"), where("roomId", "==", roomid as string));
+    
+        try {
+            const querySnapshot = await getDocs(q);
+            if (querySnapshot.empty) {
+                throw new Error("Could not find the trade to update.");
+            }
+            const tradeDocRef = querySnapshot.docs[0].ref;
+    
+            await runTransaction(db, async (transaction) => {
+                const tradeDoc = await transaction.get(tradeDocRef);
+                if (!tradeDoc.exists()) {
+                    throw new Error("Trade document not found.");
+                }
+    
+                const tradeData = tradeDoc.data() as Trade;
+    
+                if (tradeData.status === 'completed' || tradeData.status === 'cancelled') {
+                    throw new Error("This trade is already finalized or cancelled.");
+                }
+    
+                let sellerUid, buyerUid;
+                if (tradeData.traderRole === 'seller') {
+                    sellerUid = tradeData.creatorId;
+                    buyerUid = tradeData.participantId;
+                } else {
+                    sellerUid = tradeData.participantId;
+                    buyerUid = tradeData.creatorId;
+                }
+    
+                if (tradeData.sellerPaymentStatus === 'paid' && sellerUid) {
+                    const sellerUserRef = doc(db, 'users', sellerUid);
+                    const sellerDoc = await transaction.get(sellerUserRef);
+                    if (sellerDoc.exists()) {
+                        const sellerData = sellerDoc.data();
+                        const newBalance = (sellerData.balances?.[tradeData.sellersToken.name] ?? 0) + tradeData.sellerAmount;
+                        transaction.update(sellerUserRef, { [`balances.${tradeData.sellersToken.name}`]: newBalance });
+                    }
+                }
+    
+                if (tradeData.buyerPaymentStatus === 'paid' && buyerUid) {
+                    const buyerUserRef = doc(db, 'users', buyerUid);
+                    const buyerDoc = await transaction.get(buyerUserRef);
+                    if (buyerDoc.exists()) {
+                        const buyerData = buyerDoc.data();
+                        const newBalance = (buyerData.balances?.[tradeData.buyersToken.name] ?? 0) + tradeData.buyerAmount;
+                        transaction.update(buyerUserRef, { [`balances.${tradeData.buyersToken.name}`]: newBalance });
+                    }
+                }
+    
+                transaction.update(tradeDocRef, { status: 'cancelled' });
+            });
+    
+        } catch (error: any) {
+            console.error("Cancellation failed: ", error);
+            setError(`Cancellation failed: ${error.message}`);
+        }
+    };
+
+    const getTradeProgress = (trade: Trade): { percentage: number; statusText: string } => {
+        if (trade.status === 'cancelled') {
+            return { percentage: 0, statusText: 'Trade Cancelled' };
+        }
+        if (trade.status === 'completed') {
+            return { percentage: 100, statusText: 'Trade Completed' };
+        }
+        if (trade.sellerPaymentStatus === 'paid' && trade.buyerPaymentStatus === 'paid') {
+            return { percentage: 80, statusText: 'Ready for Withdrawal' };
+        }
+        if (trade.sellerPaymentStatus === 'paid' || trade.buyerPaymentStatus === 'paid') {
+            return { percentage: 60, statusText: 'One Party Has Deposited' };
+        }
+        if (trade.status === 'active') {
+            return { percentage: 40, statusText: 'Waiting for Deposits' };
+        }
+        if (trade.status === 'pending') {
+            return { percentage: 20, statusText: 'Waiting for Counterparty to Join' };
+        }
+        return { percentage: 0, statusText: 'Initializing...' };
+    };
 
     if (loading) {
         return <div className="flex justify-center items-center h-screen">Loading...</div>;
@@ -213,11 +312,18 @@ export default function ViewRoomPage() {
     const isDepositDisabled =
         (userRole === 'seller' && trade.sellerPaymentStatus === 'paid') ||
         (userRole === 'buyer' && trade.buyerPaymentStatus === 'paid') ||
-        trade.status === 'completed';
+        trade.status === 'completed' ||
+        trade.status === 'cancelled';
 
-    const isWithdrawDisabled = trade.sellerPaymentStatus !== 'paid' || trade.buyerPaymentStatus !== 'paid' || trade.status === 'completed';
+    const isWithdrawDisabled = 
+        trade.sellerPaymentStatus !== 'paid' || 
+        trade.buyerPaymentStatus !== 'paid' || 
+        trade.status === 'completed' ||
+        trade.status === 'cancelled';
 
-    const isCancelDisabled = trade.status === 'completed';
+    const isCancelDisabled = trade.status === 'completed' || trade.status === 'cancelled';
+
+    const { percentage, statusText } = getTradeProgress(trade);
 
     return (
         <div className="container mx-auto p-4">
@@ -227,6 +333,13 @@ export default function ViewRoomPage() {
                     <CardDescription>Trade ID: {trade.roomId}</CardDescription>
                 </CardHeader>
                 <CardContent>
+                    <div className="mb-6">
+                        <div className="flex justify-between mb-1">
+                            <span className="text-base font-medium text-blue-700">Trade Progress</span>
+                            <span className="text-sm font-medium text-blue-700">{statusText}</span>
+                        </div>
+                        <Progress value={percentage} className={trade.status === 'cancelled' ? 'bg-red-400' : ''}/>
+                    </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         {/* Left Column: Trade Info */}
                         <div>
@@ -237,7 +350,7 @@ export default function ViewRoomPage() {
                                 <CardContent>
                                     <div className="flex justify-between">
                                         <p className="text-gray-500">Trade Status</p>
-                                        <p>{trade.status}</p>
+                                        <p className={`font-semibold ${trade.status === 'cancelled' ? 'text-red-500' : ''}`}>{trade.status}</p>
                                     </div>
                                     <div className="mt-3">
                                         <div className="flex justify-between">
@@ -326,7 +439,24 @@ export default function ViewRoomPage() {
                                         <>
                                             <Button className="w-full" disabled={isDepositDisabled} onClick={handleMakeDeposit}>Make Deposit</Button>
                                             <Button variant="outline" className="w-full" disabled={isWithdrawDisabled} onClick={handleWithdrawToken}>Withdraw Token</Button>
-                                            <Button variant="destructive" className="w-full" disabled={isCancelDisabled}>Cancel Trade</Button>
+                                            <AlertDialog>
+                                                <AlertDialogTrigger asChild>
+                                                    <Button variant="destructive" className="w-full" disabled={isCancelDisabled}>Cancel Trade</Button>
+                                                </AlertDialogTrigger>
+                                                <AlertDialogContent>
+                                                    <AlertDialogHeader>
+                                                        <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                                                        <AlertDialogDescription>
+                                                            This action cannot be undone. This will permanently cancel the trade.
+                                                            If any funds have been deposited, they will be returned to the respective parties.
+                                                        </AlertDialogDescription>
+                                                    </AlertDialogHeader>
+                                                    <AlertDialogFooter>
+                                                        <AlertDialogCancel>Back</AlertDialogCancel>
+                                                        <AlertDialogAction onClick={handleCancelTrade}>Yes, Cancel Trade</AlertDialogAction>
+                                                    </AlertDialogFooter>
+                                                </AlertDialogContent>
+                                            </AlertDialog>
                                             <div className="text-sm text-gray-500 p-4 bg-gray-100 rounded-md">
                                                 <div className="flex items-start">
                                                     <LuInfo className="mr-2 mt-1 h-4 w-4"/>
