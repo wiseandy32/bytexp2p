@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { LuArrowLeftRight, LuChevronDown } from 'react-icons/lu';
+import { LuArrowLeftRight, LuChevronDown, LuArrowUpDown } from 'react-icons/lu';
 import TokenModal from '@/components/TokenModal';
 import { useRouter } from 'next/navigation';
 import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
@@ -117,8 +117,8 @@ export default function CreateTradePage() {
                                 <CardTitle>Seller's Details</CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-4">
-                                <div className="flex items-center gap-4">
-                                    <div className="w-1/3 cursor-pointer" onClick={() => { setIsModalOpen(true); setCurrentTokenSide('1'); }}>
+                                <div className="flex flex-col md:flex-row items-center gap-4">
+                                    <div className="w-full md:w-1/3 cursor-pointer" onClick={() => { setIsModalOpen(true); setCurrentTokenSide('1'); }}>
                                         <div className="flex items-center justify-between gap-2 p-2 rounded-md border">
                                             <div className="flex items-center gap-2">
                                                 {sellersToken ? (
@@ -133,15 +133,16 @@ export default function CreateTradePage() {
                                             <LuChevronDown />
                                         </div>
                                     </div>
-                                    <Input type="number" placeholder="Amount to sell" value={sellerAmount} onChange={(e) => setSellerAmount(e.target.value)} className="text-right text-lg font-bold flex-1" required />
+                                    <Input type="number" placeholder="Amount to sell" value={sellerAmount} onChange={(e) => setSellerAmount(e.target.value)} className="text-right text-lg font-bold flex-1 w-full" required />
                                 </div>
                                 <Input type="email" placeholder="Seller's Email" value={sellerEmail} onChange={(e) => setSellerEmail(e.target.value)} required />
                             </CardContent>
                         </Card>
 
-                        <div className="flex justify-center">
-                            <Button variant="ghost" size="icon">
-                                <LuArrowLeftRight className="h-6 w-6" />
+                        <div className="flex justify-center my-4 md:my-0">
+                            <Button variant="ghost" size="icon" type="button">
+                                <LuArrowUpDown className="h-6 w-6 md:hidden" />
+                                <LuArrowLeftRight className="h-6 w-6 hidden md:block" />
                             </Button>
                         </div>
 
@@ -151,8 +152,8 @@ export default function CreateTradePage() {
                                 <CardTitle>Buyer's Details</CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-4">
-                                <div className="flex items-center gap-4">
-                                    <div className="w-1/w-1/3 cursor-pointer" onClick={() => { setIsModalOpen(true); setCurrentTokenSide('2'); }}>
+                                <div className="flex flex-col md:flex-row items-center gap-4">
+                                    <div className="w-full md:w-1/3 cursor-pointer" onClick={() => { setIsModalOpen(true); setCurrentTokenSide('2'); }}>
                                         <div className="flex items-center justify-between gap-2 p-2 rounded-md border">
                                             <div className="flex items-center gap-2">
                                                 {buyersToken ? (
@@ -167,7 +168,7 @@ export default function CreateTradePage() {
                                             <LuChevronDown />
                                         </div>
                                     </div>
-                                    <Input type="number" placeholder="Amount to buy" value={buyerAmount} onChange={(e) => setBuyerAmount(e.target.value)} className="text-right text-lg font-bold flex-1" required />
+                                    <Input type="number" placeholder="Amount to buy" value={buyerAmount} onChange={(e) => setBuyerAmount(e.target.value)} className="text-right text-lg font-bold flex-1 w-full" required />
                                 </div>
                                 <Input type="email" placeholder="Buyer's Email" value={buyerEmail} onChange={(e) => setBuyerEmail(e.target.value)} required />
                             </CardContent>
