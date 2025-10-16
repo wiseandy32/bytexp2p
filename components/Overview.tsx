@@ -74,8 +74,7 @@ const EstimatedTotalAssets = () => {
                 <div className="bg-gray-800 p-3 rounded-lg flex items-center justify-between">
                     <div className="flex items-center">
                         <div>
-                            <p className="text-white font-bold">Loading...</p>
-                            <p className="text-gray-500 text-xs">Loading...</p>
+                            <p className="text-white font-bold">$0</p>
                         </div>
                     </div>
                 </div>
