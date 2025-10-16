@@ -70,7 +70,7 @@ export default function JoinTradeDialog({ show, onHide }: { show: boolean; onHid
 
             await updateDoc(tradeRef, {
                 participantId: auth.currentUser.uid,
-                status: 'active',
+                status: 'joined',
             });
 
             router.push(`/dashboard/view-room/${trade.roomId}`);
