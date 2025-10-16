@@ -58,6 +58,11 @@ export default function CreateTradePage() {
             return;
         }
 
+        if (auth.currentUser.email !== sellerEmail && auth.currentUser.email !== buyerEmail) {
+            setError("Your email must match either the seller's or the buyer's email.");
+            return;
+        }
+
         const roomId = generateRoomId(6);
 
         try {
@@ -71,7 +76,7 @@ export default function CreateTradePage() {
                 feeSplit,
                 sellersToken,
                 buyersToken,
-                status: 'pending',
+                status: 'pending', 
                 buyerPaymentStatus: 'pending',
                 sellerPaymentStatus: 'pending',
                 createdAt: serverTimestamp(),
