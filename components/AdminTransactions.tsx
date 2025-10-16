@@ -25,7 +25,7 @@ export default function AdminTransactions() {
   const router = useRouter();
 
   useEffect(() => {
-    const q = query(collection(db, 'transactions'), where('status', '==', 'awaiting_approval'));
+    const q = query(collection(db, 'transactions'), where('status', 'in', ['awaiting_approval', 'approved']));
     const unsubscribe = onSnapshot(q, (snapshot) => {
       const transactionsData: Transaction[] = [];
       snapshot.forEach((doc) => {
@@ -40,28 +40,29 @@ export default function AdminTransactions() {
     router.push(`/admin/transactions/${transactionId}`);
   };
 
-  const getStatusVariant = (status: string) => {
+  const getStatusClasses = (status: string) => {
     switch (status) {
-      case 'approved':
-        return 'default';
+      case 'awaiting_payment':
+        return "bg-amber-100 text-amber-800";
       case 'awaiting_approval':
-        return 'secondary';
+        return "bg-blue-100 text-blue-800";
+      case 'approved':
+        return "bg-green-100 text-green-800";
       case 'rejected':
-        return 'destructive';
+        return "bg-red-100 text-red-800";
       default:
-        return 'secondary';
+        return "bg-gray-100 text-gray-800";
     }
   };
 
   return (
     <div>
-      <h2 className="text-2xl font-semibold mb-6">Transactions for Approval</h2>
+      <h2 className="text-2xl font-semibold mb-6">Transactions</h2>
       <div className="bg-white dark:bg-gray-700 p-6 rounded-lg shadow-md">
         <table className="w-full">
           <thead>
             <tr className="text-left text-gray-500 dark:text-gray-400">
               <th className="pb-4">Transaction ID</th>
-              <th className="pb-4">User ID</th>
               <th className="pb-4">Date</th>
               <th className="pb-4">Amount</th>
               <th className="pb-4">Status</th>
@@ -76,11 +77,10 @@ export default function AdminTransactions() {
                 className="border-t border-gray-200 dark:border-gray-600 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-600"
               >
                 <td className="py-4">{txn.id}</td>
-                <td className="py-4">{txn.userId}</td>
                 <td className="py-4">{txn.createdAt.toDate().toLocaleDateString()}</td>
                 <td className="py-4">{txn.amount} {txn.token.shortName}</td>
                 <td className="py-4">
-                  <Badge variant={getStatusVariant(txn.status)}>
+                  <Badge className={getStatusClasses(txn.status)}>
                     {txn.status}
                   </Badge>
                 </td>

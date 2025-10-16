@@ -108,7 +108,7 @@ export default function AdminTransactionDetails() {
           <div className="space-y-4">
               <p><strong>User ID:</strong> {transaction.userId}</p>
               <p><strong>Amount:</strong> {transaction.amount} {transaction.token.shortName}</p>
-              <p><strong>Status:</strong> <Badge variant={transaction.status === 'approved' ? 'default' : transaction.status === 'awaiting_approval' ? 'secondary' : 'destructive'}>{transaction.status}</Badge></p>
+              <div><strong>Status:</strong> <Badge variant={transaction.status === 'approved' ? 'default' : transaction.status === 'awaiting_approval' ? 'secondary' : 'destructive'}>{transaction.status}</Badge></div>
               <p><strong>Date:</strong> {transaction.createdAt.toDate().toLocaleDateString()}</p>
               <p><strong>Transaction Hash:</strong> {transaction.txHash}</p>
               <p><strong>Proof of Payment:</strong></p>

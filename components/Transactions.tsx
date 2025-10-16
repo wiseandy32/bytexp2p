@@ -62,17 +62,18 @@ export default function Transactions() {
     router.push(`/dashboard/transactions/${id}`);
   };
 
-  const getStatusVariant = (status: string) => {
+  const getStatusClasses = (status: string) => {
     switch (status) {
-      case "approved":
-        return "default";
-      case "awaiting_payment":
-      case "awaiting_approval":
-        return "secondary";
-      case "rejected":
-        return "destructive";
+      case 'awaiting_payment':
+        return "bg-amber-100 text-amber-800";
+      case 'awaiting_approval':
+        return "bg-blue-100 text-blue-800";
+      case 'approved':
+        return "bg-green-100 text-green-800";
+      case 'rejected':
+        return "bg-red-100 text-red-800";
       default:
-        return "secondary";
+        return "bg-gray-100 text-gray-800";
     }
   };
 
@@ -110,7 +111,7 @@ export default function Transactions() {
                   {transaction.amount} {transaction.token.shortName}
                 </TableCell>
                 <TableCell>
-                  <Badge variant={getStatusVariant(transaction.status)}>
+                  <Badge className={getStatusClasses(transaction.status)}>
                     {transaction.status}
                   </Badge>
                 </TableCell>
