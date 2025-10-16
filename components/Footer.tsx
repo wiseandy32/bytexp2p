@@ -3,11 +3,10 @@ import { MapPin, Phone, Twitter, Send, Instagram } from "lucide-react";
 
 const Footer = () => {
   return (
-    <div className="bg-dark-bg3 font-sans-pro">
+    <div className="bg-dark-bg3 font-sans-pro px-5 md:px-0">
       <div className="container mx-auto py-12">
         <div className="flex items-center mb-8">
-          <img src="/bytexp2p-logo.png" alt="Bytexp2p" className="w-6 h-6" />
-          <h5 className="text-xl font-bold ml-2">Bytexp2p</h5>
+          <img src="/bytexp2p-logo.png" alt="Bytexp2p" className="w-28" />
         </div>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 pb-16 text-sm">
           <div>
