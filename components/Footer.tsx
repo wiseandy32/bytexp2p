@@ -1,40 +1,55 @@
-import Link from 'next/link';
-import { MapPin, Phone, Twitter, Send, Instagram } from 'lucide-react';
+import Link from "next/link";
+import { MapPin, Phone, Twitter, Send, Instagram } from "lucide-react";
 
 const Footer = () => {
   return (
     <div className="bg-dark-bg3 font-sans-pro">
       <div className="container mx-auto py-12">
         <div className="flex items-center mb-8">
-          <img src="/favicon.png" alt="Peershieldex" className="w-6 h-6" />
-          <h5 className="text-xl font-bold ml-2">Peershieldex</h5>
+          <img src="/bytexp2p-logo.png" alt="Bytexp2p" className="w-6 h-6" />
+          <h5 className="text-xl font-bold ml-2">Bytexp2p</h5>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 pb-16 text-sm">
           <div>
             <h5 className="text-base font-bold mb-4">COMPANY</h5>
             <p className="mb-2">
-              <Link href="/terms" className="text-gray-400 text-sm">Terms and Conditions</Link>
+              <Link href="/terms" className="text-gray-400 text-sm">
+                Terms and Conditions
+              </Link>
             </p>
             <p className="mb-2">
-              <Link href="/privacy" className="text-gray-400 text-sm">Policy</Link>
+              <Link href="/privacy" className="text-gray-400 text-sm">
+                Policy
+              </Link>
             </p>
             <p>
-              <Link href="/about-us" className="text-gray-400 text-sm">About Us</Link>
+              <Link href="/about-us" className="text-gray-400 text-sm">
+                About Us
+              </Link>
             </p>
           </div>
 
           <div>
             <h5 className="text-base font-bold mb-4">RESOURCES</h5>
             <p className="mb-2">
-              <a href="https://academy.binance.com/en" className="text-white" target="_blank" rel="noopener noreferrer">
+              <a
+                href="https://academy.binance.com/en"
+                className="text-white"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 New to crypto
               </a>
             </p>
             <p className="mb-2">
-              <Link href="/escrow-service-guarantee" className="text-white">Escrow Guarantee</Link>
+              <Link href="/escrow-service-guarantee" className="text-white">
+                Escrow Guarantee
+              </Link>
             </p>
             <p>
-              <Link href="/escrow-process" className="text-white">Escrow Process</Link>
+              <Link href="/escrow-process" className="text-white">
+                Escrow Process
+              </Link>
             </p>
           </div>
 
@@ -61,13 +76,28 @@ const Footer = () => {
           <div>
             <h5 className="text-base font-bold mb-4 text-white">Follow Us</h5>
             <div className="flex space-x-4">
-              <a href="https://twitter.com/" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white">
+              <a
+                href="https://twitter.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-gray-400 hover:text-white"
+              >
                 <Twitter size={18} />
               </a>
-              <a href="https://t.me/peershield" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white">
+              <a
+                href="https://t.me/peershield"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-gray-400 hover:text-white"
+              >
                 <Send size={18} />
               </a>
-              <a href="https://instagram.com/" target="_blank" rel="noopener noreferrer" className="text-gray-400 hover:text-white">
+              <a
+                href="https://instagram.com/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-gray-400 hover:text-white"
+              >
                 <Instagram size={18} />
               </a>
             </div>

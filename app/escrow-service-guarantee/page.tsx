@@ -1,6 +1,6 @@
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { Circle } from 'lucide-react';
+import { Circle } from "lucide-react";
 
 const EscrowServiceGuarantee = () => {
   return (
@@ -12,10 +12,11 @@ const EscrowServiceGuarantee = () => {
             Escrow Service Guarantee
           </h1>
           <p className="text-sm text-gray-300 mt-2">
-            Whether you're a seasoned bitcoin expert, or a first-time bitcoin user, Peershieldex escrow
-            delivers the level of service, expertise, and peace-of-mind you need. As part of our service
-            guarantee we cover the first $500 USD, or the total value of bitcoins in escrow if less than
-            $500 USD.
+            Whether you're a seasoned bitcoin expert, or a first-time bitcoin
+            user, Bytexp2p escrow delivers the level of service, expertise, and
+            peace-of-mind you need. As part of our service guarantee we cover
+            the first $500 USD, or the total value of bitcoins in escrow if less
+            than $500 USD.
           </p>
         </div>
       </div>
@@ -23,21 +24,18 @@ const EscrowServiceGuarantee = () => {
         <div className="container mx-auto py-5">
           <h4 className="font-bold font-serif text-2xl mb-4">What We Cover</h4>
           <p className="text-sm text-gray-300">
-            Our coverage is limited to the escrow cryptocurrencies while they are under our direct control.
-            That is, after we receive escrow cryptocurrencies, until we settle the escrow. For example we
-            cover against losses arising from:
+            Our coverage is limited to the escrow cryptocurrencies while they
+            are under our direct control. That is, after we receive escrow
+            cryptocurrencies, until we settle the escrow. For example we cover
+            against losses arising from:
           </p>
           <div className="flex items-start mt-2">
             <Circle className="text-green-500 mr-3 mt-1" size={8} />
-            <p className="text-sm text-gray-300">
-              Theft from our server(s).
-            </p>
+            <p className="text-sm text-gray-300">Theft from our server(s).</p>
           </div>
           <div className="flex items-start">
             <Circle className="text-green-500 mr-3 mt-1" size={8} />
-            <p className="text-sm text-gray-300">
-              Hacking our server(s).
-            </p>
+            <p className="text-sm text-gray-300">Hacking our server(s).</p>
           </div>
           <div className="flex items-start">
             <Circle className="text-green-500 mr-3 mt-1" size={8} />
@@ -56,7 +54,8 @@ const EscrowServiceGuarantee = () => {
         <div className="container mx-auto pb-12">
           <h4 className="font-serif text-2xl mb-4">What is Not Covered</h4>
           <p className="text-sm text-gray-300">
-            We however do not cover user actions beyond our control. Including, but not limited to:
+            We however do not cover user actions beyond our control. Including,
+            but not limited to:
           </p>
 
           <div className="flex items-start mt-2">
@@ -80,8 +79,8 @@ const EscrowServiceGuarantee = () => {
           <div className="flex items-start">
             <Circle className="text-green-500 mr-3 mt-1" size={8} />
             <p className="text-sm text-gray-300">
-              Payment to bitcoin addresses in spoofed emails (Note: we do not send the payment address via
-              email).
+              Payment to bitcoin addresses in spoofed emails (Note: we do not
+              send the payment address via email).
             </p>
           </div>
           <div className="flex items-start">
@@ -93,8 +92,9 @@ const EscrowServiceGuarantee = () => {
           <div className="flex items-start">
             <Circle className="text-green-500 mr-3 mt-1" size={8} />
             <p className="text-sm text-gray-300">
-              Our Service Guarantee also does not cover dispute resolution. In the case of dispute
-              resolution you agree that our decision is final.
+              Our Service Guarantee also does not cover dispute resolution. In
+              the case of dispute resolution you agree that our decision is
+              final.
             </p>
           </div>
         </div>
