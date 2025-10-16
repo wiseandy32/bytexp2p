@@ -40,18 +40,6 @@ export default function Header() {
           {/* Desktop Menu (hidden on small screens) */}
           <div className="hidden lg:flex items-center space-x-1">
             <Link
-              href="/dashboard"
-              className="text-sm text-gray-300 hover:text-white px-3 py-2 rounded-md"
-            >
-              Dashboard
-            </Link>
-            <Link
-              href="/admin"
-              className="text-sm text-gray-300 hover:text-white px-3 py-2 rounded-md"
-            >
-              Admin
-            </Link>
-            <Link
               href="/about-us"
               className="text-sm text-gray-300 hover:text-white px-3 py-2 rounded-md"
             >
