@@ -1,15 +1,12 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
-import { FiChevronDown, FiInfo } from 'react-icons/fi';
+import { addDoc, collection, serverTimestamp, updateDoc, doc } from 'firebase/firestore';
+import { auth, db } from '@/lib/firebase';
+import { Token } from '@/lib/data';
 import TokenModal from './TokenModal';
-
-interface Token {
-  logoUrl: string;
-  shortName: string;
-  name: string;
-}
+import { FiChevronDown, FiInfo } from 'react-icons/fi';
 
 export default function Deposit() {
   const [isModalOpen, setModalOpen] = useState(false);
@@ -22,10 +19,28 @@ export default function Deposit() {
     setModalOpen(false);
   };
 
-  const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const handleFormSubmit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
     if (selectedToken && amount) {
-      router.push(`/dashboard/deposit/address?token=${JSON.stringify(selectedToken)}&amount=${amount}`);
+      try {
+        const docRef = await addDoc(collection(db, 'transactions'), {
+          userId: auth.currentUser?.uid,
+          token: selectedToken,
+          amount: parseFloat(amount),
+          status: 'awaiting_payment',
+          createdAt: serverTimestamp(),
+          type: 'deposit',
+        });
+
+        const newDocRef = doc(db, 'transactions', docRef.id);
+        await updateDoc(newDocRef, {
+          transactionId: docRef.id,
+        });
+
+        router.push(`/dashboard/deposit/${docRef.id}`);
+      } catch (error) {
+        console.error("Error creating deposit: ", error);
+      }
     }
   };
 
@@ -37,7 +52,6 @@ export default function Deposit() {
         </div>
 
         <form onSubmit={handleFormSubmit} id="depositForm">
-          <input type="hidden" name="_token" value="XKZbMJcCD7PMuBo0wodUwnVj96Xnclcm4fg9s125" />
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mt-4">
             <div className="lg:col-span-7">
               {/* Step 1 */}
@@ -109,7 +123,7 @@ export default function Deposit() {
               </div>
 
               <p className="px-3 text-sm text-gray-400">
-                Cryptocurrency not listed? <a href="https://peershieldex.com/user/request-coin" className="text-blue-400 hover:underline">Request currency listing</a>
+                Cryptocurrency not listed? <a href="#" className="text-blue-400 hover:underline">Request currency listing</a>
               </p>
             </div>
 
@@ -118,13 +132,13 @@ export default function Deposit() {
                 <div className="p-3 lg:ml-4">
                   <div className="flex items-center">
                     <div>
-                      <img src="https://peershieldex.com/assets/images/wwls.png" alt="Wallet" className="w-9 h-9" style={{transform: 'rotate(20deg)'}}/>
+                      <img src={selectedToken?.logoUrl} alt={selectedToken?.shortName} className="w-9 h-9" />
                     </div>
                     <div className="ml-3 flex-1">
                       <small className="text-xs text-gray-200 mb-1 block">Available Asset</small>
                       <p className="text-xs m-0 font-bold text-gray-400">Current balance (Est.)</p>
                     </div>
-                    <p className="m-0 font-bold">{selectedToken ? `0 ${selectedToken.shortName}` : '0 AXS'}</p>
+                    <p className="m-0 font-bold">{selectedToken ? `0 ${selectedToken.shortName}` : '0.00'}</p>
                   </div>
                 </div>
               </div>

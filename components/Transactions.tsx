@@ -1,4 +1,4 @@
-'use client'
+'use client';
 
 import {
   Card,
@@ -17,43 +17,68 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { collection, query, where, onSnapshot } from "firebase/firestore";
+import { auth, db } from "@/lib/firebase";
+
+interface Transaction {
+  id: string;
+  amount: number;
+  status: string;
+  createdAt: {
+    toDate: () => Date;
+  };
+  type: string;
+  token: {
+    shortName: string;
+  };
+}
 
 export default function Transactions() {
   const router = useRouter();
-  const transactions = [
-    {
-      id: "TXNLUKJAYKB",
-      amount: "1.0 BTC",
-      status: "Completed",
-      date: "2024-07-22",
-      type: "Deposit",
-    },
-    {
-      id: "2",
-      amount: "0.5 ETH",
-      status: "Pending",
-      date: "2024-07-21",
-      type: "Withdrawal",
-    },
-    {
-      id: "3",
-      amount: "10.0 LTC",
-      status: "Failed",
-      date: "2024-07-20",
-      type: "Deposit",
-    },
-    {
-      id: "4",
-      amount: "100.0 DOGE",
-      status: "Completed",
-      date: "2024-07-19",
-      type: "Trade",
-    },
-  ];
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const user = auth.currentUser;
+    if (user) {
+      const q = query(
+        collection(db, "transactions"),
+        where("userId", "==", user.uid)
+      );
+      const unsubscribe = onSnapshot(q, (querySnapshot) => {
+        const userTransactions: Transaction[] = [];
+        querySnapshot.forEach((doc) => {
+          userTransactions.push({ id: doc.id, ...doc.data() } as Transaction);
+        });
+        setTransactions(userTransactions);
+        setLoading(false);
+      });
+      return () => unsubscribe();
+    }
+  }, []);
 
   const handleRowClick = (id: string) => {
     router.push(`/dashboard/transactions/${id}`);
   };
+
+  const getStatusVariant = (status: string) => {
+    switch (status) {
+      case "approved":
+        return "default";
+      case "awaiting_payment":
+      case "awaiting_approval":
+        return "secondary";
+      case "rejected":
+        return "destructive";
+      default:
+        return "secondary";
+    }
+  };
+
+  if (loading) {
+    return <div>Loading transactions...</div>;
+  }
 
   return (
     <Card>
@@ -81,21 +106,17 @@ export default function Transactions() {
               >
                 <TableCell className="font-medium">{transaction.id}</TableCell>
                 <TableCell>{transaction.type}</TableCell>
-                <TableCell>{transaction.amount}</TableCell>
                 <TableCell>
-                  <Badge
-                    variant={
-                      transaction.status === "Completed"
-                        ? "default"
-                        : transaction.status === "Pending"
-                        ? "secondary"
-                        : "destructive"
-                    }
-                  >
+                  {transaction.amount} {transaction.token.shortName}
+                </TableCell>
+                <TableCell>
+                  <Badge variant={getStatusVariant(transaction.status)}>
                     {transaction.status}
                   </Badge>
                 </TableCell>
-                <TableCell>{transaction.date}</TableCell>
+                <TableCell>
+                  {transaction.createdAt.toDate().toLocaleDateString()}
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>
