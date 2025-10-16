@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, FormEvent } from 'react';
+import { useState, FormEvent, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { addDoc, collection, serverTimestamp, updateDoc, doc } from 'firebase/firestore';
+import { addDoc, collection, serverTimestamp, updateDoc, doc, onSnapshot } from 'firebase/firestore';
 import { auth, db } from '@/lib/firebase';
 import { Token } from '@/lib/data';
 import TokenModal from './TokenModal';
@@ -12,7 +12,33 @@ export default function Deposit() {
   const [isModalOpen, setModalOpen] = useState(false);
   const [selectedToken, setSelectedToken] = useState<Token | null>(null);
   const [amount, setAmount] = useState('');
+  const [balance, setBalance] = useState(0);
   const router = useRouter();
+
+  useEffect(() => {
+    let unsubscribe: (() => void) | undefined;
+
+    if (selectedToken && auth.currentUser) {
+      const userRef = doc(db, 'users', auth.currentUser.uid);
+      unsubscribe = onSnapshot(userRef, (doc) => {
+        if (doc.exists()) {
+          const userData = doc.data();
+          const tokenBalance = userData.balances?.[selectedToken.shortName] || 0;
+          setBalance(tokenBalance);
+        } else {
+          setBalance(0);
+        }
+      });
+    } else {
+      setBalance(0);
+    }
+
+    return () => {
+      if (unsubscribe) {
+        unsubscribe();
+      }
+    };
+  }, [selectedToken]);
 
   const handleSelectToken = (token: Token) => {
     setSelectedToken(token);
@@ -127,22 +153,24 @@ export default function Deposit() {
               </p>
             </div>
 
-            <div className="lg:col-span-5">
-              <div className="lg:border-l lg:border-gray-700 h-full">
-                <div className="p-3 lg:ml-4">
-                  <div className="flex items-center">
-                    <div>
-                      <img src={selectedToken?.logoUrl} alt={selectedToken?.shortName} className="w-9 h-9" />
+            {selectedToken && (
+              <div className="lg:col-span-5">
+                <div className="lg:border-l lg:border-gray-700 h-full">
+                  <div className="p-3 lg:ml-4">
+                    <div className="flex items-center">
+                      <div>
+                        <img src={selectedToken.logoUrl} alt={selectedToken.shortName} className="w-9 h-9" />
+                      </div>
+                      <div className="ml-3 flex-1">
+                        <small className="text-xs text-gray-200 mb-1 block">Available Asset</small>
+                        <p className="text-xs m-0 font-bold text-gray-400">Current balance (Est.)</p>
+                      </div>
+                      <p className="m-0 font-bold">{`${balance} ${selectedToken.shortName}`}</p>
                     </div>
-                    <div className="ml-3 flex-1">
-                      <small className="text-xs text-gray-200 mb-1 block">Available Asset</small>
-                      <p className="text-xs m-0 font-bold text-gray-400">Current balance (Est.)</p>
-                    </div>
-                    <p className="m-0 font-bold">{selectedToken ? `0 ${selectedToken.shortName}` : '0.00'}</p>
                   </div>
                 </div>
               </div>
-            </div>
+            )}
           </div>
         </form>
 
