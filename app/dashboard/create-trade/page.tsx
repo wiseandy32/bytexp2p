@@ -1,4 +1,3 @@
-
 'use client';
 import { useEffect, useState, ReactNode } from 'react';
 import Image from 'next/image';
@@ -9,10 +8,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { LuArrowLeftRight, LuChevronDown } from 'react-icons/lu';
 import TokenModal from '@/components/TokenModal';
 import { useRouter } from 'next/navigation';
-import { addDoc, collection, doc, getDoc, serverTimestamp } from 'firebase/firestore';
+import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
 import { auth, db } from '@/lib/firebase';
 import { Token } from '@/lib/data';
-import Link from 'next/link';
 
 function generateRoomId(length: number) {
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -60,37 +58,6 @@ export default function CreateTradePage() {
             return;
         }
 
-        const amount = traderRole === 'seller' ? parseFloat(sellerAmount) : parseFloat(buyerAmount);
-        const tokenName = traderRole === 'seller' ? sellersToken.name : buyersToken.name;
-
-        const userDocRef = doc(db, 'users', auth.currentUser.uid);
-        try {
-            const userDocSnap = await getDoc(userDocRef);
-            if (userDocSnap.exists()) {
-                const userData = userDocSnap.data();
-                const tokenBalance = userData.balances && userData.balances[tokenName] ? userData.balances[tokenName] : 0;
-
-                if (tokenBalance < amount) {
-                    setError(
-                        <span>
-                            Insufficient {tokenName} balance. You have {tokenBalance}, but you need {amount}.{' '}
-                            <Link href={`/dashboard/deposit?token=${tokenName}&amount=${amount}`} className="text-blue-500 underline">
-                                Deposit now
-                            </Link>
-                        </span>
-                    );
-                    return;
-                }
-            } else {
-                setError('User data not found.');
-                return;
-            }
-        } catch (error) {
-            console.error("Error fetching user data: ", error);
-            setError('Error fetching user data.');
-            return;
-        }
-
         const roomId = generateRoomId(6);
 
         try {
@@ -105,8 +72,8 @@ export default function CreateTradePage() {
                 sellersToken,
                 buyersToken,
                 status: 'pending',
-                buyerPaymentStatus: traderRole === 'buyer' ? 'paid' : 'pending',
-                sellerPaymentStatus: traderRole === 'seller' ? 'paid' : 'pending',
+                buyerPaymentStatus: 'pending',
+                sellerPaymentStatus: 'pending',
                 createdAt: serverTimestamp(),
                 roomId,
             });
