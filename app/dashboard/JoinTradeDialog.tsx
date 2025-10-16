@@ -12,7 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { doc, getDoc, updateDoc, serverTimestamp } from 'firebase/firestore';
+import { collection, query, where, getDocs, updateDoc } from 'firebase/firestore';
 import { auth, db } from '@/lib/firebase';
 
 export default function JoinTradeDialog({ show, onHide }: { show: boolean; onHide: () => void }) {
@@ -32,29 +32,31 @@ export default function JoinTradeDialog({ show, onHide }: { show: boolean; onHid
             return;
         }
 
-        const tradeRef = doc(db, 'trades', roomId);
-        try {
-            const tradeDoc = await getDoc(tradeRef);
+        const tradesCollectionRef = collection(db, 'trades');
+        const q = query(tradesCollectionRef, where("roomId", "==", roomId));
 
-            if (!tradeDoc.exists()) {
+        try {
+            const querySnapshot = await getDocs(q);
+
+            if (querySnapshot.empty) {
                 setError("Trade not found.");
                 return;
             }
 
+            const tradeDoc = querySnapshot.docs[0];
+            const tradeRef = tradeDoc.ref;
             const trade = tradeDoc.data();
             const currentUser = auth.currentUser;
 
             const isCreator = trade.creatorId === currentUser.uid;
-            // Safely check if the user is already a participant
             const isParticipant = trade.participantId && trade.participantId === currentUser.uid;
 
-            // If user is already part of the trade, just navigate to the room
             if (isCreator || isParticipant) {
-                router.push(`/dashboard/view-room/${roomId}`);
+                router.push(`/dashboard/view-room/${trade.roomId}`);
+                onHide();
                 return;
             }
             
-            // If user is not part of the trade, check if they are the designated counterparty
             const participantEmail = trade.traderRole === 'seller' ? trade.buyerEmail : trade.sellerEmail;
             if (participantEmail !== currentUser.email) {
                 setError("You are not authorized to join this trade.");
@@ -71,7 +73,8 @@ export default function JoinTradeDialog({ show, onHide }: { show: boolean; onHid
                 status: 'active',
             });
 
-            router.push(`/dashboard/view-room/${roomId}`);
+            router.push(`/dashboard/view-room/${trade.roomId}`);
+            onHide();
         } catch (err) {
             console.error(err);
             setError("An error occurred while trying to join the trade.");
