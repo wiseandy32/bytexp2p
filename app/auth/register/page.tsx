@@ -40,9 +40,15 @@ export default function Register() {
                 isDeleted: false,
                 isVerified: false,
             });
-
+            
+            const resp =await fetch('/api/send-verification', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: user.email, uid: user.uid }),
+            });
+console.log(resp)
             await signOut(auth);
-            router.push('/auth/login');
+            router.push('/auth/verify-email');
         } catch (error: any) {
             setError(error.message);
         } finally {
