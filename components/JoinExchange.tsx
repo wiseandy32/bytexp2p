@@ -52,7 +52,7 @@ const JoinExchange = () => {
             </Link>
             <Link
               className="px-4 py-2 bg-gray-700 rounded-md w-fit"
-              href="/login"
+              href="/auth/login"
             >
               Sign in
             </Link>

@@ -131,15 +131,13 @@ export default function Header() {
               FAQs
             </Link>
             <Link
-              href="/login"
+              href="/auth/login"
               className="block text-sm text-gray-300 hover:text-white px-3 py-2 rounded-md"
             >
               Login
             </Link>
-            <Link href="/register" className="block">
-              <button className="w-full text-sm text-white bg-green-500 hover:bg-green-600 rounded font-bold px-4 py-2 transition-colors">
+            <Link href="/auth/register" className="block w-full text-sm text-white bg-green-500 hover:bg-green-600 rounded font-bold px-4 py-2 transition-colors">
                 Register
-              </button>
             </Link>
           </div>
         </div>

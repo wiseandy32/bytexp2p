@@ -76,7 +76,7 @@ export default function HowItWorks() {
             <div className="mt-8 text-right">
               <Link
                 className="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-full shadow-lg transform transition-all duration-300 hover:scale-105"
-                href="/login"
+                href="/auth/login"
               >
                 Start Exchange
               </Link>
