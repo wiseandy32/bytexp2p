@@ -24,7 +24,7 @@ export default function Hero() {
             trading experience. Your confidence, our priority.
           </p>
           <div className="flex gap-4">
-            <Link href="/register">
+            <Link href="/auth/register">
               <button className="bg-new-blue hover:bg-new-blue-dark text-white font-bold py-3 px-6 rounded-lg transition-colors">
                 Exchange Now
               </button>

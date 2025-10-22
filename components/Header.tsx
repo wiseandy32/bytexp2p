@@ -119,7 +119,7 @@ export default function Header() {
               Guarantee
             </Link>
             <Link
-              href="/register"
+              href="/auth/register"
               className="block text-sm text-gray-300 hover:text-white px-3 py-2 rounded-md"
             >
               Exchange

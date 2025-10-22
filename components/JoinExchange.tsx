@@ -45,7 +45,7 @@ const JoinExchange = () => {
             data-aos-duration="700"
           >
             <Link
-              href="/register"
+              href="/auth/register"
               className="px-4 py-2 bg-new-blue rounded-md w-fit mr-3"
             >
               Create free account
