@@ -24,30 +24,6 @@ export const WelcomeEmail: React.FC<Readonly<WelcomeEmailProps>> = ({
     <Preview>Welcome to Bytexp2p2 - Secure Peer-to-Peer Crypto Trading</Preview>
     <Body style={main}>
       <Container style={container}>
-        <Section style={header}>
-          <table align="center" border={0} cellPadding={0} cellSpacing={0}>
-            <tbody>
-              <tr>
-                <td style={{ paddingLeft: "12px", verticalAlign: "middle" }}>
-                  <Heading
-                    as="h1"
-                    style={{
-                      ...h1,
-                      color: "#1a1a1a",
-                      fontWeight: "bold",
-                      margin: 0,
-                      fontSize: "24px",
-                      lineHeight: "24px",
-                    }}
-                  >
-                    Bytexp2p2
-                  </Heading>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </Section>
-        <Hr style={hr} />
         <Section style={content}>
           <Heading style={h1}>Welcome aboard, {name}.</Heading>
           <Text style={text}>
@@ -98,11 +74,6 @@ const container = {
   marginBottom: "64px",
   border: "1px solid #f0f0f0",
   borderRadius: "4px",
-};
-
-const header = {
-  padding: "20px",
-  textAlign: "center" as const,
 };
 
 const hr = {
