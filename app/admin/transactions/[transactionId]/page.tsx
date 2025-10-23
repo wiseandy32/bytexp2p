@@ -91,7 +91,8 @@ export default function AdminTransactionDetails() {
                     to: userEmail,
                     amount: transaction.amount,
                     asset: transaction.token.shortName,
-                    transactionLink: `${window.location.origin}/transactions/${transaction.id}`,
+                    transactionLink: `${window.location.origin}/transactions/${transactionId}`,
+                    transactionId: transactionId,
                 }),
             });
             
@@ -168,7 +169,7 @@ export default function AdminTransactionDetails() {
                           <AlertDialogFooter>
                           <AlertDialogCancel>Cancel</AlertDialogCancel>
                           <AlertDialogAction onClick={() => handleAction('reject')}>Reject</AlertDialogAction>
-                          </AlertDialogFooter >
+                          </footer >
                       </AlertDialogContent>
                   </AlertDialog>
               </div>
