@@ -14,13 +14,15 @@ import {
 import * as React from "react";
 
 interface DepositApprovalEmailProps {
-  amount: string;
-  asset: string;
-  transactionLink: string;
-  transactionId: string;
+  name?: string;
+  amount?: string;
+  asset?: string;
+  transactionLink?: string;
+  transactionId?: string;
 }
 
 export const DepositApprovalEmail = ({
+  name,
   amount,
   asset,
   transactionLink,
@@ -33,7 +35,10 @@ export const DepositApprovalEmail = ({
       <Container style={container}>
         <Heading style={h1}>Deposit Approved</Heading>
         <Text style={text}>
-          Hello, your recent deposit has been approved. Here are the details:
+          Hello {name},
+        </Text>
+        <Text style={text}>
+          Your recent deposit has been approved. Here are the details:
         </Text>
         <Text style={text}>
           <strong>Transaction ID:</strong> {transactionId}
@@ -58,16 +63,13 @@ export const DepositApprovalEmail = ({
         <Text style={text}>
             Best regards,
             <br />
-            The Bytexp2p2 Team
+            The Bytexp2p Team
         </Text>
         <Hr style={hr} />
         <Section style={footer}>
           <Text style={footerText}>
             © {new Date().getFullYear()} Bytexp2p2. All rights reserved.
           </Text>
-          <Link href="https://bytexp2p2.com" style={footerLink}>
-            Bytexp2p2.com
-          </Link>
         </Section>
       </Container>
     </Body>

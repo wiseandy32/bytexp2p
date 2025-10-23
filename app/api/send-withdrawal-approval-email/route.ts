@@ -6,7 +6,7 @@ import { WithdrawalApprovalEmail } from '@/emails/WithdrawalApprovalEmail';
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function POST(req: NextRequest) {
-  const { to, amount, asset, transactionLink, transactionId } = await req.json();
+  const { to, name, amount, asset, transactionLink, transactionId } = await req.json();
 
   try {
     await resend.emails.send({
@@ -14,6 +14,7 @@ export async function POST(req: NextRequest) {
       to,
       subject: 'Your Withdrawal has been Approved',
       react: WithdrawalApprovalEmail({
+        name,
         amount,
         asset,
         transactionLink,

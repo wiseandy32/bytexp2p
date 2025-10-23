@@ -73,6 +73,7 @@ export default function AdminTransactionDetails() {
         if (userDocSnap.exists()) {
             const user = userDocSnap.data();
             const userEmail = user.email;
+            const displayName = user.displayName;
 
             const userRef = doc(db, 'users', transaction.userId);
             await updateDoc(userRef, {
@@ -92,6 +93,7 @@ export default function AdminTransactionDetails() {
                 },
                 body: JSON.stringify({
                     to: userEmail,
+                    name: displayName,
                     amount: transaction.amount,
                     asset: transaction.token.shortName,
                     transactionLink: `${window.location.origin}/transactions/${transactionId}`,
