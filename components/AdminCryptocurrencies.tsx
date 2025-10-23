@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { collection, onSnapshot, query } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
+import Link from 'next/link';
 
 interface Cryptocurrency {
   id: string;
@@ -39,6 +40,7 @@ export default function AdminCryptocurrencies() {
               <th className="pb-4">Name</th>
               <th className="pb-4">Symbol</th>
               <th className="pb-4">Deposit Address</th>
+              <th className="pb-4">Action</th>
             </tr>
           </thead>
           <tbody>
@@ -54,6 +56,11 @@ export default function AdminCryptocurrencies() {
                 <td className="py-4">{crypto.name}</td>
                 <td className="py-4">{crypto.shortName}</td>
                 <td className="py-4">{crypto.depositAddress}</td>
+                <td className="py-4">
+                  <Link href={`/admin/cryptocurrencies/edit/${crypto.id}`} className="text-blue-500 hover:underline">
+                    Edit
+                  </Link>
+                </td>
               </tr>
             ))}
           </tbody>
