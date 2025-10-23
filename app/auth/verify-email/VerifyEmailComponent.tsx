@@ -1,44 +1,44 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useState, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 
 export default function VerifyEmailComponent() {
-  const [code, setCode] = useState('');
-  const [email, setEmail] = useState('');
+  const [code, setCode] = useState("");
+  const [email, setEmail] = useState("");
   const [uid, setUid] = useState<string | null>(null);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const [view, setView] = useState('email'); // 'email' or 'code'
+  const [view, setView] = useState("email"); // 'email' or 'code'
   const [resendTimer, setResendTimer] = useState(60);
   const [canResend, setCanResend] = useState(false);
   const router = useRouter();
   const searchParams = useSearchParams();
 
   useEffect(() => {
-    const from = searchParams.get('from');
-    const userId = searchParams.get('uid');
-    const userEmail = searchParams.get('email');
-
+    const source = searchParams.get("source");
+    const userId = searchParams.get("uid");
+    const userEmail = searchParams.get("email");
+    debugger;
     if (userId) {
-        setUid(userId);
+      setUid(userId);
     }
 
     if (userEmail) {
-        setEmail(userEmail);
+      setEmail(userEmail);
     }
 
-    if (from === 'register' && userId && userEmail) {
-      setView('code');
+    if (source === "register" && userId && userEmail) {
+      setView("code");
       handleRequestCode(null, userEmail, userId); // auto-send code on load
     } else {
-        setView('email');
+      setView("email");
     }
   }, [searchParams]);
 
   useEffect(() => {
     let timer: NodeJS.Timeout;
-    if (view === 'code' && !canResend) {
+    if (view === "code" && !canResend) {
       timer = setInterval(() => {
         setResendTimer((prev) => {
           if (prev <= 1) {
@@ -53,30 +53,34 @@ export default function VerifyEmailComponent() {
     return () => clearInterval(timer);
   }, [view, canResend]);
 
-  const handleRequestCode = async (e: React.FormEvent | null, userEmail = email, userId = uid) => {
+  const handleRequestCode = async (
+    e: React.FormEvent | null,
+    userEmail = email,
+    userId = uid
+  ) => {
     e?.preventDefault();
     if (!userId || !userEmail) {
-        setError("User information is missing. Please go back and try again.");
-        return;
+      setError("User information is missing. Please go back and try again.");
+      return;
     }
 
     setLoading(true);
-    setError('');
+    setError("");
 
     try {
-      const res = await fetch('/api/send-verification', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const res = await fetch("/api/send-verification", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: userEmail, uid: userId }),
       });
 
       if (res.ok) {
-        setView('code');
+        setView("code");
         setCanResend(false);
         setResendTimer(60);
       } else {
         const data = await res.json();
-        setError(data.error || 'Failed to send verification email');
+        setError(data.error || "Failed to send verification email");
       }
     } catch (error: any) {
       setError(error.message);
@@ -84,7 +88,7 @@ export default function VerifyEmailComponent() {
       setLoading(false);
     }
   };
-  
+
   const handleResendCode = async () => {
     if (!canResend || !uid || !email) return;
     await handleRequestCode(null, email, uid);
@@ -93,18 +97,18 @@ export default function VerifyEmailComponent() {
   const handleVerify = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    setError('');
+    setError("");
 
     if (!uid) {
-        setError("User session expired or invalid. Please start over.");
-        setLoading(false);
-        return;
+      setError("User session expired or invalid. Please start over.");
+      setLoading(false);
+      return;
     }
 
     try {
-      const res = await fetch('/api/verify-email', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const res = await fetch("/api/verify-email", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ uid, code }),
       });
 
@@ -114,20 +118,20 @@ export default function VerifyEmailComponent() {
 
         if (user && user.email && user.fullName) {
           // Fire-and-forget call to send welcome email
-          fetch('/api/send-welcome-email', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+          fetch("/api/send-welcome-email", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ email: user.email, name: user.fullName }),
-          }).catch(error => {
+          }).catch((error) => {
             // Log error but don't block user
-            console.error('Failed to send welcome email:', error);
+            console.error("Failed to send welcome email:", error);
           });
         }
 
-        router.push('/auth/login');
+        router.push("/auth/login");
       } else {
         const data = await res.json();
-        setError(data.error || 'Invalid verification code');
+        setError(data.error || "Invalid verification code");
       }
     } catch (error: any) {
       setError(error.message);
@@ -138,10 +142,12 @@ export default function VerifyEmailComponent() {
 
   return (
     <>
-      {view === 'email' ? (
+      {view === "email" ? (
         <>
           <h4 className="text-2xl font-serif mb-2">Verify Your Email</h4>
-          <p className="text-gray-400 text-sm mb-6">Enter your email to receive a verification code.</p>
+          <p className="text-gray-400 text-sm mb-6">
+            Enter your email to receive a verification code.
+          </p>
           <form onSubmit={handleRequestCode}>
             <div className="mb-4 relative">
               <input
@@ -154,36 +160,56 @@ export default function VerifyEmailComponent() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
-              <label htmlFor="email" className="absolute left-3 -top-2.5 text-gray-400 text-xs bg-dark-bg5 px-1 peer-placeholder-shown:top-2.5 peer-placeholder-shown:text-base peer-focus:-top-2.5 peer-focus:text-xs transition-all">Email Address</label>
+              <label
+                htmlFor="email"
+                className="absolute left-3 -top-2.5 text-gray-400 text-xs bg-dark-bg5 px-1 peer-placeholder-shown:top-2.5 peer-placeholder-shown:text-base peer-focus:-top-2.5 peer-focus:text-xs transition-all"
+              >
+                Email Address
+              </label>
             </div>
             {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
-            <button type="submit" className="w-full bg-green-500 text-white font-bold py-2 px-4 rounded-md hover:bg-green-600" disabled={loading}>
-              {loading ? 'Sending...' : 'Request Code'}
+            <button
+              type="submit"
+              className="w-full bg-green-500 text-white font-bold py-2 px-4 rounded-md hover:bg-green-600"
+              disabled={loading}
+            >
+              {loading ? "Sending..." : "Request Code"}
             </button>
           </form>
         </>
       ) : (
         <>
           <h4 className="text-2xl font-serif mb-2">Verify Your Email</h4>
-          <p className="text-gray-400 text-sm mb-6">Enter the verification code sent to {email}.</p>
-          
+          <p className="text-gray-400 text-sm mb-6">
+            Enter the verification code sent to {email}.
+          </p>
+
           <form onSubmit={handleVerify}>
             <div className="mb-4 relative">
-              <input 
-                type="text" 
-                name="code" 
-                id="code" 
-                className="w-full bg-gray-700 border border-gray-600 rounded-md py-2 px-3 text-white focus:outline-none focus:border-green-500 peer" 
-                placeholder=" " 
-                required 
+              <input
+                type="text"
+                name="code"
+                id="code"
+                className="w-full bg-gray-700 border border-gray-600 rounded-md py-2 px-3 text-white focus:outline-none focus:border-green-500 peer"
+                placeholder=" "
+                required
                 value={code}
                 onChange={(e) => setCode(e.target.value)}
               />
-              <label htmlFor="code" className="absolute left-3 -top-2.5 text-gray-400 text-xs bg-dark-bg5 px-1 peer-placeholder-shown:top-2.5 peer-placeholder-shown:text-base peer-focus:-top-2.5 peer-focus:text-xs transition-all">Verification Code</label>
+              <label
+                htmlFor="code"
+                className="absolute left-3 -top-2.5 text-gray-400 text-xs bg-dark-bg5 px-1 peer-placeholder-shown:top-2.5 peer-placeholder-shown:text-base peer-focus:-top-2.5 peer-focus:text-xs transition-all"
+              >
+                Verification Code
+              </label>
             </div>
             {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
-            <button type="submit" className="w-full bg-green-500 text-white font-bold py-2 px-4 rounded-md hover:bg-green-600" disabled={loading}>
-              {loading ? 'Verifying...' : 'Verify'}
+            <button
+              type="submit"
+              className="w-full bg-green-500 text-white font-bold py-2 px-4 rounded-md hover:bg-green-600"
+              disabled={loading}
+            >
+              {loading ? "Verifying..." : "Verify"}
             </button>
           </form>
 
@@ -198,9 +224,7 @@ export default function VerifyEmailComponent() {
                 Resend Code
               </button>
             ) : (
-              <p className="text-gray-400">
-                Resend code in {resendTimer}s
-              </p>
+              <p className="text-gray-400">Resend code in {resendTimer}s</p>
             )}
           </div>
         </>
