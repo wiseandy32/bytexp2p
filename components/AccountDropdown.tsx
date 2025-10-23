@@ -28,18 +28,18 @@ export default function AccountDropdown() {
                     <p className="text-xs text-gray-400">{user?.email}</p>
                 </div>
             </div>
-            <Link href="/user/change-password">
+            {/* <Link href="/user/change-password">
                 <div className="px-3 py-2 pb-3 hover:bg-gray-700 flex items-center">
                     <MdPerson className="text-gray-400" size={18} />
                     <small className="ml-2 text-sm text-gray-300">Account Settings</small>
                 </div>
-            </Link>
-            <Link href="/user/kyc-application">
+            </Link> */}
+            {/* <Link href="/user/kyc-application">
                 <div className="px-3 py-2 pb-3 hover:bg-gray-700 flex items-center">
                     <MdBeenhere className="text-gray-400" size={18} />
                     <small className="ml-2 text-sm text-gray-300">Verification</small>
                 </div>
-            </Link>
+            </Link> */}
             <a href="#" onClick={handleSignOut}>
                 <div className="px-3 py-2 pb-3 hover:bg-gray-700 flex items-center">
                     <MdKey className="text-gray-400" size={18} />
