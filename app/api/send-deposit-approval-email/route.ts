@@ -6,7 +6,7 @@ import { DepositApprovalEmail } from '@/emails/DepositApprovalEmail';
 const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function POST(req: NextRequest) {
-  const { to, amount, asset, transactionLink } = await req.json();
+  const { to, amount, asset, transactionLink, transactionId } = await req.json();
 
   try {
     await resend.emails.send({
@@ -17,6 +17,7 @@ export async function POST(req: NextRequest) {
         amount,
         asset,
         transactionLink,
+        transactionId,
       }),
     });
 

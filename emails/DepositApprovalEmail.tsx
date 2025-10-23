@@ -14,15 +14,17 @@ import {
 import * as React from "react";
 
 interface DepositApprovalEmailProps {
-  amount?: string;
-  asset?: string;
-  transactionLink?: string;
+  amount: string;
+  asset: string;
+  transactionLink: string;
+  transactionId: string;
 }
 
 export const DepositApprovalEmail = ({
   amount,
   asset,
   transactionLink,
+  transactionId,
 }: DepositApprovalEmailProps) => (
   <Html>
     <Head />
@@ -32,6 +34,9 @@ export const DepositApprovalEmail = ({
         <Heading style={h1}>Deposit Approved</Heading>
         <Text style={text}>
           Hello, your recent deposit has been approved. Here are the details:
+        </Text>
+        <Text style={text}>
+          <strong>Transaction ID:</strong> {transactionId}
         </Text>
         <Text style={text}>
           <strong>Amount:</strong> {amount} {asset}
