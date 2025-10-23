@@ -9,7 +9,6 @@ import {
   Text,
   Section,
   Hr,
-  Link,
 } from "@react-email/components";
 
 interface WelcomeEmailProps {
@@ -50,9 +49,6 @@ export const WelcomeEmail: React.FC<Readonly<WelcomeEmailProps>> = ({
           <Text style={footerText}>
             © {new Date().getFullYear()} Bytexp2p2. All rights reserved.
           </Text>
-          <Link href="https://bytexp2p2.com" style={footerLink}>
-            Bytexp2p2.com
-          </Link>
         </Section>
       </Container>
     </Body>

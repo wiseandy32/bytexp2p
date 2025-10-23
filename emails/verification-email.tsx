@@ -9,7 +9,6 @@ import {
   Text,
   Section,
   Hr,
-  Link,
 } from "@react-email/components";
 
 interface VerificationEmailProps {
@@ -49,9 +48,6 @@ export const VerificationEmail: React.FC<Readonly<VerificationEmailProps>> = ({
           <Text style={footerText}>
             © {new Date().getFullYear()} Bytexp2p2. All rights reserved.
           </Text>
-          <Link href="https://bytexp2p2.com" style={footerLink}>
-            Bytexp2p2.com
-          </Link>
         </Section>
       </Container>
     </Body>
