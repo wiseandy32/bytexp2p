@@ -109,7 +109,22 @@ export default function VerifyEmail() {
       });
 
       if (res.ok) {
-        router.push('/dashboard');
+        const data = await res.json();
+        const { user } = data;
+
+        if (user && user.email && user.displayName) {
+          // Fire-and-forget call to send welcome email
+          fetch('/api/send-welcome-email', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: user.email, name: user.displayName }),
+          }).catch(error => {
+            // Log error but don't block user
+            console.error('Failed to send welcome email:', error);
+          });
+        }
+
+        router.push('/auth/login');
       } else {
         const data = await res.json();
         setError(data.error || 'Invalid verification code');

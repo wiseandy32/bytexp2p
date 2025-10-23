@@ -29,8 +29,11 @@ export async function POST(req: NextRequest) {
      });
     await batch.commit();
 
-    return NextResponse.json({ message: 'Email verified successfully' });
+    const { email, displayName } = userData;
+
+    return NextResponse.json({ message: 'Email verified successfully', user: { email, displayName } });
   } catch (error) {
+    console.error('Error verifying email:', error);
     return NextResponse.json({ error: 'Failed to verify email' }, { status: 500 });
   }
 }

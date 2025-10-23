@@ -8,7 +8,6 @@ import {
   Preview,
   Text,
   Section,
-  Img,
   Hr,
   Link,
 } from "@react-email/components";
@@ -17,28 +16,18 @@ interface WelcomeEmailProps {
   name: string;
 }
 
-const baseUrl = "https://www.mitomcash.com";
-
 export const WelcomeEmail: React.FC<Readonly<WelcomeEmailProps>> = ({
   name,
 }) => (
   <Html>
     <Head />
-    <Preview>Welcome to Mitomcash</Preview>
+    <Preview>Welcome to Bytexp2p2 - Secure Peer-to-Peer Crypto Trading</Preview>
     <Body style={main}>
       <Container style={container}>
         <Section style={header}>
           <table align="center" border={0} cellPadding={0} cellSpacing={0}>
             <tbody>
               <tr>
-                <td>
-                  <Img
-                    src={`${baseUrl}/logo.png`}
-                    width="40"
-                    height="40"
-                    alt="Mitomcash Logo"
-                  />
-                </td>
                 <td style={{ paddingLeft: "12px", verticalAlign: "middle" }}>
                   <Heading
                     as="h1"
@@ -51,7 +40,7 @@ export const WelcomeEmail: React.FC<Readonly<WelcomeEmailProps>> = ({
                       lineHeight: "24px",
                     }}
                   >
-                    Mitomcash
+                    Bytexp2p2
                   </Heading>
                 </td>
               </tr>
@@ -62,30 +51,31 @@ export const WelcomeEmail: React.FC<Readonly<WelcomeEmailProps>> = ({
         <Section style={content}>
           <Heading style={h1}>Welcome aboard, {name}.</Heading>
           <Text style={text}>
-            We're excited to have you join Mitomcash. You're now part of a
-            community of investors who are building a brighter financial future.
+            We're excited to have you join Bytexp2p2, the secure and decentralized platform for peer-to-peer crypto exchange.
           </Text>
           <Text style={text}>
-            You can now explore your dashboard, discover investment
-            opportunities, and start your journey towards financial success.
+            You're now ready to trade cryptocurrencies directly with other users, all while enjoying the peace of mind that comes with our secure escrow protocol.
+          </Text>
+          <Text style={text}>
+            At Bytexp2p2, you are in control. You can now explore your dashboard, create offers, and start trading in a secure and transparent environment.
           </Text>
           <Text style={text}>
             If you have any questions, feel free to visit our FAQ section or
-            contact our support team at support@mitomcash.com.
+            contact our support team at support@Bytexp2p2.com.
           </Text>
           <Text style={text}>
             Best regards,
             <br />
-            The Mitomcash Team
+            The Bytexp2p2 Team
           </Text>
         </Section>
         <Hr style={hr} />
         <Section style={footer}>
           <Text style={footerText}>
-            © {new Date().getFullYear()} Mitomcash. All rights reserved.
+            © {new Date().getFullYear()} Bytexp2p2. All rights reserved.
           </Text>
-          <Link href="https://mitomcash.com" style={footerLink}>
-            mitomcash.com
+          <Link href="https://bytexp2p2.com" style={footerLink}>
+            Bytexp2p2.com
           </Link>
         </Section>
       </Container>
