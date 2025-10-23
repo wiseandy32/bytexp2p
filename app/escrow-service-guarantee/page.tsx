@@ -20,7 +20,7 @@ const EscrowServiceGuarantee = () => {
           </p>
         </div>
       </div>
-      <div className="container-fluid bg-dark-bg5">
+      <div className="container-fluid bg-dark-bg5 px-4">
         <div className="container mx-auto py-10">
           <h4 className="font-bold font-serif text-2xl mb-4">What We Cover</h4>
           <p className="text-sm text-gray-300">

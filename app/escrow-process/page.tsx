@@ -19,7 +19,7 @@ const EscrowProcess = () => {
         </div>
       </div>
       <div className="container-fluid bg-dark-bg5">
-        <div className="container mx-auto py-10">
+        <div className="container mx-auto py-10 px-4">
           <h4 className="font-bold mb-4 text-2xl">Process Overview</h4>
           <div className="flex items-start mb-2">
             <Circle className="text-green-500 mr-3 mt-1" size={8} />
@@ -67,7 +67,7 @@ const EscrowProcess = () => {
           </div>
         </div>
 
-        <div className="container mx-auto pb-12">
+        <div className="container mx-auto pb-12 px-4">
           <h4 className="font-bold mb-4 text-2xl">Escrow Dispute Guide</h4>
           <p className="text-sm text-gray-300">
             We encourage buyers and sellers to resolve disputes between themselves. However this is not
