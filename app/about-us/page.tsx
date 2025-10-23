@@ -7,7 +7,7 @@ const AboutUs = () => {
     <div className="bg-dark-bg5 text-white min-h-screen">
       <Header />
       <div className="container mx-auto px-4 pb-20 sm:px-0">
-        <div className="p-4 pt-30 mx-auto bg-dark-bg" style={{ width: "100%" }}>
+        <div className="p-4 pt-30 mx-auto bg-dark-bg w-full">
           <h5
             className="text-gray-300 text-sm font-bold aos-init aos-animate"
             data-aos="fade-up"
