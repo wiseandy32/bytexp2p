@@ -20,7 +20,7 @@ export default function AccountDropdown() {
     };
 
     return (
-        <div className="absolute right-0 mt-2 w-64 bg-gray-800 border border-gray-700 rounded-md shadow-lg">
+        <div className="absolute right-0 mt-2 w-64 bg-gray-800 border border-gray-700 rounded-md shadow-lg z-[1000]">
             <div className="p-3 border-b border-gray-700 flex items-center">
                 <MdAdminPanelSettings className="text-blue-400" size={22} />
                 <div className="ml-3">
