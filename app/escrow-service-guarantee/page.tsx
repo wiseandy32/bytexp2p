@@ -4,10 +4,10 @@ import { Circle } from "lucide-react";
 
 const EscrowServiceGuarantee = () => {
   return (
-    <div className="bg-gray-900 text-white min-h-screen font-sans">
+    <div className="bg-gray-900 text-white min-h-screen">
       <Header />
-      <div className="container-fluid py-5">
-        <div className="text-center container mx-auto px-4 sm:px-0 mt-24">
+      <div className="container mx-auto px-4 pb-20 sm:px-0">
+        <div className="pt-30 mx-auto bg-dark-bg w-full">
           <h1 className="text-green-500 text-4xl font-bold font-serif mt-5">
             Escrow Service Guarantee
           </h1>
@@ -20,8 +20,8 @@ const EscrowServiceGuarantee = () => {
           </p>
         </div>
       </div>
-      <div className="container-fluid bg-dark-bg5 font-sans">
-        <div className="container mx-auto py-5">
+      <div className="container-fluid bg-dark-bg5">
+        <div className="container mx-auto py-10">
           <h4 className="font-bold font-serif text-2xl mb-4">What We Cover</h4>
           <p className="text-sm text-gray-300">
             Our coverage is limited to the escrow cryptocurrencies while they
