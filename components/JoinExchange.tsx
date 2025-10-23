@@ -21,7 +21,7 @@ const featuredLogos = [
 
 const JoinExchange = () => {
   return (
-    <div className="bg-dark-bg5 font-sans-pro py-5">
+    <div className="bg-dark-bg5 font-sans-pro py-20">
       <div className="container mx-auto px-4 sm:px-0">
         <div className="text-center">
           <h1
@@ -40,7 +40,7 @@ const JoinExchange = () => {
             experience.
           </p>
           <div
-            className="mt-4 aos-init aos-animate"
+            className="mt-4 aos-init aos-animate py-5"
             data-aos="fade-up"
             data-aos-duration="700"
           >
@@ -65,7 +65,7 @@ const JoinExchange = () => {
         >
           <div className="relative flex items-center justify-center my-5">
             <div className="flex-grow border-t border-gray-700"></div>
-            <span className="flex-shrink mx-4 text-white text-xl">
+            <span className="flex-shrink mx-4 text-white py-5 text-xl">
               We are featured In
             </span>
             <div className="flex-grow border-t border-gray-700"></div>

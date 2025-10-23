@@ -23,11 +23,7 @@ export default function HowItWorks() {
             data-aos="fade-right"
             data-aos-duration="600"
           >
-            <img
-              src="https://peershieldex.com/assets/images/arrows.png"
-              alt="vector"
-              className="w-full h-auto"
-            />
+            <img src="/image-one.jpg" alt="vector" className="w-full h-auto" />
           </div>
           <div
             className="mt-5 aos-init aos-animate"

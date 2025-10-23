@@ -86,19 +86,12 @@ const Reviews = () => {
             {reviews.map((review, index) => (
               <div key={index} className="flex-shrink-0 w-full sm:w-2/3">
                 <div className="bg-dark-bg3 rounded-xl p-6 border border-gray-700">
-                  <div className="flex">
-                    <img
-                      src="https://Peershieldex.com/assets/images/comment.png"
-                      alt=""
-                      className="w-12 h-12"
-                    />
-                    <div className="ml-4">
-                      <p className="text-sm text-gray-400">{review.text}</p>
-                      <small className="mt-2 text-sm block text-gray-500">
-                        <span className="text-green-500 mr-2">•</span>
-                        {review.author}
-                      </small>
-                    </div>
+                  <div className="ml-4 grid items-center">
+                    <p className="text-sm text-gray-400">{review.text}</p>
+                    <small className="text-sm block text-gray-500">
+                      <span className="text-green-500 mr-2">•</span>
+                      {review.author}
+                    </small>
                   </div>
                 </div>
               </div>
@@ -113,19 +106,12 @@ const Reviews = () => {
               key={index}
               className="bg-dark-bg3 rounded-xl p-6 border border-gray-700"
             >
-              <div className="flex">
-                <img
-                  src="https://peershieldex.com/assets/images/comment.png"
-                  alt=""
-                  className="w-12 h-12"
-                />
-                <div className="ml-4">
-                  <p className="text-sm text-gray-400">{review.text}</p>
-                  <small className="mt-2 text-sm block text-gray-500">
-                    <span className="text-green-500 mr-2">•</span>
-                    {review.author}
-                  </small>
-                </div>
+              <div className="ml-4">
+                <p className="text-sm text-gray-400">{review.text}</p>
+                <small className="text-sm block text-gray-500 mt-5">
+                  <span className="text-green-500 mr-2">•</span>
+                  {review.author}
+                </small>
               </div>
             </div>
           ))}
