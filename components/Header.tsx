@@ -64,12 +64,6 @@ export default function Header() {
               Exchange
             </Link>
             <Link
-              href="/#faqs"
-              className="text-sm text-gray-300 hover:text-white px-3 py-2 rounded-md"
-            >
-              FAQs
-            </Link>
-            <Link
               href="/auth/login"
               className="text-sm text-gray-300 hover:text-white px-3 py-2 rounded-md"
             >
@@ -123,12 +117,6 @@ export default function Header() {
               className="block text-sm text-gray-300 hover:text-white px-3 py-2 rounded-md"
             >
               Exchange
-            </Link>
-            <Link
-              href="/#faqs"
-              className="block text-sm text-gray-300 hover:text-white px-3 py-2 rounded-md"
-            >
-              FAQs
             </Link>
             <Link
               href="/auth/login"
