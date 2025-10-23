@@ -11,12 +11,16 @@ export default function Login() {
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
+    const [showVerificationLink, setShowVerificationLink] = useState(false);
+    const [uidForVerification, setUidForVerification] = useState<string | null>(null);
     const router = useRouter();
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
         setError('');
+        setShowVerificationLink(false);
+        setUidForVerification(null);
 
         try {
             const userCredential = await signInWithEmailAndPassword(auth, email, password);
@@ -27,6 +31,15 @@ export default function Login() {
 
             if (userDocSnap.exists()) {
                 const userData = userDocSnap.data();
+
+                if (!userData.isVerified) {
+                    setError("Please verify your email before logging in.");
+                    setShowVerificationLink(true);
+                    setUidForVerification(user.uid);
+                    setLoading(false);
+                    return;
+                }
+
                 if (userData.isAdmin) {
                     router.push('/admin/dashboard');
                 } else {
@@ -76,6 +89,13 @@ export default function Login() {
                 </div>
 
                 {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
+                {showVerificationLink && uidForVerification && (
+                    <div className="text-center mb-4">
+                        <Link href={`/auth/verify-email?uid=${uidForVerification}&email=${email}`} className="text-green-500 hover:underline">
+                            Verify Email
+                        </Link>
+                    </div>
+                )}
 
                 <button type="submit" className="w-full bg-green-500 text-white font-bold py-2 px-4 rounded-md hover:bg-green-600" disabled={loading}>
                     {loading ? 'Authenticating...' : 'Login'}

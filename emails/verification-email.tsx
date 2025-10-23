@@ -23,21 +23,13 @@ export const VerificationEmail: React.FC<Readonly<VerificationEmailProps>> = ({
 }) => (
   <Html>
     <Head />
-    <Preview>Your Mitomcash Verification Code</Preview>
+    <Preview>Your Bytexp2p2 Verification Code</Preview>
     <Body style={main}>
       <Container style={container}>
         <Section style={header}>
           <table align="center" border={0} cellPadding={0} cellSpacing={0}>
             <tbody>
               <tr>
-                <td>
-                  <Img
-                    src={`https://www.mitomcash.com/logo.png`}
-                    width="40"
-                    height="40"
-                    alt="Mitomcash Logo"
-                  />
-                </td>
                 <td style={{ paddingLeft: "12px", verticalAlign: "middle" }}>
                   <Heading
                     as="h1"
@@ -50,7 +42,7 @@ export const VerificationEmail: React.FC<Readonly<VerificationEmailProps>> = ({
                       lineHeight: "24px",
                     }}
                   >
-                    Mitomcash
+                    Bytexp2p2
                   </Heading>
                 </td>
               </tr>
@@ -61,7 +53,7 @@ export const VerificationEmail: React.FC<Readonly<VerificationEmailProps>> = ({
         <Section style={content}>
           <Heading style={h1}>Verify Your Email Address</Heading>
           <Text style={text}>
-            Thank you for registering with Mitomcash. To complete your account
+            Thank you for registering with Bytexp2p2. To complete your account
             setup, please use the following verification code:
           </Text>
           <Section style={codeContainer}>
@@ -74,16 +66,16 @@ export const VerificationEmail: React.FC<Readonly<VerificationEmailProps>> = ({
           <Text style={text}>
             Best regards,
             <br />
-            The Mitomcash Team
+            The Bytexp2p2 Team
           </Text>
         </Section>
         <Hr style={hr} />
         <Section style={footer}>
           <Text style={footerText}>
-            © {new Date().getFullYear()} Mitomcash. All rights reserved.
+            © {new Date().getFullYear()} Bytexp2p2. All rights reserved.
           </Text>
-          <Link href="https://mitomcash.com" style={footerLink}>
-            mitomcash.com
+          <Link href="https://bytexp2p2.com" style={footerLink}>
+            Bytexp2p2.com
           </Link>
         </Section>
       </Container>

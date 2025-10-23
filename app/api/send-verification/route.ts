@@ -30,7 +30,7 @@ export async function POST(req: NextRequest) {
     const emailHtml = await pretty(await render(VerificationEmail({ verificationCode })));
 
     await resend.emails.send({
-      from: 'onboarding@resend.dev',
+      from: 'Bytexp2p <admin@bytexp2p.com>',
       to: email,
       subject: 'Verify your email address',
       html: emailHtml,
@@ -39,7 +39,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ message: 'Verification email sent' });
   } catch (error) {
     console.error(error);
-    return NextResponse.json(error)
-    // return NextResponse.json({ error: 'Failed to send verification email' }, { status: 400 });
+    return NextResponse.json({ error: 'Failed to send verification email' }, { status: 500 });
   }
 }
