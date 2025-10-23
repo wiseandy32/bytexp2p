@@ -89,6 +89,35 @@ export default function CreateTradePage() {
                 createdAt: serverTimestamp(),
                 roomId,
             });
+
+            // Send trade creation emails
+            const creatorEmail = auth.currentUser.email;
+            const participantEmail = traderRole === 'seller' ? buyerEmail : sellerEmail;
+            const creatorRole = traderRole;
+            const participantRole = traderRole === 'seller' ? 'buyer' : 'seller';
+            const tradeLink = `${window.location.origin}/dashboard/view-room/${roomId}`;
+
+            try {
+                await fetch('/api/send-trade-creation-emails', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        roomId,
+                        creatorRole,
+                        participantRole,
+                        sellerAmount,
+                        sellersToken: sellersToken?.name,
+                        buyerAmount,
+                        buyersToken: buyersToken?.name,
+                        tradeLink,
+                        creatorEmail,
+                        participantEmail,
+                    }),
+                });
+            } catch (emailError) {
+                console.error("Error sending trade creation emails: ", emailError);
+            }
+
             router.push(`/dashboard/view-room/${roomId}`);
         } catch (error) {
             console.error("Error creating trade: ", error);
