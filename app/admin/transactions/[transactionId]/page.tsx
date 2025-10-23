@@ -66,17 +66,40 @@ export default function AdminTransactionDetails() {
 
     if (action === 'approve') {
       try {
-        const userRef = doc(db, 'users', transaction.userId);
-        await updateDoc(userRef, {
-          [`balances.${transaction.token.shortName}`]: increment(transaction.amount)
-        });
+        const userDocRef = doc(db, 'users', transaction.userId);
+        const userDocSnap = await getDoc(userDocRef);
 
-        await updateDoc(transactionRef, {
-          status: 'approved',
-        });
-        
-        toast.success('Deposit approved successfully!');
-        router.push('/admin/transactions');
+        if (userDocSnap.exists()) {
+            const user = userDocSnap.data();
+            const userEmail = user.email;
+
+            const userRef = doc(db, 'users', transaction.userId);
+            await updateDoc(userRef, {
+            [`balances.${transaction.token.shortName}`]: increment(transaction.amount)
+            });
+
+            await updateDoc(transactionRef, {
+            status: 'approved',
+            });
+
+            await fetch('/api/send-deposit-approval-email', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    to: userEmail,
+                    amount: transaction.amount,
+                    asset: transaction.token.shortName,
+                    transactionLink: `${window.location.origin}/transactions/${transaction.id}`,
+                }),
+            });
+            
+            toast.success('Deposit approved successfully!');
+            router.push('/admin/transactions');
+        } else {
+            toast.error('User not found');
+        }
       } catch (error) {
         console.error(`Error approving transaction ${transactionId}:`, error);
         toast.error('An error occurred while approving the deposit.');
@@ -145,7 +168,7 @@ export default function AdminTransactionDetails() {
                           <AlertDialogFooter>
                           <AlertDialogCancel>Cancel</AlertDialogCancel>
                           <AlertDialogAction onClick={() => handleAction('reject')}>Reject</AlertDialogAction>
-                          </AlertDialogFooter>
+                          </AlertDialogFooter >
                       </AlertDialogContent>
                   </AlertDialog>
               </div>
