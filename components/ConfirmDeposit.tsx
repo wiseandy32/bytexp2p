@@ -74,12 +74,6 @@ export default function ConfirmDeposit() {
     <div className="min-h-screen bg-gray-900 text-white p-4 md:p-8">
       <div className="max-w-md mx-auto">
         <div className="mb-5 mt-4">
-          <Image
-            src="https://peershieldex.com/assets/images/icon-convert.svg"
-            alt=""
-            width={40}
-            height={40}
-          />
           <span style={{ fontSize: "20px" }} className="top-2 font-bold">
             Confirm Deposit
           </span>
