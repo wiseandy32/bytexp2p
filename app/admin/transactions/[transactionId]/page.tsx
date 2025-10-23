@@ -63,6 +63,7 @@ export default function AdminTransactionDetails() {
     if (!transaction) return;
 
     const transactionRef = doc(db, 'transactions', transactionId as string);
+    const isDeposit = transaction.type === 'deposit';
 
     if (action === 'approve') {
       try {
@@ -75,14 +76,16 @@ export default function AdminTransactionDetails() {
 
             const userRef = doc(db, 'users', transaction.userId);
             await updateDoc(userRef, {
-            [`balances.${transaction.token.shortName}`]: increment(transaction.amount)
+            [`balances.${transaction.token.shortName}`]: increment(isDeposit ? transaction.amount : -transaction.amount)
             });
 
             await updateDoc(transactionRef, {
             status: 'approved',
             });
 
-            await fetch('/api/send-deposit-approval-email', {
+            const emailApiEndpoint = isDeposit ? '/api/send-deposit-approval-email' : '/api/send-withdrawal-approval-email';
+
+            await fetch(emailApiEndpoint, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -96,25 +99,25 @@ export default function AdminTransactionDetails() {
                 }),
             });
             
-            toast.success('Deposit approved successfully!');
+            toast.success(`${isDeposit ? 'Deposit' : 'Withdrawal'} approved successfully!`);
             router.push('/admin/transactions');
         } else {
             toast.error('User not found');
         }
       } catch (error) {
         console.error(`Error approving transaction ${transactionId}:`, error);
-        toast.error('An error occurred while approving the deposit.');
+        toast.error(`An error occurred while approving the ${isDeposit ? 'deposit' : 'withdrawal'}.`);
       }
     } else { // 'reject'
       try {
         await updateDoc(transactionRef, {
           status: 'rejected',
         });
-        toast.success('Deposit rejected successfully!');
+        toast.success(`${isDeposit ? 'Deposit' : 'Withdrawal'} rejected successfully!`);
         router.push('/admin/transactions');
       } catch (error) {
         console.error(`Error rejecting transaction ${transactionId}:`, error);
-        toast.error('An error occurred while rejecting the deposit.');
+        toast.error(`An error occurred while rejecting the ${isDeposit ? 'deposit' : 'withdrawal'}.`);
       }
     }
   };
@@ -144,9 +147,9 @@ export default function AdminTransactionDetails() {
                       </AlertDialogTrigger>
                       <AlertDialogContent>
                           <AlertDialogHeader>
-                          <AlertDialogTitle>Are you sure you want to approve this deposit?</AlertDialogTitle>
+                          <AlertDialogTitle>Are you sure you want to approve this {transaction.type}?</AlertDialogTitle>
                           <AlertDialogDescription>
-                              This action will credit the user's account with {transaction.amount} {transaction.token.shortName}. This action cannot be undone.
+                              This action will {transaction.type === 'deposit' ? 'credit' : 'debit'} the user's account with {transaction.amount} {transaction.token.shortName}. This action cannot be undone.
                           </AlertDialogDescription>
                           </AlertDialogHeader>
                           <AlertDialogFooter>
@@ -161,7 +164,7 @@ export default function AdminTransactionDetails() {
                       </AlertDialogTrigger>
                       <AlertDialogContent>
                           <AlertDialogHeader>
-                          <AlertDialogTitle>Are you sure you want to reject this deposit?</AlertDialogTitle>
+                          <AlertDialogTitle>Are you sure you want to reject this {transaction.type}?</AlertDialogTitle>
                           <AlertDialogDescription>
                               This will mark the transaction as rejected. This action cannot be undone.
                           </AlertDialogDescription>
@@ -169,7 +172,7 @@ export default function AdminTransactionDetails() {
                           <AlertDialogFooter>
                           <AlertDialogCancel>Cancel</AlertDialogCancel>
                           <AlertDialogAction onClick={() => handleAction('reject')}>Reject</AlertDialogAction>
-                          </footer >
+                          </AlertDialogFooter >
                       </AlertDialogContent>
                   </AlertDialog>
               </div>
