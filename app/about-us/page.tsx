@@ -1,12 +1,13 @@
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { FaBullseye, FaEye, FaHeadset } from "react-icons/fa";
 
 const AboutUs = () => {
   return (
     <div className="bg-dark-bg5 text-white min-h-screen">
       <Header />
-      <div className="container mx-auto mt-5 px-4 sm:px-0">
-        <div className="p-4 mt-24 mx-auto bg-dark-bg" style={{ width: "100%" }}>
+      <div className="container mx-auto px-4 pb-20 sm:px-0">
+        <div className="p-4 pt-30 mx-auto bg-dark-bg" style={{ width: "100%" }}>
           <h5
             className="text-gray-300 text-sm font-bold aos-init aos-animate"
             data-aos="fade-up"
@@ -22,14 +23,6 @@ const AboutUs = () => {
             Our company
           </h2>
 
-          <div className="block md:hidden">
-            <img
-              src="https://peershieldex.com/assets/images/company.png"
-              alt="company"
-              className="w-full h-48 object-cover rounded-2xl"
-            />
-          </div>
-
           <p className="mt-4 text-white text-sm">
             Bytexp2p is a trusted cryptocurrency escrow service featured on
             forbes. We aim at making crypto currency exchange as easy and fast
@@ -39,13 +32,9 @@ const AboutUs = () => {
             between themselves. However this is not always possible, so we offer
             an impartial systematic approach to solving most common disputes.
           </p>
-          <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+          <div className="my-16 grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
             <div>
-              <img
-                src="https://peershieldex.com/assets/images/ctrd.png"
-                alt=""
-                className="h-10 w-8 mx-auto"
-              />
+              <FaBullseye className="h-10 w-8 mx-auto" />
               <h5 className="my-4 text-white font-bold">Our mission</h5>
               <p className="text-white text-sm">
                 In a world where cryptocurrencies are shifting the balance of
@@ -55,11 +44,7 @@ const AboutUs = () => {
               </p>
             </div>
             <div>
-              <img
-                src="https://peershieldex.com/assets/images/ctrd.png"
-                alt=""
-                className="h-10 w-8 mx-auto"
-              />
+              <FaEye className="h-10 w-8 mx-auto" />
               <h5 className="my-4 text-white font-bold">Our vision</h5>
               <p className="text-white text-sm">
                 Our vision is to add trust and reliability to online bitcoin
@@ -69,11 +54,7 @@ const AboutUs = () => {
               </p>
             </div>
             <div>
-              <img
-                src="https://peershieldex.com/assets/images/ctrd.png"
-                alt=""
-                className="h-10 w-8 mx-auto"
-              />
+              <FaHeadset className="h-10 w-8 mx-auto" />
               <h5 className="my-4 text-white font-bold">Best support</h5>
               <p className="text-white text-sm">
                 We are committed to providing you with the highest levels of
