@@ -76,6 +76,31 @@ export default function Hero() {
               </div>
             </div>
 
+            <div className="my-4 bg-gray-900 p-4 rounded-lg">
+              <div className="flex items-center">
+                <div className="bg-blue-500 p-2 rounded-full">
+                  <Receipt size={20} />
+                </div>
+                <div className="ml-3 text-xs">
+                  <p className="font-bold text-white">Trade execution</p>
+                  <p className="text-gray-400">Completed by Buyer & Seller</p>
+                </div>
+              </div>
+              <div className="h-4 w-px bg-blue-400 ml-5 my-1"></div>
+              <div className="flex items-center">
+                <div className="bg-blue-500 p-2 rounded-full">
+                  <Verified size={20} />
+                </div>
+                <div className="ml-3 text-xs">
+                  <p className="font-bold text-white">Verifying Trade</p>
+                  <p className="text-gray-400">
+                    validated by{" "}
+                    <span className="text-white font-bold">Bytexp2p</span>
+                  </p>
+                </div>
+              </div>
+            </div>
+
             <div className="mt-6 text-sm">
               <div className="flex justify-between mb-2">
                 <span className="text-gray-400">Escrow fee</span>
@@ -99,31 +124,6 @@ export default function Hero() {
             </button>
           </div>
           <div className="absolute z-0 top-1/2 left-1/2 transform -translate-x-1/4 -translate-y-1/2 w-96 h-96 bg-green-900 rounded-full filter blur-3xl opacity-20"></div>
-
-          <div className="absolute z-20 top-1/2 -right-12 transform -translate-y-1/2 bg-gray-800 border-gray-700 p-4 rounded-2xl shadow-lg">
-            <div className="flex items-center">
-              <div className="bg-blue-500 p-2 rounded-full">
-                <Receipt size={20} />
-              </div>
-              <div className="ml-3 text-xs">
-                <p className="font-bold text-white">Trade execution</p>
-                <p className="text-gray-400">Completed by Buyer & Seller</p>
-              </div>
-            </div>
-            <div className="h-4 w-px bg-blue-400 ml-5 my-1"></div>
-            <div className="flex items-center">
-              <div className="bg-blue-500 p-2 rounded-full">
-                <Verified size={20} />
-              </div>
-              <div className="ml-3 text-xs">
-                <p className="font-bold text-white">Verifying Trade</p>
-                <p className="text-gray-400">
-                  validated by{" "}
-                  <span className="text-white font-bold">Bytexp2p</span>
-                </p>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
     </section>
