@@ -20,25 +20,11 @@ const StartExchanging = () => {
             experience with our escrow services
           </p>
 
-          <div className="flex mt-10 justify-center flex-col md:flex-row">
+          <div className="flex mt-10 justify-center">
             <Link href="/auth/register">
-              <button className="w-full md:w-auto px-8 py-3 font-semibold flex justify-center items-center bg-new-blue rounded-md">
+              <button className="px-8 py-3 font-semibold flex justify-center items-center bg-new-blue rounded-md">
                 Exchange Now{" "}
                 <ArrowRight className="ml-2" style={{ fontSize: "16px" }} />
-              </button>
-            </Link>
-            <Link href="">
-              <button className="w-full md:w-auto px-8 py-3 font-semibold text-black bg-white mt-4 md:mt-0 md:ml-4 flex justify-center items-center rounded-md">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="17"
-                  height="17"
-                  fill="currentColor"
-                  viewBox="0 0 512 512"
-                >
-                  <path d="M325.3 234.3L104.6 13l280.8 161.2-60.1 60.1zM47 0C34 6.8 25.3 19.2 25.3 35.3v441.3c0 16.1 8.7 28.5 21.7 35.3l256.6-256L47 0zm425.2 225.6l-58.9-34.1-65.7 64.5 65.7 64.5 60.1-34.1c18-14.3 18-46.5-1.2-60.8zM104.6 499l280.8-161.2-60.1-60.1L104.6 499z"></path>
-                </svg>
-                <span className="ml-2">Download Mobile App</span>
               </button>
             </Link>
           </div>
