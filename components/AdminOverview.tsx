@@ -43,7 +43,7 @@ export default function AdminOverview() {
         </Card>
         <Card>
           <CardHeader>
-            <CardTitle>Pending Withdrawals</CardTitle>
+            <CardTitle>Pending Approvals</CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-3xl font-bold">12</p>
