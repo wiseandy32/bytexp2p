@@ -62,13 +62,6 @@ const Footer = () => {
                   <small>5 Brayford Square, Stepney Green, London E10SG</small>
                 </span>
               </p>
-              <p className="flex items-center">
-                <Phone className="text-gray-400 mr-2" size={18} />
-                <span>
-                  WhatsApp: <br />
-                  <small>+447438472430</small>
-                </span>
-              </p>
             </div>
           </div>
 
