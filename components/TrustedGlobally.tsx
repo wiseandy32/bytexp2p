@@ -1,4 +1,4 @@
-import { MdRadioButtonChecked } from "react-icons/md";
+import { MdRadioButtonChecked, MdSupportAgent } from "react-icons/md";
 
 const timelineItems = [
   {
@@ -64,10 +64,8 @@ const TrustedGlobally = () => {
                 data-aos-duration="600"
                 className="aos-init aos-animate"
               >
-                <img
-                  src="https://peershieldex.com/assets/images/clock.png"
-                  alt="24/7 support"
-                  className="w-24 h-24 mx-auto"
+                <MdSupportAgent
+                  className="w-24 h-24 mx-auto text-blue-500"
                 />
               </div>
               <div className="mt-3">
