@@ -3,7 +3,7 @@ import Link from "next/link";
 
 export default function Hero() {
   return (
-    <section className="container mx-auto pt-48 pb-20">
+    <section className="container mx-auto pt-24 md:pt-48 pb-20 overflow-hidden px-5">
       <div className="grid md:grid-cols-2 gap-16 items-center">
         <div
           className="aos-init aos-animate"

@@ -15,16 +15,16 @@ export default function Stats() {
             <h4 className="text-4xl font-bold mb-2">8.7 Min.</h4>
             <small className="text-gray-400">Avg. Processing Time</small>
           </div>
-          <div className="text-center aos-init aos-animate" data-aos="fade-up" data-aos-duration="500">
+          <div className="text-center aos-init aos-animate" data-aos-fade-up="up" data-aos-duration="500">
             <h4 className="text-4xl font-bold mb-2">22K+</h4>
             <small className="text-gray-400">Active Users</small>
           </div>
         </div>
         <div className="mt-16 text-center aos-init aos-animate" data-aos="fade-up" data-aos-duration="400">
           <p className="font-bold text-gray-400 text-sm tracking-widest mb-4">SECURELY BUY, SELL, SIGN AND MANAGE TRANSACTIONS</p>
-          <h1 className="text-5xl font-bold">Escrow exchange for 120+ cryptocurrencies</h1>
-          <div className="mt-8 border border-gray-800 rounded-lg p-1">
-            <iframe src="https://widget.coinlib.io/widget?type=full_v2&theme=dark&cnt=6&pref_coin_id=1505&graph=yes" width="100%" height="420px" scrolling="none" style={{border:0, margin:0, padding:0}}></iframe>
+          <h1 className="text-3xl md:text-5xl font-bold">Escrow exchange for 120+ cryptocurrencies</h1>
+          <div className="mt-8 border border-gray-800 rounded-lg p-1 overflow-x-auto">
+            <iframe src="https://widget.coinlib.io/widget?type=full_v2&theme=dark&cnt=6&pref_coin_id=1505&graph=yes" width="100%" height="420px" scrolling="none" style={{border:0, margin:0, padding:0, minWidth: '700px'}}></iframe>
           </div>
         </div>
       </div>
