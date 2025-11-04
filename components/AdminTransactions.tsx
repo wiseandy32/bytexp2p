@@ -59,36 +59,38 @@ export default function AdminTransactions() {
     <div>
       <h2 className="text-2xl font-semibold mb-6">Transactions</h2>
       <div className="bg-white dark:bg-gray-700 p-6 rounded-lg shadow-md">
-        <table className="w-full">
-          <thead>
-            <tr className="text-left text-gray-500 dark:text-gray-400">
-              <th className="pb-4">Transaction ID</th>
-              <th className="pb-4">Date</th>
-              <th className="pb-4">Amount</th>
-              <th className="pb-4">Status</th>
-              <th className="pb-4">Type</th>
-            </tr>
-          </thead>
-          <tbody>
-            {transactions.map((txn) => (
-              <tr
-                key={txn.id}
-                onClick={() => handleRowClick(txn.id)}
-                className="border-t border-gray-200 dark:border-gray-600 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-600"
-              >
-                <td className="py-4">{txn.id}</td>
-                <td className="py-4">{txn.createdAt.toDate().toLocaleDateString()}</td>
-                <td className="py-4">{txn.amount} {txn.token.shortName}</td>
-                <td className="py-4">
-                  <Badge className={getStatusClasses(txn.status)}>
-                    {txn.status}
-                  </Badge>
-                </td>
-                <td className="py-4">{txn.type}</td>
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead>
+              <tr className="text-left text-gray-500 dark:text-gray-400">
+                <th className="px-6 py-3 whitespace-nowrap">Transaction ID</th>
+                <th className="px-6 py-3 whitespace-nowrap">Date</th>
+                <th className="px-6 py-3 whitespace-nowrap">Amount</th>
+                <th className="px-6 py-3 whitespace-nowrap">Status</th>
+                <th className="px-6 py-3 whitespace-nowrap">Type</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {transactions.map((txn) => (
+                <tr
+                  key={txn.id}
+                  onClick={() => handleRowClick(txn.id)}
+                  className="border-t border-gray-200 dark:border-gray-600 cursor-pointer hover:bg-gray-50 dark:hover:bg-gray-600"
+                >
+                  <td className="px-6 py-4 whitespace-nowrap">{txn.id}</td>
+                  <td className="px-6 py-4 whitespace-nowrap">{txn.createdAt.toDate().toLocaleDateString()}</td>
+                  <td className="px-6 py-4 whitespace-nowrap">{txn.amount} {txn.token.shortName}</td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <Badge className={getStatusClasses(txn.status)}>
+                      {txn.status}
+                    </Badge>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">{txn.type}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );

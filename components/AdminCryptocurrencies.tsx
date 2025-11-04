@@ -32,39 +32,41 @@ export default function AdminCryptocurrencies() {
     <div>
       <h2 className="text-2xl font-semibold mb-6">All Cryptocurrencies</h2>
       <div className="bg-white dark:bg-gray-700 p-6 rounded-lg shadow-md">
-        <table className="w-full">
-          <thead>
-            <tr className="text-left text-gray-500 dark:text-gray-400">
-              <th className="pb-4">S/N</th>
-              <th className="pb-4">Logo</th>
-              <th className="pb-4">Name</th>
-              <th className="pb-4">Symbol</th>
-              <th className="pb-4">Deposit Address</th>
-              <th className="pb-4">Action</th>
-            </tr>
-          </thead>
-          <tbody>
-            {cryptocurrencies.map((crypto, index) => (
-              <tr
-                key={crypto.id}
-                className="border-t border-gray-200 dark:border-gray-600"
-              >
-                <td className="py-4">{index + 1}</td>
-                <td className="py-4">
-                  <img src={crypto.logoUrl} alt={crypto.name} className="w-8 h-8 rounded-full" />
-                </td>
-                <td className="py-4">{crypto.name}</td>
-                <td className="py-4">{crypto.shortName}</td>
-                <td className="py-4">{crypto.depositAddress}</td>
-                <td className="py-4">
-                  <Link href={`/admin/cryptocurrencies/edit/${crypto.id}`} className="text-blue-500 hover:underline">
-                    Edit
-                  </Link>
-                </td>
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead>
+              <tr className="text-left text-gray-500 dark:text-gray-400">
+                <th className="px-6 py-3 whitespace-nowrap">S/N</th>
+                <th className="px-6 py-3 whitespace-nowrap">Logo</th>
+                <th className="px-6 py-3 whitespace-nowrap">Name</th>
+                <th className="px-6 py-3 whitespace-nowrap">Symbol</th>
+                <th className="px-6 py-3 whitespace-nowrap">Deposit Address</th>
+                <th className="px-6 py-3 whitespace-nowrap">Action</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {cryptocurrencies.map((crypto, index) => (
+                <tr
+                  key={crypto.id}
+                  className="border-t border-gray-200 dark:border-gray-600"
+                >
+                  <td className="px-6 py-4 whitespace-nowrap">{index + 1}</td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <img src={crypto.logoUrl} alt={crypto.name} className="w-8 h-8 rounded-full" />
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">{crypto.name}</td>
+                  <td className="px-6 py-4 whitespace-nowrap">{crypto.shortName}</td>
+                  <td className="px-6 py-4 whitespace-nowrap">{crypto.depositAddress}</td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <Link href={`/admin/cryptocurrencies/edit/${crypto.id}`} className="text-blue-500 hover:underline">
+                      Edit
+                    </Link>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );

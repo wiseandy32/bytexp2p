@@ -116,51 +116,53 @@ export default function AdminUsers() {
         <CardTitle>Users</CardTitle>
       </CardHeader>
       <CardContent style={{ overflowY: 'visible' }}>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Id</TableHead>
-              <TableHead>Email Address</TableHead>
-              <TableHead>Name</TableHead>
-              <TableHead>Role</TableHead>
-              <TableHead>Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {users.map((user, index) => (
-              <TableRow key={user.id}>
-                <TableCell>{index + 1}</TableCell>
-                <TableCell>{user.email || 'N/A'}</TableCell>
-                <TableCell>{user.name || 'N/A'}</TableCell>
-                <TableCell>{user.role || 'user'}</TableCell>
-                <TableCell className="relative">
-                  <button onClick={() => setOpenActionMenu(openActionMenu === user.id ? null : user.id)} className="text-gray-500 hover:text-gray-700">
-                    <FiMoreVertical size={20} />
-                  </button>
-                  {openActionMenu === user.id && (
-                    <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-md shadow-lg z-10 border border-gray-200 dark:border-gray-700">
-                      <div className="py-1">
-                        <div className="px-4 py-2 text-xs text-gray-400">Actions</div>
-                        {user.role !== 'admin' ? (
-                          <button onClick={() => { handleMakeAdmin(user.id); setOpenActionMenu(null); }} className="block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600">
-                            Make Admin
-                          </button>
-                        ) : (
-                          <button onClick={() => { handleDemoteToUser(user.id); setOpenActionMenu(null); }} className="block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600">
-                            Demote to User
-                          </button>
-                        )}
-                        <button onClick={() => { handleDeleteUser(user.id); setOpenActionMenu(null); }} className="block w-full text-left px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-gray-100 dark:hover:bg-gray-600">
-                          Delete
-                        </button>
-                      </div>
-                    </div>
-                  )}
-                </TableCell>
+        <div className="overflow-x-auto">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Id</TableHead>
+                <TableHead>Email Address</TableHead>
+                <TableHead>Name</TableHead>
+                <TableHead>Role</TableHead>
+                <TableHead>Actions</TableHead>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+            </TableHeader>
+            <TableBody>
+              {users.map((user, index) => (
+                <TableRow key={user.id}>
+                  <TableCell>{index + 1}</TableCell>
+                  <TableCell>{user.email || 'N/A'}</TableCell>
+                  <TableCell>{user.name || 'N/A'}</TableCell>
+                  <TableCell>{user.role || 'user'}</TableCell>
+                  <TableCell className="relative">
+                    <button onClick={() => setOpenActionMenu(openActionMenu === user.id ? null : user.id)} className="text-gray-500 hover:text-gray-700">
+                      <FiMoreVertical size={20} />
+                    </button>
+                    {openActionMenu === user.id && (
+                      <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-md shadow-lg z-10 border border-gray-200 dark:border-gray-700">
+                        <div className="py-1">
+                          <div className="px-4 py-2 text-xs text-gray-400">Actions</div>
+                          {user.role !== 'admin' ? (
+                            <button onClick={() => { handleMakeAdmin(user.id); setOpenActionMenu(null); }} className="block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600">
+                              Make Admin
+                            </button>
+                          ) : (
+                            <button onClick={() => { handleDemoteToUser(user.id); setOpenActionMenu(null); }} className="block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-600">
+                              Demote to User
+                            </button>
+                          )}
+                          <button onClick={() => { handleDeleteUser(user.id); setOpenActionMenu(null); }} className="block w-full text-left px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-gray-100 dark:hover:bg-gray-600">
+                            Delete
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
         <AlertDialog open={showDeleteConfirmation} onOpenChange={setShowDeleteConfirmation}>
           <AlertDialogContent>
             <AlertDialogHeader>

@@ -88,40 +88,42 @@ export default function Transactions() {
         <CardDescription>A list of your recent transactions.</CardDescription>
       </CardHeader>
       <CardContent>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Transaction ID</TableHead>
-              <TableHead>Type</TableHead>
-              <TableHead>Amount</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Date</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {transactions.map((transaction) => (
-              <TableRow
-                key={transaction.id}
-                onClick={() => handleRowClick(transaction.id)}
-                className="cursor-pointer"
-              >
-                <TableCell className="font-medium">{transaction.id}</TableCell>
-                <TableCell>{transaction.type}</TableCell>
-                <TableCell>
-                  {transaction.amount} {transaction.token.shortName}
-                </TableCell>
-                <TableCell>
-                  <Badge className={getStatusClasses(transaction.status)}>
-                    {transaction.status}
-                  </Badge>
-                </TableCell>
-                <TableCell>
-                  {transaction.createdAt.toDate().toLocaleDateString()}
-                </TableCell>
+        <div className="overflow-x-auto">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>Transaction ID</TableHead>
+                <TableHead>Type</TableHead>
+                <TableHead>Amount</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Date</TableHead>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+            </TableHeader>
+            <TableBody>
+              {transactions.map((transaction) => (
+                <TableRow
+                  key={transaction.id}
+                  onClick={() => handleRowClick(transaction.id)}
+                  className="cursor-pointer"
+                >
+                  <TableCell className="font-medium">{transaction.id}</TableCell>
+                  <TableCell>{transaction.type}</TableCell>
+                  <TableCell>
+                    {transaction.amount} {transaction.token.shortName}
+                  </TableCell>
+                  <TableCell>
+                    <Badge className={getStatusClasses(transaction.status)}>
+                      {transaction.status}
+                    </Badge>
+                  </TableCell>
+                  <TableCell>
+                    {transaction.createdAt.toDate().toLocaleDateString()}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
       </CardContent>
     </Card>
   );

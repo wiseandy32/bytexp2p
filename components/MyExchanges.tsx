@@ -34,43 +34,45 @@ export default function MyExchanges() {
   ];
 
   return (
-    <Table>
-      <TableHeader>
-        <TableRow>
-          <TableHead>Trade ID</TableHead>
-          <TableHead>Cryptocurrency</TableHead>
-          <TableHead>Amount</TableHead>
-          <TableHead>Price</TableHead>
-          <TableHead>Status</TableHead>
-          <TableHead></TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        {exchanges.map((exchange) => (
-          <TableRow key={exchange.id}>
-            <TableCell>{exchange.id}</TableCell>
-            <TableCell>{exchange.cryptocurrency}</TableCell>
-            <TableCell>{exchange.amount}</TableCell>
-            <TableCell>{exchange.price}</TableCell>
-            <TableCell>
-              <span
-                className={`px-2 py-1 rounded-full text-xs font-semibold ${
-                  exchange.status === "Completed"
-                    ? "bg-green-100 text-green-800"
-                    : exchange.status === "Ongoing"
-                    ? "bg-yellow-100 text-yellow-800"
-                    : "bg-red-100 text-red-800"
-                }`}
-              >
-                {exchange.status}
-              </span>
-            </TableCell>
-            <TableCell>
-              <Button variant="outline">View</Button>
-            </TableCell>
+    <div className="overflow-x-auto">
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Trade ID</TableHead>
+            <TableHead>Cryptocurrency</TableHead>
+            <TableHead>Amount</TableHead>
+            <TableHead>Price</TableHead>
+            <TableHead>Status</TableHead>
+            <TableHead></TableHead>
           </TableRow>
-        ))}
-      </TableBody>
-    </Table>
+        </TableHeader>
+        <TableBody>
+          {exchanges.map((exchange) => (
+            <TableRow key={exchange.id}>
+              <TableCell>{exchange.id}</TableCell>
+              <TableCell>{exchange.cryptocurrency}</TableCell>
+              <TableCell>{exchange.amount}</TableCell>
+              <TableCell>{exchange.price}</TableCell>
+              <TableCell>
+                <span
+                  className={`px-2 py-1 rounded-full text-xs font-semibold ${
+                    exchange.status === "Completed"
+                      ? "bg-green-100 text-green-800"
+                      : exchange.status === "Ongoing"
+                      ? "bg-yellow-100 text-yellow-800"
+                      : "bg-red-100 text-red-800"
+                  }`}
+                >
+                  {exchange.status}
+                </span>
+              </TableCell>
+              <TableCell>
+                <Button variant="outline">View</Button>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </div>
   );
 }
