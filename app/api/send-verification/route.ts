@@ -1,7 +1,6 @@
 
 import { NextRequest, NextResponse } from 'next/server';
-import { db } from '@/lib/firebase';
-import { doc, updateDoc } from 'firebase/firestore';
+import { initAdmin } from '@/lib/firebase-admin';
 import { Resend } from 'resend';
 import VerificationEmail from '@/emails/verification-email';
 import { render, pretty } from '@react-email/render';
@@ -10,6 +9,7 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 const generateVerificationCode = () => {
   return Math.floor(100000 + Math.random() * 900000).toString();
 };
+
 export async function POST(req: NextRequest) {
   const { email, uid } = await req.json();
 
@@ -19,10 +19,11 @@ export async function POST(req: NextRequest) {
 
   const verificationCode = generateVerificationCode();
   const verificationTokenExpires = Date.now() + 600000; // 10 minutes
-  try {
 
-    const userRef = doc(db, 'users', uid);
-    await updateDoc(userRef, {
+  try {
+    const { adminDb } = initAdmin();
+    
+    await adminDb.collection('users').doc(uid).update({
       verificationToken: verificationCode,
       verificationTokenExpires: verificationTokenExpires,
     });
@@ -37,8 +38,8 @@ export async function POST(req: NextRequest) {
     });
 
     return NextResponse.json({ message: 'Verification email sent' });
-  } catch (error) {
-    console.error(error);
-    return NextResponse.json({ error: 'Failed to send verification email' }, { status: 500 });
+  } catch (error: any) {
+    console.error('Error sending verification email:', error);
+    return NextResponse.json({ error: error.message || 'Failed to send verification email' }, { status: 500 });
   }
 }
