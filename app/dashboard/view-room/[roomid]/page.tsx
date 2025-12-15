@@ -19,6 +19,7 @@ import {
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog"
 import { TradeStatus } from '@/lib/trade-types';
+import { toast } from 'sonner';
 
 interface Trade {
     creatorId: string;
@@ -48,6 +49,10 @@ export default function ViewRoomPage() {
 
     useEffect(() => {
         if (!roomid) return;
+        if (!currentUser) {
+            router.push('/auth/login?roomid=' + roomid);
+            return;
+        }
 
         const q = query(collection(db, "trades"), where("roomId", "==", roomid as string));
 
@@ -58,6 +63,8 @@ export default function ViewRoomPage() {
                 if (currentUser?.email === tradeData.sellerEmail || currentUser?.email === tradeData.buyerEmail) {
                     setTrade(tradeData);
                 } else {
+                    console.log(currentUser)
+                    console.log("tradeData ", tradeData)
                     setError("You are not authorized to view this trade.");
                 }
             } else {
@@ -67,6 +74,7 @@ export default function ViewRoomPage() {
         }, (err) => {
             console.error("Error fetching trade:", err);
             setError("Failed to fetch trade details.");
+            toast.error("Failed to fetch trade details.");
             setLoading(false);
         });
 

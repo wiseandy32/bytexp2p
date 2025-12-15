@@ -19,7 +19,8 @@ export async function POST(req: NextRequest) {
     creatorEmail,
     participantEmail,
   } = await req.json();
-
+console.log("creatorEmail", creatorEmail);
+console.log("participantEmail", participantEmail);
   try {
     // Send email to the trade creator
     await resend.emails.send({

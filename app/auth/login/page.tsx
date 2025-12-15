@@ -1,6 +1,6 @@
 'use client';
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth, db } from "@/lib/firebase";
@@ -14,7 +14,9 @@ export default function Login() {
     const [showVerificationLink, setShowVerificationLink] = useState(false);
     const [uidForVerification, setUidForVerification] = useState<string | null>(null);
     const router = useRouter();
-
+    const params = useSearchParams();
+    const roomid = params.get('roomid');
+console.log(roomid)
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
@@ -40,7 +42,9 @@ export default function Login() {
                     return;
                 }
 
-                if (userData.isAdmin) {
+                if(roomid) {
+                    router.push(`/dashboard/view-room/${roomid}`);
+                }else if (userData.isAdmin) {
                     router.push('/admin/dashboard');
                 } else {
                     router.push('/dashboard');

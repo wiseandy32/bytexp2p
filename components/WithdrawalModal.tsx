@@ -1,35 +1,37 @@
 "use client";
 
+import { fetchTokens, Token } from "@/lib/data";
 import { useState, useEffect } from "react";
-import { toast } from 'sonner';
+import { toast } from "sonner";
+import TokenModal from "./TokenModal";
+import { FiChevronDown } from "react-icons/fi";
 
-const tokens = [
-  { value: "1", name: "AXS" },
-  { value: "264", name: "OCTA" },
-  { value: "267", name: "EGLD" },
-  { value: "248", name: "DAR" },
-  { value: "259", name: "WOLF" },
-  { value: "266", name: "AAVE" },
-  { value: "265", name: "WAFFLES" },
-  { value: "247", name: "HOT" },
-  { value: "263", name: "TRIO" },
-  { value: "262", name: "EAR" },
-  { value: "261", name: "DATA" },
-  { value: "260", name: "RCH" },
-  { value: "258", name: "ENA" },
-  { value: "249", name: "CPH" },
-  { value: "257", name: "ANKR" },
-  { value: "268", name: "AEVO" },
-  { value: "255", name: "ALI" },
-];
+type WithdrawalModalProps = {
+  isOpen: boolean;
+  onClose: () => void;
+};
 
-export default function WithdrawalModal({ isOpen, onClose }) {
+export default function WithdrawalModal({
+  isOpen,
+  onClose,
+}: WithdrawalModalProps) {
   const [amount, setAmount] = useState("");
   const [address, setAddress] = useState("");
-  const [selectedToken, setSelectedToken] = useState(tokens[0].value);
+  const [selectedToken, setSelectedToken] = useState<Token | null | undefined>(
+    null
+  );
+  const [allTokens, setAllTokens] = useState<Token[]>([]);
 
   useEffect(() => {
-    const handleEsc = (event) => {
+    const getTokens = async () => {
+      const fetchedTokens = await fetchTokens();
+      setAllTokens(fetchedTokens);
+    };
+    getTokens();
+  }, []);
+
+  useEffect(() => {
+    const handleEsc = (event: KeyboardEvent) => {
       if (event.keyCode === 27) {
         onClose();
       }
@@ -43,13 +45,15 @@ export default function WithdrawalModal({ isOpen, onClose }) {
 
   if (!isOpen) return null;
 
-  const handleSubmit = (event) => {
+  const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
     console.log("Withdrawal request:", { selectedToken, amount, address });
     // here you would add the logic to handle the withdrawal
     toast.success("Withdrawal request submitted");
     onClose();
   };
+
+  console.log(allTokens);
 
   return (
     <div className="fixed inset-0 bg-[rgba(0,0,0,0.8)] z-50 flex justify-center items-center">
@@ -89,12 +93,18 @@ export default function WithdrawalModal({ isOpen, onClose }) {
               <select
                 id="currency_id"
                 name="currency_id"
-                value={selectedToken}
-                onChange={(e) => setSelectedToken(e.target.value)}
+                value={selectedToken?.shortName || ""}
+                onChange={(e) =>
+                  setSelectedToken(
+                    allTokens?.find(
+                      (token) => token.shortName === e.target.value
+                    )
+                  )
+                }
                 className="w-full bg-gray-700 border-none rounded-md py-2 px-3 text-white focus:outline-none"
               >
-                {tokens.map((token) => (
-                  <option key={token.value} value={token.value}>
+                {allTokens.map((token) => (
+                  <option key={token.depositAddress} value={token.shortName}>
                     {token.name}
                   </option>
                 ))}
