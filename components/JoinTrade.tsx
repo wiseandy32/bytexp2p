@@ -14,6 +14,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { toast } from 'sonner';
 
 interface Trade {
   id: string;
@@ -99,9 +100,12 @@ export default function JoinTrade() {
         status: 'active',
       });
 
+      toast.success("Joined trade successfully");
+
     } catch (error) {
       console.error("Error joining trade: ", error);
       setError("An error occurred while trying to join the trade.");
+      toast.error("Error joining trade, Try again later.");
     }
   };
 

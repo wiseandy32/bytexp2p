@@ -14,6 +14,7 @@ import { Button } from '@/components/ui/button';
 import { db } from '@/lib/firebase';
 import { addDoc, collection } from 'firebase/firestore';
 import { uploadToCloudinary } from '@/lib/cloudinary';
+import { toast } from 'sonner';
 
 export default function AdminAddCryptocurrency() {
   const [cryptocurrencyName, setCryptocurrencyName] = useState('');
@@ -88,6 +89,7 @@ export default function AdminAddCryptocurrency() {
         logoUrl: finalLogoUrl,
       });
 
+      toast.success('Cryptocurrency added successfully!');
       setStatus('Cryptocurrency added successfully!');
       setCryptocurrencyName('');
       setShortName('');
@@ -110,6 +112,7 @@ export default function AdminAddCryptocurrency() {
         logoFileInput.value = '';
       }
     } catch (e) {
+      toast.error('Error adding cryptocurrency. Please try again.');
       setError('Error adding cryptocurrency. Please try again.');
       setStatus('');
       console.error(e);

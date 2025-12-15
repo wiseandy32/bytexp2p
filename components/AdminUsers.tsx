@@ -24,6 +24,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
 import { FiMoreVertical } from 'react-icons/fi';
+import { toast } from 'sonner';
 
 interface User {
   id: string;
@@ -91,10 +92,11 @@ export default function AdminUsers() {
         throw new Error(errorData.error || 'Failed to make admin');
       }
       
+      toast.success("User promoted to admin successfully");
       fetchUsers();
     } catch (error) {
       console.error("Error making user admin: ", error);
-      alert("Error making user admin: " + (error as Error).message);
+      toast.error("Error making user admin: " + (error as Error).message);
     }
   };
 
@@ -117,10 +119,11 @@ export default function AdminUsers() {
         throw new Error(errorData.error || 'Failed to demote user');
       }
 
+      toast.success("User demoted successfully");
       fetchUsers();
     } catch (error) {
       console.error("Error demoting user: ", error);
-      alert("Error demoting user: " + (error as Error).message);
+      toast.error("Error demoting user: " + (error as Error).message);
     }
   };
 
@@ -149,10 +152,11 @@ export default function AdminUsers() {
           throw new Error(errorData.error || 'Failed to delete user');
         }
 
+        toast.success("User deleted successfully");
         fetchUsers();
       } catch (error) {
         console.error("Error deleting user: ", error);
-        alert("Error deleting user: " + (error as Error).message);
+        toast.error("Error deleting user: " + (error as Error).message);
       }
     }
     setShowDeleteConfirmation(false);

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { toast } from 'sonner';
 
 const tokens = [
   { value: "1", name: "AXS" },
@@ -46,6 +47,7 @@ export default function WithdrawalModal({ isOpen, onClose }) {
     event.preventDefault();
     console.log("Withdrawal request:", { selectedToken, amount, address });
     // here you would add the logic to handle the withdrawal
+    toast.success("Withdrawal request submitted");
     onClose();
   };
 

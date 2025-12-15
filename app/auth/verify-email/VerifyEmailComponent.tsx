@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { toast } from 'sonner';
 
 export default function VerifyEmailComponent() {
   const [code, setCode] = useState("");
@@ -127,6 +128,7 @@ export default function VerifyEmailComponent() {
           });
         }
 
+        toast.success("Email verified successfully! Please login.");
         router.push("/auth/login");
       } else {
         const data = await res.json();

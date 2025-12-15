@@ -14,6 +14,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { toast } from 'sonner';
 
 export default function CreateTrade() {
   const [cryptocurrency, setCryptocurrency] = useState('');
@@ -38,9 +39,12 @@ export default function CreateTrade() {
         setCryptocurrency('');
         setAmount('');
         setPrice('');
+        setPrice('');
         setTerms('');
+        toast.success("Trade created successfully");
       } catch (error) {
         console.error("Error creating trade: ", error);
+        toast.error("Error creating trade, Try again later.");
       }
     }
   };
