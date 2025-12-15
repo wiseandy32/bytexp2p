@@ -19,7 +19,7 @@ export default function VerifyEmailComponent() {
     const source = searchParams.get("source");
     const userId = searchParams.get("uid");
     const userEmail = searchParams.get("email");
-    debugger;
+    
     if (userId) {
       setUid(userId);
     }
