@@ -1,8 +1,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { collection, getDocs, doc, updateDoc, deleteDoc } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
+import { collection, getDocs } from 'firebase/firestore';
+import { db, auth } from '@/lib/firebase';
 import {
   Table,
   TableBody,
@@ -67,23 +67,60 @@ export default function AdminUsers() {
     fetchUsers();
   }, []);
 
+  const getAuthToken = async () => {
+    if (!auth.currentUser) return null;
+    return await auth.currentUser.getIdToken();
+  };
+
   const handleMakeAdmin = async (userId: string) => {
     try {
-      const userDoc = doc(db, 'users', userId);
-      await updateDoc(userDoc, { isAdmin: true });
+      const token = await getAuthToken();
+      if (!token) throw new Error("Not authenticated");
+
+      const response = await fetch('/api/admin/users', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ userId, isAdmin: true }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to make admin');
+      }
+      
       fetchUsers();
     } catch (error) {
       console.error("Error making user admin: ", error);
+      alert("Error making user admin: " + (error as Error).message);
     }
   };
 
   const handleDemoteToUser = async (userId: string) => {
     try {
-      const userDoc = doc(db, 'users', userId);
-      await updateDoc(userDoc, { isAdmin: false });
+      const token = await getAuthToken();
+      if (!token) throw new Error("Not authenticated");
+
+      const response = await fetch('/api/admin/users', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ userId, isAdmin: false }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to demote user');
+      }
+
       fetchUsers();
     } catch (error) {
-      console.error("Error making user admin: ", error);
+      console.error("Error demoting user: ", error);
+      alert("Error demoting user: " + (error as Error).message);
     }
   };
 
@@ -95,11 +132,27 @@ export default function AdminUsers() {
   const confirmDelete = async () => {
     if (userToDelete) {
       try {
-        const userDoc = doc(db, 'users', userToDelete);
-        await deleteDoc(userDoc);
+        const token = await getAuthToken();
+        if (!token) throw new Error("Not authenticated");
+
+        const response = await fetch('/api/admin/users', {
+          method: 'DELETE',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({ userId: userToDelete }),
+        });
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error || 'Failed to delete user');
+        }
+
         fetchUsers();
       } catch (error) {
         console.error("Error deleting user: ", error);
+        alert("Error deleting user: " + (error as Error).message);
       }
     }
     setShowDeleteConfirmation(false);
