@@ -30,7 +30,6 @@ export default function VerifyEmailComponent() {
 
     if (source === "register" && userId && userEmail) {
       setView("code");
-      handleRequestCode(null, userEmail, userId); // auto-send code on load
     } else {
       setView("email");
     }
