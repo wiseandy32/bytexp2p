@@ -63,7 +63,7 @@ export default function AdminCryptocurrencies() {
   return (
     <div>
       <h2 className="text-2xl font-semibold mb-6">All Cryptocurrencies</h2>
-      <div className="bg-white dark:bg-gray-700 p-6 rounded-lg shadow-md">
+      <div className="bg-white dark:bg-gray-700 p-6 rounded-lg shadow-md max-w-[calc(100vw-2rem)] md:max-w-[calc(100vw-22rem)]">
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
