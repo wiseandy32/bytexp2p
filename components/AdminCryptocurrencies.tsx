@@ -84,11 +84,17 @@ export default function AdminCryptocurrencies() {
                 >
                   <td className="px-6 py-4 whitespace-nowrap">{index + 1}</td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <img
-                      src={crypto.logoUrl}
-                      alt={crypto.name}
-                      className="w-8 h-8 rounded-full"
-                    />
+                    {crypto.logoUrl ? (
+                      <img
+                        src={crypto.logoUrl}
+                        alt={crypto.name}
+                        className="w-8 h-8 rounded-full"
+                      />
+                    ) : (
+                      <div className="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-600 flex items-center justify-center text-xs text-gray-500 dark:text-gray-400">
+                        {crypto.shortName?.[0] || "?"}
+                      </div>
+                    )}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">{crypto.name}</td>
                   <td className="px-6 py-4 whitespace-nowrap">
