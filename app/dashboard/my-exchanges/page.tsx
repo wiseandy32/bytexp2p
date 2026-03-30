@@ -88,6 +88,7 @@ export default function MyExchangesPage() {
                 return 'bg-blue-200 text-blue-800';
             case 'seller_deposited':
             case 'buyer_deposited':
+            case 'under_review':
             case 'ready_to_withdraw':
                 return 'bg-yellow-200 text-yellow-800';
             case 'completed':

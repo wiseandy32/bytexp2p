@@ -41,13 +41,14 @@ export default function AdminDashboard({
     { href: "/admin/transactions", label: "Transactions" },
     { href: "/admin/cryptocurrencies", label: "Cryptocurrencies" },
     { href: "/admin/add-cryptocurrency", label: "Add Cryptocurrency" },
+    { href: "/admin/trades", label: "Trades" },
   ];
 
   const getCurrentRouteTitle = () => {
     if (pathname === "/admin") {
       return "Overview";
     }
-    const currentNavItem = navItems.find((item) => item.href === pathname);
+    const currentNavItem = navItems.find((item) => pathname === item.href || pathname.startsWith(item.href + '/'));
     return currentNavItem ? currentNavItem.label : "";
   };
 
@@ -65,20 +66,23 @@ export default function AdminDashboard({
           <FiX size={24} className="text-gray-500 dark:text-gray-400" />
         </button>
       </div>
-      {navItems.map((item) => (
-        <Link
-          key={item.href}
-          href={item.href}
-          onClick={() => setSidebarOpen(false)}
-          className={`px-4 py-2 rounded-md font-medium text-gray-700 dark:text-gray-300 ${
-            pathname === item.href
-              ? "bg-gray-100 text-blue-600 dark:bg-gray-700 dark:text-blue-400"
-              : "hover:bg-gray-50 dark:hover:bg-gray-700"
-          }`}
-        >
-          {item.label}
-        </Link>
-      ))}
+      {navItems.map((item) => {
+        const isActive = pathname === item.href || pathname.startsWith(item.href + '/');
+        return (
+          <Link
+            key={item.href}
+            href={item.href}
+            onClick={() => setSidebarOpen(false)}
+            className={`px-4 py-2 rounded-md font-medium text-gray-700 dark:text-gray-300 ${
+              isActive
+                ? "bg-gray-100 text-blue-600 dark:bg-gray-700 dark:text-blue-400"
+                : "hover:bg-gray-50 dark:hover:bg-gray-700"
+            }`}
+          >
+            {item.label}
+          </Link>
+        );
+      })}
     </nav>
   );
 

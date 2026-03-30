@@ -3,6 +3,7 @@ export type TradeStatus =
   | "joined"
   | "buyer_deposited"
   | "seller_deposited"
+  | "under_review"
   | "ready_to_withdraw"
   | "completed"
   | "cancelled";

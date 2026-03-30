@@ -61,6 +61,7 @@ export default function ViewRoomPage() {
   const [trade, setTrade] = useState<Trade | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [isAdminUser, setIsAdminUser] = useState(false);
   const currentUser = auth.currentUser;
 
   useEffect(() => {
@@ -70,41 +71,63 @@ export default function ViewRoomPage() {
       return;
     }
 
-    const q = query(
-      collection(db, "trades"),
-      where("roomId", "==", roomid as string),
-    );
+    let isMounted = true;
+    let unsubscribeSnapshot: () => void;
 
-    const unsubscribe = onSnapshot(
-      q,
-      (querySnapshot) => {
-        if (!querySnapshot.empty) {
-          const tradeDoc = querySnapshot.docs[0];
-          const tradeData = tradeDoc.data() as Trade;
-          if (
-            currentUser?.email === tradeData.sellerEmail ||
-            currentUser?.email === tradeData.buyerEmail
-          ) {
-            setTrade(tradeData);
-          } else {
-            console.log(currentUser);
-            console.log("tradeData ", tradeData);
-            setError("You are not authorized to view this trade.");
-          }
-        } else {
-          setError("Trade not found.");
+    const setupStream = async () => {
+      let isUserAdmin = false;
+      try {
+        const userDoc = await getDoc(doc(db, "users", currentUser.uid));
+        if (userDoc.exists() && userDoc.data().isAdmin) {
+          isUserAdmin = true;
+          if (isMounted) setIsAdminUser(true);
         }
-        setLoading(false);
-      },
-      (err) => {
-        console.error("Error fetching trade:", err);
-        setError("Failed to fetch trade details.");
-        toast.error("Failed to fetch trade details.");
-        setLoading(false);
-      },
-    );
+      } catch (err) {
+        console.error("Error checking admin status:", err);
+      }
 
-    return () => unsubscribe();
+      if (!isMounted) return;
+
+      const q = query(
+        collection(db, "trades"),
+        where("roomId", "==", roomid as string),
+      );
+
+      unsubscribeSnapshot = onSnapshot(
+        q,
+        (querySnapshot) => {
+          if (!querySnapshot.empty) {
+            const tradeDoc = querySnapshot.docs[0];
+            const tradeData = tradeDoc.data() as Trade;
+            if (
+              currentUser?.email === tradeData.sellerEmail ||
+              currentUser?.email === tradeData.buyerEmail ||
+              isUserAdmin
+            ) {
+              setTrade(tradeData);
+            } else {
+              setError("You are not authorized to view this trade.");
+            }
+          } else {
+            setError("Trade not found.");
+          }
+          setLoading(false);
+        },
+        (err) => {
+          console.error("Error fetching trade:", err);
+          setError("Failed to fetch trade details.");
+          toast.error("Failed to fetch trade details.");
+          setLoading(false);
+        },
+      );
+    };
+
+    setupStream();
+
+    return () => {
+      isMounted = false;
+      if (unsubscribeSnapshot) unsubscribeSnapshot();
+    };
   }, [roomid, currentUser]);
 
   const userRole =
@@ -177,7 +200,7 @@ export default function ViewRoomPage() {
         if (userRole === "seller") {
           updates.sellerPaymentStatus = "paid";
           if (tradeData.buyerPaymentStatus === "paid") {
-            newStatus = "ready_to_withdraw";
+            newStatus = "under_review";
           } else {
             newStatus = "seller_deposited";
           }
@@ -185,7 +208,7 @@ export default function ViewRoomPage() {
           // buyer
           updates.buyerPaymentStatus = "paid";
           if (tradeData.sellerPaymentStatus === "paid") {
-            newStatus = "ready_to_withdraw";
+            newStatus = "under_review";
           } else {
             newStatus = "buyer_deposited";
           }
@@ -360,6 +383,27 @@ export default function ViewRoomPage() {
     }
   };
 
+  const handleAdminApprove = async () => {
+    if (!trade) return;
+    try {
+      const q = query(
+        collection(db, "trades"),
+        where("roomId", "==", roomid as string),
+      );
+      const querySnapshot = await getDocs(q);
+      if (!querySnapshot.empty) {
+        const tradeDocRef = querySnapshot.docs[0].ref;
+        await updateDoc(tradeDocRef, {
+          status: "ready_to_withdraw",
+        });
+        toast.success("Trade approved successfully.");
+      }
+    } catch (err: any) {
+      console.error("Error approving trade:", err);
+      toast.error("Failed to approve trade.");
+    }
+  };
+
   const getTradeProgress = (
     trade: Trade,
   ): { percentage: number; statusText: string } => {
@@ -368,9 +412,10 @@ export default function ViewRoomPage() {
     } = {
       pending: { percentage: 15, statusText: "Trade Created" },
       joined: { percentage: 30, statusText: "Both Parties Joined" },
-      buyer_deposited: { percentage: 60, statusText: "Buyer Has Deposited" },
-      seller_deposited: { percentage: 60, statusText: "Seller Has Deposited" },
-      ready_to_withdraw: { percentage: 80, statusText: "Ready for Withdrawal" },
+      buyer_deposited: { percentage: 50, statusText: "Buyer Has Deposited" },
+      seller_deposited: { percentage: 50, statusText: "Seller Has Deposited" },
+      under_review: { percentage: 70, statusText: "Under Admin Review" },
+      ready_to_withdraw: { percentage: 85, statusText: "Ready for Withdrawal" },
       completed: { percentage: 100, statusText: "Trade Completed" },
       cancelled: { percentage: 0, statusText: "Trade Cancelled" },
     };
@@ -584,66 +629,118 @@ export default function ViewRoomPage() {
                       </p>
                     </div>
                   ) : trade.status === "pending" &&
-                    currentUser?.uid === trade.creatorId ? (
+                    currentUser?.uid === trade.creatorId && !isAdminUser ? (
                     <p className="text-gray-500 text-center">
                       Waiting for counterparty to join...
                     </p>
                   ) : (
                     <>
-                      <Button
-                        className="w-full"
-                        disabled={isDepositDisabled}
-                        onClick={handleMakeDeposit}
-                      >
-                        Make Deposit
-                      </Button>
-                      <Button
-                        variant="outline"
-                        className="w-full"
-                        disabled={isWithdrawDisabled}
-                        onClick={handleWithdrawToken}
-                      >
-                        Withdraw Token
-                      </Button>
-                      <AlertDialog>
-                        <AlertDialogTrigger asChild>
+                      {isAdminUser && !userRole ? (
+                        <div className="space-y-4">
                           <Button
-                            variant="destructive"
-                            className="w-full"
-                            disabled={isCancelDisabled}
+                            className="w-full bg-green-600 hover:bg-green-700"
+                            disabled={trade.status !== "under_review"}
+                            onClick={handleAdminApprove}
                           >
-                            Cancel Trade
+                            Approve Trade
                           </Button>
-                        </AlertDialogTrigger>
-                        <AlertDialogContent>
-                          <AlertDialogHeader>
-                            <AlertDialogTitle>
-                              Are you absolutely sure?
-                            </AlertDialogTitle>
-                            <AlertDialogDescription>
-                              This action cannot be undone. This will
-                              permanently cancel the trade. If any funds have
-                              been deposited, they will be returned to the
-                              respective parties.
-                            </AlertDialogDescription>
-                          </AlertDialogHeader>
-                          <AlertDialogFooter>
-                            <AlertDialogCancel>Back</AlertDialogCancel>
-                            <AlertDialogAction onClick={handleCancelTrade}>
-                              Yes, Cancel Trade
-                            </AlertDialogAction>
-                          </AlertDialogFooter>
-                        </AlertDialogContent>
-                      </AlertDialog>
-                      <div className="text-sm text-gray-500 p-4 bg-gray-100 rounded-md">
-                        <div className="flex items-start">
-                          <LuInfo className="mr-2 mt-1 h-4 w-4" />
-                          <span>
-                            Only cancel the trade if you are certain. This
-                            action cannot be undone.
-                          </span>
+                          <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                              <Button
+                                variant="destructive"
+                                className="w-full"
+                                disabled={isCancelDisabled}
+                              >
+                                Cancel Trade
+                              </Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                              <AlertDialogHeader>
+                                <AlertDialogTitle>
+                                  Are you absolutely sure?
+                                </AlertDialogTitle>
+                                <AlertDialogDescription>
+                                  This action cannot be undone. This will
+                                  permanently cancel the trade. If any funds have
+                                  been deposited, they will be returned to the
+                                  respective parties.
+                                </AlertDialogDescription>
+                              </AlertDialogHeader>
+                              <AlertDialogFooter>
+                                <AlertDialogCancel>Back</AlertDialogCancel>
+                                <AlertDialogAction onClick={handleCancelTrade}>
+                                  Yes, Cancel Trade
+                                </AlertDialogAction>
+                              </AlertDialogFooter>
+                            </AlertDialogContent>
+                          </AlertDialog>
+                          <div className="text-sm text-gray-500 p-4 bg-gray-100 rounded-md">
+                            <div className="flex items-start">
+                              <LuInfo className="mr-2 mt-1 h-4 w-4" />
+                              <span>
+                                Warning: As an Admin, only cancel this trade if there are irreconcilable errors.
+                              </span>
+                            </div>
+                          </div>
                         </div>
-                      </div>
+                      ) : (
+                        <>
+                          <Button
+                            className="w-full"
+                            disabled={isDepositDisabled}
+                            onClick={handleMakeDeposit}
+                          >
+                            Make Deposit
+                          </Button>
+                          <Button
+                            variant="outline"
+                            className="w-full"
+                            disabled={isWithdrawDisabled}
+                            onClick={handleWithdrawToken}
+                          >
+                            Withdraw Token
+                          </Button>
+                          <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                              <Button
+                                variant="destructive"
+                                className="w-full"
+                                disabled={isCancelDisabled}
+                              >
+                                Cancel Trade
+                              </Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                              <AlertDialogHeader>
+                                <AlertDialogTitle>
+                                  Are you absolutely sure?
+                                </AlertDialogTitle>
+                                <AlertDialogDescription>
+                                  This action cannot be undone. This will
+                                  permanently cancel the trade. If any funds have
+                                  been deposited, they will be returned to the
+                                  respective parties.
+                                </AlertDialogDescription>
+                              </AlertDialogHeader>
+                              <AlertDialogFooter>
+                                <AlertDialogCancel>Back</AlertDialogCancel>
+                                <AlertDialogAction onClick={handleCancelTrade}>
+                                  Yes, Cancel Trade
+                                </AlertDialogAction>
+                              </AlertDialogFooter>
+                            </AlertDialogContent>
+                          </AlertDialog>
+                          <div className="text-sm text-gray-500 p-4 bg-gray-100 rounded-md">
+                            <div className="flex items-start">
+                              <LuInfo className="mr-2 mt-1 h-4 w-4" />
+                              <span>
+                                Only cancel the trade if you are certain. This
+                                action cannot be undone.
+                              </span>
+                            </div>
+                          </div>
+                        </>
+                      )}
                     </>
                   )}
                 </CardContent>

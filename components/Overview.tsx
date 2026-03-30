@@ -205,6 +205,7 @@ const getTradeProgress = (status) => {
         joined: { percentage: 30, statusText: "Both Parties Joined" },
         buyer_deposited: { percentage: 60, statusText: "Buyer Has Deposited" },
         seller_deposited: { percentage: 60, statusText: "Seller Has Deposited" },
+        under_review: { percentage: 70, statusText: "Under Admin Review" },
         ready_to_withdraw: { percentage: 80, statusText: "Ready for Withdrawal" },
         completed: { percentage: 100, statusText: "Trade Completed" },
         cancelled: { percentage: 0, statusText: "Trade Cancelled" },
@@ -223,14 +224,15 @@ const TradeItem = ({ trade, currentUserEmail }) => {
         joined: 'text-blue-400',
         buyer_deposited: 'text-blue-400',
         seller_deposited: 'text-blue-400',
+        under_review: 'text-purple-400',
         ready_to_withdraw: 'text-teal-400',
     }[trade.status] || 'text-gray-400';
 
     const progressBarColor = {
         completed: 'bg-green-500',
         cancelled: 'bg-red-500',
+        under_review: 'bg-purple-500',
     }[trade.status] || 'bg-blue-500';
-
 
     return (
         <Link href={`/dashboard/view-room/${trade.roomId}`} key={trade.id} className="block bg-gray-800 p-4 rounded-lg hover:bg-gray-700 transition-colors duration-300">
