@@ -59,8 +59,8 @@ export default function JoinTradeDialog({ show, onHide }: { show: boolean; onHid
                 return;
             }
             
-            const participantEmail = trade.traderRole === 'seller' ? trade.sellerEmail : trade.buyerEmail;
-            if (participantEmail !== currentUser.email) {
+            const expectedParticipantEmail = trade.traderRole === 'seller' ? trade.buyerEmail : trade.sellerEmail;
+            if (expectedParticipantEmail?.trim().toLowerCase() !== currentUser.email?.trim().toLowerCase()) {
                 setError("You are not authorized to join this trade.");
                 return;
             }
