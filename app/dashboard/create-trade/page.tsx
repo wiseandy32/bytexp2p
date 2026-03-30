@@ -42,6 +42,21 @@ export default function CreateTradePage() {
     const [error, setError] = useState<ReactNode | null>(null);
     const [isCreating, setIsCreating] = useState(false);
 
+    useEffect(() => {
+        const unsubscribe = auth.onAuthStateChanged((user) => {
+            if (user?.email) {
+                if (traderRole === 'seller') {
+                    setSellerEmail(user.email);
+                    setBuyerEmail((prev) => prev === user.email ? '' : prev);
+                } else {
+                    setBuyerEmail(user.email);
+                    setSellerEmail((prev) => prev === user.email ? '' : prev);
+                }
+            }
+        });
+        return () => unsubscribe();
+    }, [traderRole]);
+
     const handleTokenSelect = (token: Token) => {
         const selectedToken = { name: token.shortName, image: token.logoUrl };
         if (currentTokenSide === '1') {
@@ -140,6 +155,19 @@ export default function CreateTradePage() {
                     <form onSubmit={handleSubmit} className="space-y-6">
                         {error && <p className="text-red-500 text-center">{error}</p>}
 
+                        {/* Role Selection */}
+                        <Card>
+                            <CardHeader>
+                                <CardTitle>Select Your Role</CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                                <div className="flex gap-2">
+                                    <Button type="button" variant={traderRole === 'seller' ? 'default' : 'secondary'} onClick={() => setTraderRole('seller')} className="flex-1">Seller</Button>
+                                    <Button type="button" variant={traderRole === 'buyer' ? 'default' : 'secondary'} onClick={() => setTraderRole('buyer')} className="flex-1">Buyer</Button>
+                                </div>
+                            </CardContent>
+                        </Card>
+
                         {/* Seller's Details */}
                         <Card>
                             <CardHeader>
@@ -164,7 +192,7 @@ export default function CreateTradePage() {
                                     </div>
                                     <Input type="number" placeholder="Amount to sell" value={sellerAmount} onChange={(e) => setSellerAmount(e.target.value)} className="text-right text-lg font-bold flex-1 w-full" required />
                                 </div>
-                                <Input type="email" placeholder="Seller's Email" value={sellerEmail} onChange={(e) => setSellerEmail(e.target.value)} required />
+                                <Input type="email" placeholder="Seller's Email" value={sellerEmail} onChange={(e) => setSellerEmail(e.target.value)} readOnly={traderRole === 'seller'} className={traderRole === 'seller' ? 'bg-muted' : ''} required />
                             </CardContent>
                         </Card>
 
@@ -199,7 +227,7 @@ export default function CreateTradePage() {
                                     </div>
                                     <Input type="number" placeholder="Amount to buy" value={buyerAmount} onChange={(e) => setBuyerAmount(e.target.value)} className="text-right text-lg font-bold flex-1 w-full" required />
                                 </div>
-                                <Input type="email" placeholder="Buyer's Email" value={buyerEmail} onChange={(e) => setBuyerEmail(e.target.value)} required />
+                                <Input type="email" placeholder="Buyer's Email" value={buyerEmail} onChange={(e) => setBuyerEmail(e.target.value)} readOnly={traderRole === 'buyer'} className={traderRole === 'buyer' ? 'bg-muted' : ''} required />
                             </CardContent>
                         </Card>
 
@@ -227,14 +255,6 @@ export default function CreateTradePage() {
                                 </div>
                             </CardContent>
                         </Card>
-                        
-                        <div>
-                            <label className="font-semibold mb-2 block">Select your role</label>
-                            <div className="flex gap-2">
-                                <Button type="button" variant={traderRole === 'seller' ? 'default' : 'secondary'} onClick={() => setTraderRole('seller')} className="flex-1">Seller</Button>
-                                <Button type="button" variant={traderRole === 'buyer' ? 'default' : 'secondary'} onClick={() => setTraderRole('buyer')} className="flex-1">Buyer</Button>
-                            </div>
-                        </div>
 
                         <Button type="submit" className="w-full" disabled={isCreating}>
                             {isCreating ? 'Creating Trade...' : 'Start Trade'}
