@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { fetchTokens, Token } from '@/lib/data';
+import { useState, useEffect } from "react";
+import { fetchTokens, Token } from "@/lib/data";
 
 interface TokenModalProps {
   isOpen: boolean;
@@ -9,8 +9,12 @@ interface TokenModalProps {
   onSelectToken: (token: Token) => void;
 }
 
-export default function TokenModal({ isOpen, onClose, onSelectToken }: TokenModalProps) {
-  const [searchTerm, setSearchTerm] = useState('');
+export default function TokenModal({
+  isOpen,
+  onClose,
+  onSelectToken,
+}: TokenModalProps) {
+  const [searchTerm, setSearchTerm] = useState("");
   const [tokens, setTokens] = useState<Token[]>([]);
 
   useEffect(() => {
@@ -25,9 +29,10 @@ export default function TokenModal({ isOpen, onClose, onSelectToken }: TokenModa
 
   if (!isOpen) return null;
 
-  const filteredTokens = tokens.filter(token =>
-    token.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    token.shortName.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredTokens = tokens.filter(
+    (token) =>
+      token.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      token.shortName.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   return (
@@ -39,21 +44,31 @@ export default function TokenModal({ isOpen, onClose, onSelectToken }: TokenModa
               type="text"
               placeholder="Search by Coin/Token"
               className="bg-transparent text-white w-full focus:outline-none"
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchTerm(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                setSearchTerm(e.target.value)
+              }
             />
-            <button onClick={onClose} className="text-blue-400 font-bold ml-4">Cancel</button>
+            <button onClick={onClose} className="text-blue-400 font-bold ml-4">
+              Cancel
+            </button>
           </div>
         </div>
         <div className="p-4">
           <p className="text-sm text-gray-400 mb-4">Coin/Token List</p>
           <div className="max-h-80 overflow-y-auto">
-            {filteredTokens.map(token => (
-              <div 
+            {filteredTokens.map((token) => (
+              <div
                 key={token.id}
                 className="flex items-center p-3 hover:bg-gray-700 cursor-pointer rounded-md"
                 onClick={() => onSelectToken(token)}
               >
-                <img src={token.logoUrl} alt={token.shortName} className="w-5 h-5 mr-3" />
+                {token.logoUrl && (
+                  <img
+                    src={token.logoUrl}
+                    alt={token.shortName}
+                    className="w-5 h-5 mr-3"
+                  />
+                )}
                 <p className="font-bold mr-4">{token.shortName}</p>
                 <p className="text-gray-400 text-sm capitalize">{token.name}</p>
               </div>
