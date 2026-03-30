@@ -107,7 +107,7 @@ export default function CreateTradePage() {
 
             // Send trade creation emails
             const creatorEmail = auth.currentUser.email;
-            const participantEmail = traderRole === 'seller' ? sellerEmail : buyerEmail;
+            const participantEmail = traderRole === 'seller' ? buyerEmail : sellerEmail;
             const creatorRole = traderRole;
             const participantRole = traderRole === 'seller' ? 'buyer' : 'seller';
             const tradeLink = `${window.location.origin}/dashboard/view-room/${roomId}`;
