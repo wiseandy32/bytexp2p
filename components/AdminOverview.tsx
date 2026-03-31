@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { collection, onSnapshot } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
+import { Badge } from '@/components/ui/badge';
 
 interface Transaction {
     id: string;
@@ -24,6 +25,21 @@ export default function AdminOverview() {
     const [pendingApprovals, setPendingApprovals] = useState(0);
     const [transactions, setTransactions] = useState<Transaction[]>([]);
 
+    const getStatusClasses = (status: string) => {
+        switch (status) {
+            case 'awaiting_payment':
+                return "bg-amber-100 text-amber-800";
+            case 'awaiting_approval':
+                return "bg-blue-100 text-blue-800";
+            case 'approved':
+                return "bg-green-100 text-green-800";
+            case 'rejected':
+                return "bg-red-100 text-red-800";
+            default:
+                return "bg-gray-100 text-gray-800";
+        }
+    };
+
     useEffect(() => {
         const unsubscribeUsers = onSnapshot(collection(db, 'users'), (snapshot) => {
             setTotalUsers(snapshot.size);
@@ -36,10 +52,13 @@ export default function AdminOverview() {
 
             snapshot.forEach((doc) => {
                 const data = doc.data();
+
+                if (data.type === 'trade') return;
+
                 if (data.type === 'deposit' && data.status === 'approved') {
                     volume += data.amount;
                 }
-                if (data.status === 'pending') {
+                if (data.status === 'pending' || data.status === 'awaiting_approval') {
                     pending++;
                 }
                 txns.push({ id: doc.id, ...data } as Transaction);
@@ -123,7 +142,11 @@ export default function AdminOverview() {
                                         <td className="py-4 whitespace-nowrap">{txn.userId}</td>
                                         <td className="py-4 whitespace-nowrap">{txn.createdAt.toDate().toLocaleDateString()}</td>
                                         <td className="py-4 whitespace-nowrap">${txn.amount.toFixed(2)}</td>
-                                        <td className="py-4 whitespace-nowrap">{txn.status}</td>
+                                        <td className="py-4 whitespace-nowrap">
+                                            <Badge className={getStatusClasses(txn.status)}>
+                                                {txn.status}
+                                            </Badge>
+                                        </td>
                                     </tr>
                                 ))}
                             </tbody>
