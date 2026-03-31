@@ -128,21 +128,21 @@ export default function AdminOverview() {
                         <table className="w-full">
                             <thead>
                                 <tr className="text-left text-gray-500 dark:text-gray-400">
-                                    <th className="pb-4 whitespace-nowrap">Transaction ID</th>
-                                    <th className="pb-4 whitespace-nowrap">User</th>
-                                    <th className="pb-4 whitespace-nowrap">Date</th>
-                                    <th className="pb-4 whitespace-nowrap">Amount</th>
-                                    <th className="pb-4 whitespace-nowrap">Status</th>
+                                    <th className="pb-4 px-4 whitespace-nowrap">Transaction ID</th>
+                                    <th className="pb-4 px-4 whitespace-nowrap">User</th>
+                                    <th className="pb-4 px-4 whitespace-nowrap">Date</th>
+                                    <th className="pb-4 px-4 whitespace-nowrap">Amount</th>
+                                    <th className="pb-4 px-4 whitespace-nowrap">Status</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {transactions.map((txn) => (
                                     <tr key={txn.id} className="border-t border-gray-200 dark:border-gray-600">
-                                        <td className="py-4 whitespace-nowrap">{txn.id}</td>
-                                        <td className="py-4 whitespace-nowrap">{txn.userId}</td>
-                                        <td className="py-4 whitespace-nowrap">{txn.createdAt.toDate().toLocaleDateString()}</td>
-                                        <td className="py-4 whitespace-nowrap">${txn.amount.toFixed(2)}</td>
-                                        <td className="py-4 whitespace-nowrap">
+                                        <td className="py-4 px-4 whitespace-nowrap">{txn.id}</td>
+                                        <td className="py-4 px-4 whitespace-nowrap">{txn.userId}</td>
+                                        <td className="py-4 px-4 whitespace-nowrap">{txn.createdAt.toDate().toLocaleDateString()}</td>
+                                        <td className="py-4 px-4 whitespace-nowrap">${txn.amount.toFixed(2)}</td>
+                                        <td className="py-4 px-4 whitespace-nowrap">
                                             <Badge className={getStatusClasses(txn.status)}>
                                                 {txn.status}
                                             </Badge>
