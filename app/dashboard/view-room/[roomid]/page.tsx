@@ -492,22 +492,24 @@ export default function ViewRoomPage() {
                   <CardTitle>Trade Information</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="flex justify-between">
-                    <p className="text-gray-500">Trade Status</p>
-                    <p
-                      className={`font-semibold ${trade.status === "cancelled" ? "text-red-500" : ""}`}
-                    >
-                      {trade.status}
-                    </p>
-                  </div>
-                  <div className="mt-3">
-                    <div className="flex justify-between">
-                      <p className="text-gray-500">Your Role</p>
-                      <p>{userRole}</p>
+                  <div className="overflow-x-auto">
+                    <div className="flex justify-between gap-4 whitespace-nowrap">
+                      <p className="text-gray-500">Trade Status:</p>
+                      <p
+                        className={`font-semibold ${trade.status === "cancelled" ? "text-red-500" : ""}`}
+                      >
+                        {trade.status}
+                      </p>
                     </div>
-                    <div className="flex justify-between">
-                      <p className="text-gray-500">Fee Payer</p>
-                      <p>{trade.feeSplit}</p>
+                    <div className="mt-3 space-y-2">
+                      <div className="flex justify-between gap-4 whitespace-nowrap">
+                        <p className="text-gray-500">Your Role:</p>
+                        <p>{userRole}</p>
+                      </div>
+                      <div className="flex justify-between gap-4 whitespace-nowrap">
+                        <p className="text-gray-500">Fee Payer:</p>
+                        <p>{trade.feeSplit}</p>
+                      </div>
                     </div>
                   </div>
                 </CardContent>
@@ -522,37 +524,38 @@ export default function ViewRoomPage() {
                 </CardHeader>
                 <CardContent>
                   <hr />
+                  <div className="overflow-x-auto space-y-3 mt-3">
+                    <div className="flex justify-between gap-4 whitespace-nowrap">
+                      <p className="text-gray-500">Seller's ID:</p>
+                      <p>{trade.sellerEmail}</p>
+                    </div>
 
-                  <div className="flex justify-between">
-                    <p className="text-gray-500">Seller's ID</p>
-                    <p>{trade.sellerEmail}</p>
-                  </div>
+                    <div className="flex justify-between gap-4 whitespace-nowrap">
+                      <p className="text-gray-500">Sending:</p>
+                      <p>
+                        {trade.sellerAmount} {trade.sellersToken.name}
+                      </p>
+                    </div>
 
-                  <div className="flex justify-between">
-                    <p className="text-gray-500">Sending</p>
-                    <p>
-                      {trade.sellerAmount} {trade.sellersToken.name}
-                    </p>
-                  </div>
+                    <div className="flex justify-between gap-4 whitespace-nowrap">
+                      <p className="text-gray-500">Receiving:</p>
+                      <p>
+                        {trade.buyerAmount} {trade.buyersToken.name}
+                      </p>
+                    </div>
 
-                  <div className="flex justify-between">
-                    <p className="text-gray-500">Receiving</p>
-                    <p>
-                      {trade.buyerAmount} {trade.buyersToken.name}
-                    </p>
-                  </div>
-
-                  <div className="flex justify-between">
-                    <p className="text-gray-500">Payment Status</p>
-                    <p>
-                      <span
-                        className={`badge ${trade.sellerPaymentStatus === "paid" ? "badge-success text-white" : "badge-warning text-white"}`}
-                      >
-                        {trade.sellerPaymentStatus === "paid"
-                          ? "Paid"
-                          : "Pending"}
-                      </span>
-                    </p>
+                    <div className="flex justify-between gap-4 whitespace-nowrap">
+                      <p className="text-gray-500">Payment Status:</p>
+                      <p>
+                        <span
+                          className={`badge ${trade.sellerPaymentStatus === "paid" ? "badge-success text-white" : "badge-warning text-white"}`}
+                        >
+                          {trade.sellerPaymentStatus === "paid"
+                            ? "Paid"
+                            : "Pending"}
+                        </span>
+                      </p>
+                    </div>
                   </div>
                 </CardContent>
               </Card>
@@ -566,45 +569,46 @@ export default function ViewRoomPage() {
                 </CardHeader>
                 <CardContent>
                   <hr />
+                  <div className="overflow-x-auto space-y-3 mt-3">
+                    <div className="flex justify-between gap-4 whitespace-nowrap">
+                      <p className="text-gray-500">Buyer's ID:</p>
+                      <p>
+                        {trade.buyerEmail ? (
+                          trade.buyerEmail
+                        ) : (
+                          <span className="text-yellow-500">
+                            Waiting to join...
+                          </span>
+                        )}
+                      </p>
+                    </div>
 
-                  <div className="flex justify-between">
-                    <p className="text-gray-500">Buyer's ID</p>
-                    <p>
-                      {trade.buyerEmail ? (
-                        trade.buyerEmail
-                      ) : (
-                        <span className="text-yellow-500">
-                          Waiting to join...
+                    <div className="flex justify-between gap-4 whitespace-nowrap">
+                      <p className="text-gray-500">Sending:</p>
+                      <p>
+                        {trade.buyerAmount} {trade.buyersToken.name}
+                      </p>
+                    </div>
+
+                    <div className="flex justify-between gap-4 whitespace-nowrap">
+                      <p className="text-gray-500">Receiving:</p>
+                      <p>
+                        {trade.sellerAmount} {trade.sellersToken.name}
+                      </p>
+                    </div>
+
+                    <div className="flex justify-between gap-4 whitespace-nowrap">
+                      <p className="text-gray-500">Payment Status:</p>
+                      <p>
+                        <span
+                          className={`badge ${trade.buyerPaymentStatus === "paid" ? "badge-success text-white" : "badge-warning text-white"}`}
+                        >
+                          {trade.buyerPaymentStatus === "paid"
+                            ? "Paid"
+                            : "Pending"}
                         </span>
-                      )}
-                    </p>
-                  </div>
-
-                  <div className="flex justify-between">
-                    <p className="text-gray-500">Sending</p>
-                    <p>
-                      {trade.buyerAmount} {trade.buyersToken.name}
-                    </p>
-                  </div>
-
-                  <div className="flex justify-between">
-                    <p className="text-gray-500">Receiving</p>
-                    <p>
-                      {trade.sellerAmount} {trade.sellersToken.name}
-                    </p>
-                  </div>
-
-                  <div className="flex justify-between">
-                    <p className="text-gray-500">Payment Status</p>
-                    <p>
-                      <span
-                        className={`badge ${trade.buyerPaymentStatus === "paid" ? "badge-success text-white" : "badge-warning text-white"}`}
-                      >
-                        {trade.buyerPaymentStatus === "paid"
-                          ? "Paid"
-                          : "Pending"}
-                      </span>
-                    </p>
+                      </p>
+                    </div>
                   </div>
                 </CardContent>
               </Card>
