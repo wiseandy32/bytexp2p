@@ -149,47 +149,49 @@ export default function AdminTrades() {
       </div>
 
       <Card>
-        <CardContent className="p-6 overflow-x-auto">
-          {loading ? (
-            <div className="text-center py-4">Loading trades...</div>
-          ) : filteredTrades.length === 0 ? (
-            <div className="text-center py-4 text-gray-500">No {filter !== 'all' ? filter : ''} trades found.</div>
-          ) : (
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b text-left text-gray-500 dark:text-gray-400">
-                  <th className="pb-4 font-medium">Room ID</th>
-                  <th className="pb-4 font-medium">Participants (Seller/Buyer)</th>
-                  <th className="pb-4 font-medium">Exchange</th>
-                  <th className="pb-4 font-medium text-right">Status</th>
-                </tr>
-              </thead>
-                <tbody>
-                {filteredTrades.map((trade) => (
-                  <tr
-                    key={trade.id}
-                    onClick={() => handleRowClick(trade.roomId)}
-                    className="border-b border-gray-100 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600/50 cursor-pointer transition-colors"
-                  >
-                    <td className="py-4 font-mono">{trade.roomId}</td>
-                    <td className="py-4">
-                      <div className="truncate max-w-[150px]" title={trade.sellerEmail}>{trade.sellerEmail || 'N/A'}</div>
-                      <div className="text-gray-500 truncate max-w-[150px]" title={trade.buyerEmail}>{trade.buyerEmail || 'Waiting...'}</div>
-                    </td>
-                    <td className="py-4">
-                      <div>{trade.sellerAmount} {trade.sellersToken?.name}</div>
-                      <div className="text-gray-500">for {trade.buyerAmount} {trade.buyersToken?.name}</div>
-                    </td>
-                    <td className="py-4 text-right">
-                      <Badge className={`${getStatusClasses(trade.status)} border-0 text-xs px-2 py-0.5 whitespace-nowrap capitalize`}>
-                        {trade.status.replace(/_/g, ' ')}
-                      </Badge>
-                    </td>
+        <CardContent className="p-6" style={{ overflowY: 'visible' }}>
+          <div className="overflow-x-auto">
+            {loading ? (
+              <div className="text-center py-4">Loading trades...</div>
+            ) : filteredTrades.length === 0 ? (
+              <div className="text-center py-4 text-gray-500">No {filter !== 'all' ? filter : ''} trades found.</div>
+            ) : (
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b text-left text-gray-500 dark:text-gray-400">
+                    <th className="pb-4 font-medium whitespace-nowrap">Room ID</th>
+                    <th className="pb-4 font-medium whitespace-nowrap">Participants (Seller/Buyer)</th>
+                    <th className="pb-4 font-medium whitespace-nowrap">Exchange</th>
+                    <th className="pb-4 font-medium text-right whitespace-nowrap">Status</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          )}
+                </thead>
+                  <tbody>
+                  {filteredTrades.map((trade) => (
+                    <tr
+                      key={trade.id}
+                      onClick={() => handleRowClick(trade.roomId)}
+                      className="border-b border-gray-100 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600/50 cursor-pointer transition-colors"
+                    >
+                      <td className="py-4 font-mono whitespace-nowrap">{trade.roomId}</td>
+                      <td className="py-4 whitespace-nowrap">
+                        <div className="truncate max-w-[150px]" title={trade.sellerEmail}>{trade.sellerEmail || 'N/A'}</div>
+                        <div className="text-gray-500 truncate max-w-[150px]" title={trade.buyerEmail}>{trade.buyerEmail || 'Waiting...'}</div>
+                      </td>
+                      <td className="py-4 whitespace-nowrap">
+                        <div>{trade.sellerAmount} {trade.sellersToken?.name}</div>
+                        <div className="text-gray-500">for {trade.buyerAmount} {trade.buyersToken?.name}</div>
+                      </td>
+                      <td className="py-4 text-right whitespace-nowrap">
+                        <Badge className={`${getStatusClasses(trade.status)} border-0 text-xs px-2 py-0.5 whitespace-nowrap capitalize`}>
+                          {trade.status.replace(/_/g, ' ')}
+                        </Badge>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
+          </div>
         </CardContent>
       </Card>
     </div>

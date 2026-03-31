@@ -104,29 +104,31 @@ export default function AdminOverview() {
                         View all
                     </Link>
                 </CardHeader>
-                <CardContent>
-                    <table className="w-full">
-                        <thead>
-                            <tr className="text-left text-gray-500 dark:text-gray-400">
-                                <th className="pb-4">Transaction ID</th>
-                                <th className="pb-4">User</th>
-                                <th className="pb-4">Date</th>
-                                <th className="pb-4">Amount</th>
-                                <th className="pb-4">Status</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {transactions.map((txn) => (
-                                <tr key={txn.id} className="border-t border-gray-200 dark:border-gray-600">
-                                    <td className="py-4">{txn.id}</td>
-                                    <td className="py-4">{txn.userId}</td>
-                                    <td className="py-4">{txn.createdAt.toDate().toLocaleDateString()}</td>
-                                    <td className="py-4">${txn.amount.toFixed(2)}</td>
-                                    <td className="py-4">{txn.status}</td>
+                <CardContent style={{ overflowY: 'visible' }}>
+                    <div className="overflow-x-auto">
+                        <table className="w-full">
+                            <thead>
+                                <tr className="text-left text-gray-500 dark:text-gray-400">
+                                    <th className="pb-4 whitespace-nowrap">Transaction ID</th>
+                                    <th className="pb-4 whitespace-nowrap">User</th>
+                                    <th className="pb-4 whitespace-nowrap">Date</th>
+                                    <th className="pb-4 whitespace-nowrap">Amount</th>
+                                    <th className="pb-4 whitespace-nowrap">Status</th>
                                 </tr>
-                            ))}
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                {transactions.map((txn) => (
+                                    <tr key={txn.id} className="border-t border-gray-200 dark:border-gray-600">
+                                        <td className="py-4 whitespace-nowrap">{txn.id}</td>
+                                        <td className="py-4 whitespace-nowrap">{txn.userId}</td>
+                                        <td className="py-4 whitespace-nowrap">{txn.createdAt.toDate().toLocaleDateString()}</td>
+                                        <td className="py-4 whitespace-nowrap">${txn.amount.toFixed(2)}</td>
+                                        <td className="py-4 whitespace-nowrap">{txn.status}</td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
                 </CardContent>
             </Card>
         </div>
