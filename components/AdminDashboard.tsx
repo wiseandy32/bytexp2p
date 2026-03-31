@@ -39,9 +39,9 @@ export default function AdminDashboard({
     { href: "/admin/overview", label: "Overview" },
     { href: "/admin/users", label: "Users" },
     { href: "/admin/transactions", label: "Transactions" },
+    { href: "/admin/trades", label: "Trades" },
     { href: "/admin/cryptocurrencies", label: "Cryptocurrencies" },
     { href: "/admin/add-cryptocurrency", label: "Add Cryptocurrency" },
-    { href: "/admin/trades", label: "Trades" },
   ];
 
   const getCurrentRouteTitle = () => {
