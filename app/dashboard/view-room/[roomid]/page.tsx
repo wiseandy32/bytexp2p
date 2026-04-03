@@ -299,6 +299,7 @@ export default function ViewRoomPage() {
         });
         transaction.update(tradeDocRef, { status: "completed" });
       });
+      toast.success("Withdrawal processed successfully!");
     } catch (error: any) {
       console.error("Withdrawal failed: ", error);
       setError(`Withdrawal failed: ${error.message}`);
