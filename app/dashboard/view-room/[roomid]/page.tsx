@@ -726,8 +726,7 @@ export default function ViewRoomPage() {
                             Make Deposit
                           </Button>
                           <Button
-                            variant="outline"
-                            className="w-full"
+                            className="w-full bg-green-600 hover:bg-green-700 text-white"
                             disabled={isWithdrawDisabled}
                             onClick={handleWithdrawToken}
                           >
