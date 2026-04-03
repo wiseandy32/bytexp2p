@@ -52,6 +52,8 @@ interface Trade {
   participantId?: string;
   buyerPaymentStatus: string;
   sellerPaymentStatus: string;
+  buyerWithdrawalStatus?: string;
+  sellerWithdrawalStatus?: string;
 }
 
 export default function ViewRoomPage() {
@@ -225,30 +227,13 @@ export default function ViewRoomPage() {
   };
 
   const handleWithdrawToken = async () => {
-    if (!trade || !currentUser) return;
+    if (!trade || !currentUser || !userRole) return;
     if (trade.status !== "ready_to_withdraw") {
-      setError("Both parties must deposit funds before withdrawal.");
+      toast.error("Both parties must deposit funds before withdrawal.");
       return;
     }
 
-    let sellerUid, buyerUid;
-    if (trade.traderRole === "seller") {
-      sellerUid = trade.creatorId;
-      buyerUid = trade.participantId;
-    } else {
-      sellerUid = trade.participantId;
-      buyerUid = trade.creatorId;
-    }
-
-    if (!sellerUid || !buyerUid) {
-      setError(
-        "Cannot process withdrawal. Counterparty has not joined or is missing.",
-      );
-      return;
-    }
-
-    const sellerUserRef = doc(db, "users", sellerUid);
-    const buyerUserRef = doc(db, "users", buyerUid);
+    const userRef = doc(db, "users", currentUser.uid);
     const q = query(
       collection(db, "trades"),
       where("roomId", "==", roomid as string),
@@ -257,52 +242,66 @@ export default function ViewRoomPage() {
     try {
       const querySnapshot = await getDocs(q);
       if (querySnapshot.empty) {
-        setError("Could not find the trade to update.");
+        toast.error("Could not find the trade to update.");
         return;
       }
       const tradeDocRef = querySnapshot.docs[0].ref;
 
       await runTransaction(db, async (transaction) => {
         const tradeDoc = await transaction.get(tradeDocRef);
-        const sellerDoc = await transaction.get(sellerUserRef);
-        const buyerDoc = await transaction.get(buyerUserRef);
+        const userDoc = await transaction.get(userRef);
 
-        if (!tradeDoc.exists() || !sellerDoc.exists() || !buyerDoc.exists()) {
-          throw new Error(
-            "A required document (trade, seller, or buyer) is missing.",
-          );
+        if (!tradeDoc.exists() || !userDoc.exists()) {
+          throw new Error("A required document is missing.");
         }
         const tradeData = tradeDoc.data() as Trade;
         if (tradeData.status !== "ready_to_withdraw") {
-          throw new Error("Both parties must deposit funds before withdrawal.");
+          throw new Error("Trade is not ready for withdrawal.");
         }
 
-        const sellerData = sellerDoc.data();
-        const buyerData = buyerDoc.data();
+        const userData = userDoc.data();
+        let updates: any = {};
 
-        const sellerReceivesToken = tradeData.buyersToken.name;
-        const sellerReceivesAmount = tradeData.buyerAmount;
-        const newSellerBalance =
-          (sellerData.balances?.[sellerReceivesToken] ?? 0) +
-          sellerReceivesAmount;
+        if (userRole === "seller") {
+          if (tradeData.sellerWithdrawalStatus === "withdrawn") {
+            throw new Error("You have already withdrawn your funds.");
+          }
+          const tokenName = tradeData.buyersToken.name;
+          const amount = tradeData.buyerAmount;
+          const newBalance = (userData.balances?.[tokenName] ?? 0) + amount;
 
-        const buyerReceivesToken = tradeData.sellersToken.name;
-        const buyerReceivesAmount = tradeData.sellerAmount;
-        const newBuyerBalance =
-          (buyerData.balances?.[buyerReceivesToken] ?? 0) + buyerReceivesAmount;
+          transaction.update(userRef, {
+            [`balances.${tokenName}`]: newBalance,
+          });
+          updates.sellerWithdrawalStatus = "withdrawn";
 
-        transaction.update(sellerUserRef, {
-          [`balances.${sellerReceivesToken}`]: newSellerBalance,
-        });
-        transaction.update(buyerUserRef, {
-          [`balances.${buyerReceivesToken}`]: newBuyerBalance,
-        });
-        transaction.update(tradeDocRef, { status: "completed" });
+          if (tradeData.buyerWithdrawalStatus === "withdrawn") {
+            updates.status = "completed";
+          }
+        } else if (userRole === "buyer") {
+          if (tradeData.buyerWithdrawalStatus === "withdrawn") {
+            throw new Error("You have already withdrawn your funds.");
+          }
+          const tokenName = tradeData.sellersToken.name;
+          const amount = tradeData.sellerAmount;
+          const newBalance = (userData.balances?.[tokenName] ?? 0) + amount;
+
+          transaction.update(userRef, {
+            [`balances.${tokenName}`]: newBalance,
+          });
+          updates.buyerWithdrawalStatus = "withdrawn";
+
+          if (tradeData.sellerWithdrawalStatus === "withdrawn") {
+            updates.status = "completed";
+          }
+        }
+
+        transaction.update(tradeDocRef, updates);
       });
       toast.success("Withdrawal processed successfully!");
     } catch (error: any) {
       console.error("Withdrawal failed: ", error);
-      setError(`Withdrawal failed: ${error.message}`);
+      toast.error(`Withdrawal failed: ${error.message}`);
     }
   };
 
@@ -457,7 +456,10 @@ export default function ViewRoomPage() {
     (userRole === "buyer" && trade.buyerPaymentStatus === "paid") ||
     !["joined", "buyer_deposited", "seller_deposited"].includes(trade.status);
 
-  const isWithdrawDisabled = trade.status !== "ready_to_withdraw";
+  const isWithdrawDisabled =
+    trade.status !== "ready_to_withdraw" ||
+    (userRole === "seller" && trade.sellerWithdrawalStatus === "withdrawn") ||
+    (userRole === "buyer" && trade.buyerWithdrawalStatus === "withdrawn");
   const isCancelDisabled =
     trade.status === "completed" || trade.status === "cancelled";
 
@@ -557,6 +559,19 @@ export default function ViewRoomPage() {
                         </span>
                       </p>
                     </div>
+
+                    <div className="flex justify-between gap-4 whitespace-nowrap">
+                      <p className="text-gray-500">Withdrawal Status:</p>
+                      <p>
+                        <span
+                          className={`badge ${trade.sellerWithdrawalStatus === "withdrawn" ? "badge-success text-white" : "badge-secondary text-white"}`}
+                        >
+                          {trade.sellerWithdrawalStatus === "withdrawn"
+                            ? "Withdrawn"
+                            : "Pending"}
+                        </span>
+                      </p>
+                    </div>
                   </div>
                 </CardContent>
               </Card>
@@ -606,6 +621,19 @@ export default function ViewRoomPage() {
                         >
                           {trade.buyerPaymentStatus === "paid"
                             ? "Paid"
+                            : "Pending"}
+                        </span>
+                      </p>
+                    </div>
+
+                    <div className="flex justify-between gap-4 whitespace-nowrap">
+                      <p className="text-gray-500">Withdrawal Status:</p>
+                      <p>
+                        <span
+                          className={`badge ${trade.buyerWithdrawalStatus === "withdrawn" ? "badge-success text-white" : "badge-secondary text-white"}`}
+                        >
+                          {trade.buyerWithdrawalStatus === "withdrawn"
+                            ? "Withdrawn"
                             : "Pending"}
                         </span>
                       </p>
@@ -703,7 +731,10 @@ export default function ViewRoomPage() {
                             disabled={isWithdrawDisabled}
                             onClick={handleWithdrawToken}
                           >
-                            Withdraw Token
+                            {(userRole === "seller" && trade.sellerWithdrawalStatus === "withdrawn") || 
+                             (userRole === "buyer" && trade.buyerWithdrawalStatus === "withdrawn") 
+                              ? "Token Withdrawn" 
+                              : "Withdraw Token"}
                           </Button>
                           <AlertDialog>
                             <AlertDialogTrigger asChild>
