@@ -34,6 +34,7 @@ interface Transaction {
   proofOfPayment: string;
   userId: string;
   txHash: string;
+  destinationAddress: string;
 }
 
 export default function AdminTransactionDetails() {
@@ -168,17 +169,28 @@ export default function AdminTransactionDetails() {
             <strong>Date:</strong>{" "}
             {transaction.createdAt.toDate().toLocaleDateString()}
           </p>
-          <p>
-            <strong>Transaction Hash:</strong> {transaction.txHash}
-          </p>
-          <p>
-            <strong>Proof of Payment:</strong>
-          </p>
-          <img
-            src={transaction.proofOfPayment}
-            alt="Proof of Payment"
-            className="w-full max-w-md rounded-md"
-          />
+          {transaction.txHash && (
+            <p>
+              <strong>Transaction Hash:</strong> {transaction.txHash}
+            </p>
+          )}
+          {transaction.type === "withdrawal" && transaction.destinationAddress && (
+            <p>
+              <strong>Destination Address:</strong> {transaction.destinationAddress}
+            </p>
+          )}
+          {transaction.type === "deposit" && (
+            <>
+              <p>
+                <strong>Proof of Payment:</strong>
+              </p>
+              <img
+                src={transaction.proofOfPayment}
+                alt="Proof of Payment"
+                className="w-full max-w-md rounded-md"
+              />
+            </>
+          )}
           <div className="flex gap-4">
             <AlertDialog>
               <AlertDialogTrigger asChild>

@@ -3,8 +3,8 @@
 import { fetchTokens, Token } from "@/lib/data";
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
-import TokenModal from "./TokenModal";
-import { FiChevronDown } from "react-icons/fi";
+import { auth, db } from "@/lib/firebase";
+import { addDoc, collection, doc, getDoc, serverTimestamp, updateDoc } from "firebase/firestore";
 
 type WithdrawalModalProps = {
   isOpen: boolean;
@@ -21,6 +21,7 @@ export default function WithdrawalModal({
     null
   );
   const [allTokens, setAllTokens] = useState<Token[]>([]);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const getTokens = async () => {
@@ -45,15 +46,75 @@ export default function WithdrawalModal({
 
   if (!isOpen) return null;
 
-  const handleSubmit = (event: React.FormEvent) => {
+  const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-    console.log("Withdrawal request:", { selectedToken, amount, address });
-    // here you would add the logic to handle the withdrawal
-    toast.success("Withdrawal request submitted");
-    onClose();
-  };
 
-  console.log(allTokens);
+    const user = auth.currentUser;
+    if (!user || !selectedToken || !amount) {
+      toast.error("Please fill in all fields");
+      return;
+    }
+
+    const withdrawAmount = parseFloat(amount);
+    if (isNaN(withdrawAmount) || withdrawAmount <= 0) {
+      toast.error("Please enter a valid amount");
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const userDocRef = doc(db, "users", user.uid);
+      const userDocSnap = await getDoc(userDocRef);
+
+      if (!userDocSnap.exists()) {
+        toast.error("User account not found");
+        setLoading(false);
+        return;
+      }
+
+      const userData = userDocSnap.data();
+      const balance = userData.balances?.[selectedToken.shortName] || 0;
+
+      if (balance < withdrawAmount) {
+        toast.error(`Insufficient ${selectedToken.shortName} balance. Available: ${balance}`);
+        setLoading(false);
+        return;
+      }
+
+      const docRef = await addDoc(collection(db, "transactions"), {
+        userId: user.uid,
+        type: "withdrawal",
+        amount: withdrawAmount,
+        token: {
+          shortName: selectedToken.shortName,
+          name: selectedToken.name,
+          depositAddress: selectedToken.depositAddress,
+          logoUrl: selectedToken.logoUrl,
+          qrCodeUrl: selectedToken.qrCodeUrl,
+          network: selectedToken.network,
+        },
+        destinationAddress: address,
+        status: "awaiting_approval",
+        createdAt: serverTimestamp(),
+      });
+
+      await updateDoc(doc(db, "transactions", docRef.id), {
+        transactionId: docRef.id,
+      });
+
+      toast.success("Withdrawal request submitted successfully");
+      setAmount("");
+      setAddress("");
+      setSelectedToken(null);
+      onClose();
+    } catch (error) {
+      console.error("Error creating withdrawal:", error);
+      toast.error("Failed to submit withdrawal request");
+    }
+
+    setLoading(false);
+  };
 
   return (
     <div className="fixed inset-0 bg-[rgba(0,0,0,0.8)] z-50 flex justify-center items-center">
@@ -161,8 +222,9 @@ export default function WithdrawalModal({
               <button
                 type="submit"
                 className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md text-xs"
+                disabled={loading}
               >
-                Proceed
+                {loading ? "Submitting..." : "Proceed"}
               </button>
             </div>
           </form>
