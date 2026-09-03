@@ -31,6 +31,7 @@ export default function AdminTransactions() {
       snapshot.forEach((doc) => {
         transactionsData.push({ id: doc.id, ...doc.data() } as Transaction);
       });
+      transactionsData.sort((a, b) => b.createdAt.toDate().getTime() - a.createdAt.toDate().getTime());
       setTransactions(transactionsData);
     });
     return () => unsubscribe();
