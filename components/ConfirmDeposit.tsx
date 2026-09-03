@@ -17,9 +17,16 @@ export default function ConfirmDeposit() {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
+  const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB
+
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
+      if (file.size > MAX_FILE_SIZE) {
+        toast.error("File size must be 2MB or less");
+        event.target.value = "";
+        return;
+      }
       setProofImage(file);
       const reader = new FileReader();
       reader.onloadend = () => {
@@ -36,6 +43,12 @@ export default function ConfirmDeposit() {
     let proofOfPaymentUrl = "";
 
     if (proofImage) {
+      if (proofImage.size > MAX_FILE_SIZE) {
+        toast.error("File size must be 2MB or less");
+        setLoading(false);
+        return;
+      }
+
       const formData = new FormData();
       formData.append("file", proofImage);
 
