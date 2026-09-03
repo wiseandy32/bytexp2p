@@ -1,10 +1,5 @@
-import ProtectedRoute from "@/components/ProtectedRoute";
 import Overview from "@/components/Overview";
 
 export default function Dashboard() {
-    return (
-        <ProtectedRoute>
-            <Overview />
-        </ProtectedRoute>
-    );
+    return <Overview />;
 }
