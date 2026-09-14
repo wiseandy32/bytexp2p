@@ -3,6 +3,11 @@ import { initAdmin } from '@/lib/firebase-admin';
 import { Resend } from 'resend';
 import ForgotPasswordEmail from '@/emails/forgot-password-email';
 import { render, pretty } from '@react-email/render';
+import {
+  checkRateLimit,
+  getClientIp,
+  tooManyRequests,
+} from '@/lib/rate-limit';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 const RESET_CODE_TTL_MS = 15 * 60 * 1000; // 15 minutes
@@ -25,6 +30,21 @@ export async function POST(req: NextRequest) {
 
   const normalizedEmail = email.trim().toLowerCase();
 
+  // Throttle code generation: per-IP and per-email, checked before any work.
+  const ip = getClientIp(req);
+  const ipLimit = checkRateLimit(
+    `forgot-password:ip:${ip}`,
+    5,
+    60 * 60 * 1000
+  );
+  if (!ipLimit.allowed) return tooManyRequests(ipLimit.resetAfterMs);
+  const emailLimit = checkRateLimit(
+    `forgot-password:email:${normalizedEmail}`,
+    3,
+    60 * 60 * 1000
+  );
+  if (!emailLimit.allowed) return tooManyRequests(emailLimit.resetAfterMs);
+
   try {
     const { adminAuth, adminDb } = initAdmin();
 
@@ -42,6 +62,9 @@ export async function POST(req: NextRequest) {
       {
         passwordResetToken: resetCode,
         passwordResetTokenExpires: Date.now() + RESET_CODE_TTL_MS,
+        // Fresh code resets the brute-force counter (see reset-password route).
+        passwordResetAttempts: 0,
+        passwordResetLockedUntil: null,
       },
       { merge: true }
     );
