@@ -42,6 +42,7 @@ export default function Dashboard({ children }: { children: React.ReactNode }) {
     { href: "/dashboard/deposit", label: "Deposit" },
     { href: "/dashboard/withdraw", label: "Withdraw" },
     { href: "/dashboard/transactions", label: "Transactions" },
+    { href: "/dashboard/profile", label: "Profile" },
   ];
 
   const exchangeNavItems = [

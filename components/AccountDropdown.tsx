@@ -3,12 +3,14 @@ import { useAuth } from "@/app/context/AuthContext";
 import { auth } from "@/lib/firebase";
 import { signOut } from "firebase/auth";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { MdAdminPanelSettings, MdBeenhere, MdKey, MdPerson } from "react-icons/md";
+import { usePathname, useRouter } from "next/navigation";
+import { MdAdminPanelSettings, MdKey, MdPerson } from "react-icons/md";
 
 export default function AccountDropdown() {
     const { user } = useAuth();
     const router = useRouter();
+    const pathname = usePathname();
+    const profileHref = pathname?.startsWith("/admin") ? "/admin/profile" : "/dashboard/profile";
 
     const handleSignOut = async () => {
         try {
@@ -28,12 +30,12 @@ export default function AccountDropdown() {
                     <p className="text-xs text-gray-400">{user?.email}</p>
                 </div>
             </div>
-            {/* <Link href="/user/change-password">
+            <Link href={profileHref}>
                 <div className="px-3 py-2 pb-3 hover:bg-gray-700 flex items-center">
                     <MdPerson className="text-gray-400" size={18} />
-                    <small className="ml-2 text-sm text-gray-300">Account Settings</small>
+                    <small className="ml-2 text-sm text-gray-300">Profile</small>
                 </div>
-            </Link> */}
+            </Link>
             {/* <Link href="/user/kyc-application">
                 <div className="px-3 py-2 pb-3 hover:bg-gray-700 flex items-center">
                     <MdBeenhere className="text-gray-400" size={18} />
