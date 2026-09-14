@@ -33,8 +33,8 @@ export default function AdminAddCryptocurrency() {
   const handleQrCodeFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      if (file.size > 1024 * 1024) { // 1MB limit
-        setError('QR Code file size cannot exceed 1MB.');
+      if (file.size > 2 * 1024 * 1024) { // 2MB limit
+        setError('QR Code file size cannot exceed 2MB.');
         setQrCodeFile(null);
       } else {
         setError('');
@@ -47,8 +47,8 @@ export default function AdminAddCryptocurrency() {
   const handleLogoFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      if (file.size > 1024 * 1024) { // 1MB limit
-        setError('Logo file size cannot exceed 1MB.');
+      if (file.size > 2 * 1024 * 1024) { // 2MB limit
+        setError('Logo file size cannot exceed 2MB.');
         setLogoFile(null);
       } else {
         setError('');
@@ -266,7 +266,7 @@ export default function AdminAddCryptocurrency() {
                 />
               )}
               {error && <p className="text-sm text-red-500 mt-1">{error}</p>}
-              <p className="text-sm text-gray-500 mt-1">Max file size: 1MB</p>
+              <p className="text-sm text-gray-500 mt-1">Max file size: 2MB</p>
             </div>
             <Button type="submit">Add Cryptocurrency</Button>
             {status && <p className="text-sm text-gray-500 mt-2">{status}</p>}

@@ -28,6 +28,7 @@ export default function EditCryptocurrencyForm({ cryptocurrencyId }: { cryptocur
   const [logoType, setLogoType] = useState('url');
   const [qrCodeType, setQrCodeType] = useState('url');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState('');
   const router = useRouter();
 
   useEffect(() => {
@@ -48,20 +49,42 @@ export default function EditCryptocurrencyForm({ cryptocurrencyId }: { cryptocur
     fetchCryptocurrency();
   }, [cryptocurrencyId]);
 
+  const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB
+
   const handleLogoFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
-      setLogoFile(e.target.files[0]);
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.size > MAX_FILE_SIZE) {
+        setError('Logo file size cannot exceed 2MB.');
+        setLogoFile(null);
+        e.target.value = '';
+        return;
+      }
+      setError('');
+      setLogoFile(file);
     }
   };
 
   const handleQrCodeFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
-      setQrCodeFile(e.target.files[0]);
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.size > MAX_FILE_SIZE) {
+        setError('QR Code file size cannot exceed 2MB.');
+        setQrCodeFile(null);
+        e.target.value = '';
+        return;
+      }
+      setError('');
+      setQrCodeFile(file);
     }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (error) {
+      toast.error('Please fix the errors before submitting.');
+      return;
+    }
     setIsSubmitting(true);
     try {
       let finalLogoUrl = logoUrl;
@@ -270,6 +293,9 @@ export default function EditCryptocurrencyForm({ cryptocurrencyId }: { cryptocur
           />
         )}
       </div>
+      {error && (
+        <p className="text-sm text-red-500 mb-4">{error}</p>
+      )}
       <button
         type="submit"
         className="w-full px-4 py-2 text-white bg-blue-500 rounded-md hover:bg-blue-600 focus:outline-none focus:bg-blue-600 disabled:bg-gray-400"
