@@ -115,6 +115,15 @@ function LoginContent() {
         </div>
 
         {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
+
+        <div className="text-right mb-4">
+          <Link
+            href="/auth/forgot-password"
+            className="text-green-500 text-sm hover:underline"
+          >
+            Forgot password?
+          </Link>
+        </div>
         {showVerificationLink && uidForVerification && (
           <div className="text-center mb-4">
             <Link

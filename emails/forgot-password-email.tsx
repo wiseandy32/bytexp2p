@@ -11,19 +11,20 @@ import {
   Img,
   Hr,
   Link,
-  Button,
 } from "@react-email/components";
 
 interface ForgotPasswordEmailProps {
   name: string;
-  resetLink: string;
+  resetCode: string;
+  expiresInMinutes?: number;
 }
 
 const baseUrl = "https://www.mitomcash.com/";
 
 export const ForgotPasswordEmail: React.FC<Readonly<ForgotPasswordEmailProps>> = ({
   name,
-  resetLink,
+  resetCode,
+  expiresInMinutes = 15,
 }) => (
   <Html>
     <Head />
@@ -67,12 +68,11 @@ export const ForgotPasswordEmail: React.FC<Readonly<ForgotPasswordEmailProps>> =
           <Text style={text}>Hello {name},</Text>
           <Text style={text}>
             We received a request to reset your password for your Mitomcash
-            account. Click the button below to set a new password:
+            account. Enter the code below on the password reset page to set a
+            new password. This code expires in {expiresInMinutes} minutes:
           </Text>
           <Section style={{ textAlign: "center" }}>
-            <Button style={button} href={resetLink}>
-              Reset Password
-            </Button>
+            <Text style={code}>{resetCode}</Text>
           </Section>
           <Text style={text}>
             If you did not request a password reset, please ignore this email or
@@ -144,15 +144,16 @@ const text = {
   margin: "0 0 20px",
 };
 
-const button = {
-  backgroundColor: "#007bff",
-  color: "#ffffff",
-  fontSize: "16px",
-  fontWeight: "600",
-  textDecoration: "none",
-  padding: "12px 24px",
-  borderRadius: "4px",
+const code = {
+  backgroundColor: "#f6f9fc",
+  color: "#1a1a1a",
+  fontSize: "32px",
+  fontWeight: "700",
+  letterSpacing: "8px",
+  padding: "16px 24px",
+  borderRadius: "8px",
   display: "inline-block",
+  border: "1px dashed #007bff",
 };
 
 const footer = {
