@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { doc, getDoc, updateDoc, increment } from "firebase/firestore";
-import { db } from "@/lib/firebase";
+import { db, auth } from "@/lib/firebase";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -67,10 +67,6 @@ export default function AdminTransactionDetails() {
         const userDocSnap = await getDoc(userDocRef);
 
         if (userDocSnap.exists()) {
-          const user = userDocSnap.data();
-          const userEmail = user.email;
-          const displayName = user.displayName;
-
           const userRef = doc(db, "users", transaction.userId);
           await updateDoc(userRef, {
             [`balances.${transaction.token.shortName}`]: increment(
@@ -86,24 +82,34 @@ export default function AdminTransactionDetails() {
             ? "/api/send-deposit-approval-email"
             : "/api/send-withdrawal-approval-email";
 
-          await fetch(emailApiEndpoint, {
+          // Recipient/amounts are derived server-side from the transaction;
+          // only the id (plus a display-only link) is sent, with admin auth.
+          const idToken = await auth.currentUser?.getIdToken();
+          if (!idToken) {
+            toast.error("Session expired. Please log in again.");
+            return;
+          }
+
+          const emailRes = await fetch(emailApiEndpoint, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
+              Authorization: `Bearer ${idToken}`,
             },
             body: JSON.stringify({
-              to: userEmail,
-              name: displayName,
-              amount: transaction.amount,
-              asset: transaction.token.shortName,
-              transactionLink: `${window.location.origin}/transactions/${transactionId}`,
               transactionId: transactionId,
+              transactionLink: `${window.location.origin}/transactions/${transactionId}`,
             }),
           });
 
-          toast.success(
-            `${isDeposit ? "Deposit" : "Withdrawal"} approved successfully!`,
-          );
+          if (!emailRes.ok) {
+            console.error("Approval email failed:", await emailRes.text());
+            toast.error("Approved, but the notification email failed to send.");
+          } else {
+            toast.success(
+              `${isDeposit ? "Deposit" : "Withdrawal"} approved successfully!`,
+            );
+          }
           router.push("/admin/transactions");
         } else {
           toast.error("User not found");

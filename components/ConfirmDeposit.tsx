@@ -5,7 +5,7 @@ import { useState } from "react";
 import { FiUpload } from "react-icons/fi";
 import Image from "next/image";
 import { doc, updateDoc, serverTimestamp } from "firebase/firestore";
-import { db } from "@/lib/firebase";
+import { db, auth } from "@/lib/firebase";
 import { toast } from "sonner";
 
 export default function ConfirmDeposit() {
@@ -53,11 +53,28 @@ export default function ConfirmDeposit() {
       formData.append("file", proofImage);
 
       try {
+        const idToken = await auth.currentUser?.getIdToken();
+        if (!idToken) {
+          toast.error("Session expired. Please log in again.");
+          setLoading(false);
+          return;
+        }
         const response = await fetch("/api/upload", {
           method: "POST",
+          headers: { Authorization: `Bearer ${idToken}` },
           body: formData,
         });
+        if (!response.ok) {
+          toast.error("Proof upload failed. Please try again.");
+          setLoading(false);
+          return;
+        }
         const data = await response.json();
+        if (!data.url) {
+          toast.error("Proof upload failed. Please try again.");
+          setLoading(false);
+          return;
+        }
         proofOfPaymentUrl = data.url;
       } catch (error) {
         console.error("Error uploading image:", error);

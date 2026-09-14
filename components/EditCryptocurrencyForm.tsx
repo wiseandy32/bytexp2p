@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
-import { db } from '@/lib/firebase';
+import { db, auth } from '@/lib/firebase';
 import { useRouter } from 'next/navigation';
 import { Toaster, toast } from 'sonner';
 
@@ -85,6 +85,11 @@ export default function EditCryptocurrencyForm({ cryptocurrencyId }: { cryptocur
       toast.error('Please fix the errors before submitting.');
       return;
     }
+    const idToken = await auth.currentUser?.getIdToken();
+    if (!idToken) {
+      toast.error('Session expired. Please log in again.');
+      return;
+    }
     setIsSubmitting(true);
     try {
       let finalLogoUrl = logoUrl;
@@ -93,6 +98,7 @@ export default function EditCryptocurrencyForm({ cryptocurrencyId }: { cryptocur
         formData.append('file', logoFile);
         const response = await fetch('/api/upload', {
           method: 'POST',
+          headers: { Authorization: `Bearer ${idToken}` },
           body: formData,
         });
         const data = await response.json();
@@ -112,6 +118,7 @@ export default function EditCryptocurrencyForm({ cryptocurrencyId }: { cryptocur
         formData.append('file', qrCodeFile);
         const response = await fetch('/api/upload', {
           method: 'POST',
+          headers: { Authorization: `Bearer ${idToken}` },
           body: formData,
         });
         const data = await response.json();
