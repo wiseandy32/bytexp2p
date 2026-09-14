@@ -5,6 +5,7 @@ import { Suspense, useState } from "react";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth, db } from "@/lib/firebase";
 import { doc, getDoc } from "firebase/firestore";
+import { getSafeNext } from "@/lib/safe-redirect";
 
 function LoginContent() {
   const [email, setEmail] = useState("");
@@ -51,7 +52,11 @@ function LoginContent() {
           return;
         }
 
-        if (roomid) {
+        // Explicit deep-link destination (e.g. trade invite) wins over defaults.
+        const next = getSafeNext(params.get("next"));
+        if (next) {
+          router.push(next);
+        } else if (roomid) {
           router.push(`/dashboard/view-room/${roomid}`);
         } else if (userData.isAdmin) {
           router.push("/admin/dashboard");

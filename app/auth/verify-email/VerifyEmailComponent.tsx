@@ -3,6 +3,8 @@
 import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { toast } from 'sonner';
+import { auth } from "@/lib/firebase";
+import { getSafeNext } from "@/lib/safe-redirect";
 
 export default function VerifyEmailComponent() {
   const [code, setCode] = useState("");
@@ -67,10 +69,23 @@ export default function VerifyEmailComponent() {
     setLoading(true);
     setError("");
 
+    // Code requests require the matching signed-in user. Freshly registered
+    // users are signed out, so they must log in first (login keeps the
+    // session for unverified accounts and links back here).
+    const idToken = await auth.currentUser?.getIdToken();
+    if (!idToken) {
+      setError("Session expired. Please log in again to request a code.");
+      setLoading(false);
+      return;
+    }
+
     try {
       const res = await fetch("/api/send-verification", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${idToken}`,
+        },
         body: JSON.stringify({ email: userEmail, uid: userId }),
       });
 
@@ -113,23 +128,20 @@ export default function VerifyEmailComponent() {
       });
 
       if (res.ok) {
-        const data = await res.json();
-        const { user } = data;
-
-        if (user && user.email && user.fullName) {
-          // Fire-and-forget call to send welcome email
-          fetch("/api/send-welcome-email", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ email: user.email, name: user.fullName }),
-          }).catch((error) => {
-            // Log error but don't block user
-            console.error("Failed to send welcome email:", error);
-          });
+        // The welcome email is sent server-side inside /api/verify-email.
+        // Preserve any deep-link (?next=, e.g. trade invite): verified users
+        // with a live session go straight there, otherwise via login.
+        const next = getSafeNext(searchParams.get("next"));
+        toast.success("Email verified successfully!");
+        if (next && auth.currentUser) {
+          router.push(next);
+        } else {
+          router.push(
+            next
+              ? `/auth/login?next=${encodeURIComponent(next)}`
+              : "/auth/login"
+          );
         }
-
-        toast.success("Email verified successfully! Please login.");
-        router.push("/auth/login");
       } else {
         const data = await res.json();
         setError(data.error || "Invalid verification code");

@@ -1,16 +1,16 @@
 "use client";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Suspense, useState } from "react";
 import {
   createUserWithEmailAndPassword,
   updateProfile,
-  signOut,
 } from "firebase/auth";
 import { auth, db } from "@/lib/firebase";
 import { doc, setDoc } from "firebase/firestore";
+import { getSafeNext } from "@/lib/safe-redirect";
 
-export default function Register() {
+function RegisterContent() {
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -18,6 +18,8 @@ export default function Register() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const next = getSafeNext(searchParams.get("next"));
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -49,18 +51,26 @@ export default function Register() {
         isVerified: false,
       });
 
+      const idToken = await user.getIdToken();
       await fetch("/api/send-verification", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${idToken}`,
+        },
         body: JSON.stringify({ email: user.email, uid: user.uid }),
       });
 
       const uid = user.uid;
 
-      await signOut(auth);
-      router.push(
-        `/auth/verify-email?uid=${uid}&email=${email}&source=register`
-      );
+      // Stay signed in so the code can be resent / verified without
+      // logging in again. Unverified accounts are kept out of the app by
+      // the ProtectedRoute verification gate. Thread any deep-link (?next=)
+      // through verification so invitees land in the trade room.
+      const verifyUrl =
+        `/auth/verify-email?uid=${uid}&email=${email}&source=register` +
+        (next ? `&next=${encodeURIComponent(next)}` : "");
+      router.push(verifyUrl);
     } catch (error: any) {
       setError(error.message);
     } finally {
@@ -164,11 +174,28 @@ export default function Register() {
       <div className="text-center mt-6">
         <p className="text-gray-400">
           Already have an account?{" "}
-          <Link href="/auth/login" className="text-green-500 hover:underline">
+          <Link
+            href={
+              next
+                ? `/auth/login?next=${encodeURIComponent(next)}`
+                : "/auth/login"
+            }
+            className="text-green-500 hover:underline"
+          >
             Login
           </Link>
         </p>
       </div>
     </>
+  );
+}
+
+export default function Register() {
+  return (
+    <Suspense
+      fallback={<div className="text-center p-4">Loading register...</div>}
+    >
+      <RegisterContent />
+    </Suspense>
   );
 }

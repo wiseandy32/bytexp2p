@@ -70,6 +70,25 @@ export default function JoinTradeDialog({ show, onHide }: { show: boolean; onHid
                 return;
             }
 
+            // Invites sent to unregistered addresses expire after 24 hours.
+            // (No invite record = invited while registered, or legacy trade.)
+            const invitesQuery = query(
+                collection(db, 'tradeInvites'),
+                where("roomId", "==", trade.roomId),
+                where("recipientEmail", "==", currentUser.email?.trim().toLowerCase())
+            );
+            const invitesSnapshot = await getDocs(invitesQuery);
+            if (!invitesSnapshot.empty) {
+                const now = Date.now();
+                const hasLiveInvite = invitesSnapshot.docs.some(
+                    (d) => (d.data().expiresAtMs ?? 0) > now
+                );
+                if (!hasLiveInvite) {
+                    setError("This invitation has expired. Ask the creator to invite you again.");
+                    return;
+                }
+            }
+
             await updateDoc(tradeRef, {
                 participantId: auth.currentUser.uid,
                 status: 'joined',

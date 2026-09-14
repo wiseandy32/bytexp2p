@@ -12,6 +12,7 @@ import { addDoc, collection, serverTimestamp } from 'firebase/firestore';
 import { auth, db } from '@/lib/firebase';
 import { Token } from '@/lib/data';
 import { TradeStatus } from '@/lib/trade-types';
+import { toast } from 'sonner';
 
 function generateRoomId(length: number) {
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -84,6 +85,31 @@ export default function CreateTradePage() {
             return;
         }
 
+        // Counterparty sanity checks: no self-trades, positive amounts,
+        // and two different tokens.
+        if (sellerEmail.trim().toLowerCase() === buyerEmail.trim().toLowerCase()) {
+            setError('Seller and buyer emails must be different.');
+            setIsCreating(false);
+            return;
+        }
+
+        const parsedSellerAmount = parseFloat(sellerAmount);
+        const parsedBuyerAmount = parseFloat(buyerAmount);
+        if (
+            isNaN(parsedSellerAmount) || isNaN(parsedBuyerAmount) ||
+            parsedSellerAmount <= 0 || parsedBuyerAmount <= 0
+        ) {
+            setError('Both trade amounts must be numbers greater than zero.');
+            setIsCreating(false);
+            return;
+        }
+
+        if (sellersToken?.name === buyersToken?.name) {
+            setError('Seller and buyer tokens must be different.');
+            setIsCreating(false);
+            return;
+        }
+
         const roomId = generateRoomId(6);
         const initialStatus: TradeStatus = 'pending';
 
@@ -105,30 +131,36 @@ export default function CreateTradePage() {
                 roomId,
             });
 
-            // Send trade creation emails
-            const creatorEmail = auth.currentUser.email;
-            const participantEmail = traderRole === 'seller' ? buyerEmail : sellerEmail;
-            const creatorRole = traderRole;
-            const participantRole = traderRole === 'seller' ? 'buyer' : 'seller';
+            // Send trade creation emails (content derived server-side
+            // from the stored trade; only the room id is sent, with auth).
             const tradeLink = `${window.location.origin}/dashboard/view-room/${roomId}`;
 
             try {
-                await fetch('/api/send-trade-creation-emails', {
+                const idToken = await auth.currentUser?.getIdToken();
+                if (!idToken) throw new Error("Session expired. Please log in again.");
+                const emailRes = await fetch('/api/send-trade-creation-emails', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        roomId,
-                        creatorRole,
-                        participantRole,
-                        sellerAmount,
-                        sellersToken: sellersToken?.name,
-                        buyerAmount,
-                        buyersToken: buyersToken?.name,
-                        tradeLink,
-                        creatorEmail,
-                        participantEmail,
-                    }),
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${idToken}`,
+                    },
+                    body: JSON.stringify({ roomId, tradeLink }),
                 });
+                if (!emailRes.ok) {
+                    console.error("Trade creation emails failed: ", await emailRes.text());
+                    toast.warning('Trade created, but the invite emails could not be sent. Please share the room ID with your counterparty manually.');
+                } else {
+                    const emailData = await emailRes.json();
+                    const counterparty = traderRole === 'seller' ? buyerEmail : sellerEmail;
+                    if (emailData.participantEmailSent === false) {
+                        const reason = emailData.inviteSkippedReason === 'recipient_limit'
+                            ? `${counterparty} has already received several invites recently, so this one was skipped to avoid spamming them.`
+                            : `invite sending is temporarily limited for your account.`;
+                        toast.warning(`Trade created, but no invite was sent to ${counterparty} (${reason}) Share room ID ${roomId} with them manually so they can join.`, { duration: 10000 });
+                    } else if (emailData.inviteSentToUnregistered) {
+                        toast.success(`Trade created. ${counterparty} isn't registered yet, so we sent an invite with signup instructions — or share room ID ${roomId} with them directly.`, { duration: 8000 });
+                    }
+                }
             } catch (emailError) {
                 console.error("Error sending trade creation emails: ", emailError);
             }
