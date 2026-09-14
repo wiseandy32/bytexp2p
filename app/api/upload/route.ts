@@ -2,6 +2,12 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { v2 as cloudinary } from 'cloudinary';
+import {
+  checkRateLimit,
+  getClientIp,
+  tooManyRequests,
+} from '@/lib/rate-limit';
+import { requireUser } from '@/lib/require-auth';
 
 cloudinary.config({
   cloud_name: process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
@@ -12,6 +18,17 @@ cloudinary.config({
 const MAX_FILE_SIZE = 2 * 1024 * 1024; // 2MB
 
 export async function POST(request: NextRequest) {
+  // Only signed-in users may upload (proofs of payment, coin logos/QRs).
+  const authed = await requireUser(request);
+  if ('error' in authed) return authed.error;
+
+  const ipLimit = checkRateLimit(
+    `upload:ip:${getClientIp(request)}`,
+    60,
+    60 * 60 * 1000
+  );
+  if (!ipLimit.allowed) return tooManyRequests(ipLimit.resetAfterMs);
+
   const formData = await request.formData();
   const file = formData.get('file') as File;
 
