@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { MapPin, Phone, Twitter, Send, Instagram } from "lucide-react";
+import { MapPin } from "lucide-react";
 
 const Footer = () => {
   return (
@@ -62,36 +62,6 @@ const Footer = () => {
                   <small>5 Brayford Square, Stepney Green, London E10SG</small>
                 </span>
               </p>
-            </div>
-          </div>
-
-          <div>
-            <h5 className="text-base font-bold mb-4 text-white">Follow Us</h5>
-            <div className="flex space-x-4">
-              <a
-                href="https://twitter.com/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-gray-400 hover:text-white"
-              >
-                <Twitter size={18} />
-              </a>
-              <a
-                href="https://t.me/peershield"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-gray-400 hover:text-white"
-              >
-                <Send size={18} />
-              </a>
-              <a
-                href="https://instagram.com/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-gray-400 hover:text-white"
-              >
-                <Instagram size={18} />
-              </a>
             </div>
           </div>
         </div>
